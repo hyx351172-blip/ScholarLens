@@ -1,0 +1,66 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.sample
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.sample
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node / frontend
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime state and logs
+*.log
+*.pid
+*.tmp
+logs/
+log/
+pids/
+
+# Generated uploads and extraction artifacts
+backend/output/
+backend/**/output/
+backend/**/outputs/
+backend/data/*
+!backend/data/.gitkeep
+
+# Local databases and container volumes
+backend/Database/milvus_server/volumes/
+backend/Database/milvus_server/data/
+backend/Database/milvus_server/collection_name_mapping.json
+backend/**/output_bak/
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE / operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local cleanup backups
+.cleanup-backup/
