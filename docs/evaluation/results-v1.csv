@@ -1,0 +1,11 @@
+id,type,document_hit,strict_evidence_hit,answer_grade,citation_grade,top1_score,retrieve_seconds,llm_seconds,total_seconds,notes
+Q01,fact,true,true,correct,mostly_supported,0.687823,2.467,10.356,12.823,"核心数字正确；对表格合计差异的解释属于无依据推测"
+Q02,understanding,true,true,correct,mostly_supported,0.680059,2.755,24.866,27.621,"四个维度正确；额外推导的指标数量和定义存在过度扩展"
+Q03,fact,true,false,partial,partial,0.607779,2.474,12.541,15.015,"命中 GAAP 论文但未召回定义全称的摘要 Chunk，错误声称全称未知"
+Q04,understanding,true,true,correct,supported,0.743965,2.342,36.059,38.401,"核心机制正确，但回答明显过长"
+Q05,fact,true,true,correct,supported,0.708888,2.349,14.685,17.035,"正确回答 cryptographic provenance 与 derivation lineage"
+Q06,understanding,true,true,correct,supported,0.687041,2.357,28.173,30.531,"正确描述 External/Derived-Untrusted 祖先触发阻断"
+Q07,fact,true,true,correct,supported,0.667783,2.351,28.305,30.656,"正确概括未授权读取、信任传播和风险动作问题"
+Q08,understanding,true,true,correct,supported,0.669028,2.336,39.051,41.387,"正确区分硬授权与分级信任；回答过长"
+Q09,comparison,false,false,partial,unsupported_for_one_side,0.735813,2.310,33.912,36.222,"Top-10 只有 MAP-Graph，未召回 MemLineage 主文；比较结论不够可靠"
+Q10,unanswerable,n/a,n/a,correct,supported,0.483534,2.357,19.760,22.117,"正确说明四篇论文均未提供精确 GPU 小时或耗电量"

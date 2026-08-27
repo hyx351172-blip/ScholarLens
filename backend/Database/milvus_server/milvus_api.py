@@ -1,9 +1,7 @@
 import uuid
 import json
 import os
-import requests
 import time
-import numpy as np
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -17,6 +15,8 @@ from pydantic import BaseModel
 from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType, utility
 from dotenv import load_dotenv
 
+from embedding_client import EmbeddingAPIError, request_embeddings
+
 # 加载仓库根目录 .env 文件
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 env_path = PROJECT_ROOT / '.env'
@@ -28,6 +28,7 @@ MILVUS_PORT = os.getenv("MILVUS_PORT")
 EMBEDDING_URL = os.getenv("EMBEDDING_URL")
 EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME")
 EMBEDDING_API_KEY = os.getenv("EMBEDDING_API_KEY")
+EMBEDDING_BATCH_SIZE = int(os.getenv("EMBEDDING_BATCH_SIZE", "10"))
 UPLOAD_BASE_DIR = Path(os.getenv(
     "UPLOAD_BASE_DIR",
     str(PROJECT_ROOT / "backend" / "output" / "uploads")
@@ -103,31 +104,16 @@ class MilvusRAGService:
     def generate_embedding(self, text: str) -> List[float]:
         """单个文本生成向量（用于query）"""
         try:
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.embedding_api_key}"
-            }
-
-            payload = {
-                "model": self.embedding_model_name,
-                "input": [text]
-            }
-
-            response = requests.post(self.embedding_url, json=payload, headers=headers, timeout=30)
-
-            if response.status_code == 200:
-                result = response.json()
-                embedding = result["data"][0]["embedding"]
-                return embedding
-            else:
-                print(f"Embedding API error: {response.status_code}")
-                fallback_dim = self.get_model_dimension(self.embedding_model_name)
-                return np.random.rand(fallback_dim).tolist()
-
-        except Exception as e:
+            return request_embeddings(
+                api_url=self.embedding_url,
+                api_key=self.embedding_api_key,
+                model_name=self.embedding_model_name,
+                texts=[text],
+                timeout=30,
+            )[0]
+        except EmbeddingAPIError as e:
             print(f"Embedding generation failed: {e}")
-            fallback_dim = self.get_model_dimension(self.embedding_model_name)
-            return np.random.rand(fallback_dim).tolist()
+            raise HTTPException(status_code=502, detail=str(e)) from e
 
     def generate_embeddings_batch(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
         """
@@ -153,42 +139,17 @@ class MilvusRAGService:
         def process_batch(batch_idx: int, batch_texts: List[str]) -> tuple:
             """处理单个批次"""
             start_idx = batch_idx * batch_size
-
             try:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.embedding_api_key}"
-                }
-
-                payload = {
-                    "model": self.embedding_model_name,
-                    "input": batch_texts
-                }
-
-                response = requests.post(
-                    self.embedding_url,
-                    json=payload,
-                    headers=headers,
-                    timeout=60
+                batch_embeddings = request_embeddings(
+                    api_url=self.embedding_url,
+                    api_key=self.embedding_api_key,
+                    model_name=self.embedding_model_name,
+                    texts=batch_texts,
+                    timeout=60,
                 )
-
-                if response.status_code == 200:
-                    result = response.json()
-                    batch_embeddings = [item["embedding"] for item in result["data"]]
-                    return batch_idx, start_idx, batch_embeddings, None
-                else:
-                    error_msg = f"API返回错误: {response.status_code}"
-                    print(f"批次 {batch_idx + 1} {error_msg}")
-                    fallback_dim = self.get_model_dimension(self.embedding_model_name)
-                    batch_embeddings = [np.random.rand(fallback_dim).tolist() for _ in batch_texts]
-                    return batch_idx, start_idx, batch_embeddings, error_msg
-
-            except Exception as e:
-                error_msg = f"处理异常: {str(e)}"
-                print(f"批次 {batch_idx + 1} {error_msg}")
-                fallback_dim = self.get_model_dimension(self.embedding_model_name)
-                batch_embeddings = [np.random.rand(fallback_dim).tolist() for _ in batch_texts]
-                return batch_idx, start_idx, batch_embeddings, error_msg
+                return batch_idx, start_idx, batch_embeddings
+            except EmbeddingAPIError as e:
+                raise EmbeddingAPIError(f"Embedding batch {batch_idx + 1} failed: {e}") from e
 
         # 准备批次
         batches = []
@@ -204,17 +165,66 @@ class MilvusRAGService:
             }
 
             for future in as_completed(future_to_batch):
-                batch_idx, start_idx, batch_embeddings, error = future.result()
+                try:
+                    batch_idx, start_idx, batch_embeddings = future.result()
+                except EmbeddingAPIError as e:
+                    for pending in future_to_batch:
+                        pending.cancel()
+                    raise HTTPException(status_code=502, detail=str(e)) from e
 
                 # 填充结果
                 for i, embedding in enumerate(batch_embeddings):
                     all_embeddings[start_idx + i] = embedding
+
+        if any(embedding is None for embedding in all_embeddings):
+            raise HTTPException(status_code=502, detail="Embedding API returned an incomplete batch")
+
+        dimensions = {len(embedding) for embedding in all_embeddings}
+        if len(dimensions) != 1:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Embedding batches returned inconsistent dimensions: {sorted(dimensions)}",
+            )
 
         elapsed = time.time() - start_time
         rate = total_texts / elapsed if elapsed > 0 else 0
         print(f"批量生成完成，总耗时: {elapsed:.2f}秒，平均速率: {rate:.2f} 文本/秒")
 
         return all_embeddings
+
+    def ensure_files_not_present(
+        self,
+        collection_name: str,
+        file_ids: List[str],
+        filenames: List[str],
+    ) -> None:
+        """Reject duplicate file ingestion before generating embeddings."""
+        if not utility.has_collection(collection_name):
+            return
+
+        collection = Collection(collection_name)
+        collection.load()
+        identity_fields = {
+            "file_id": sorted(set(file_ids)),
+            "filename": sorted(set(filenames)),
+        }
+        for field_name, values in identity_fields.items():
+            for value in values:
+                escaped_value = value.replace("\\", "\\\\").replace('"', '\\"')
+                existing = collection.query(
+                    expr=f'{field_name} == "{escaped_value}"',
+                    limit=1,
+                    output_fields=["id"],
+                )
+                if not existing:
+                    continue
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        f"File with {field_name}={value} already exists in "
+                        f"knowledge base {collection_name}"
+                    ),
+                )
 
     def get_model_dimension(self, model_name: str) -> int:
         """获取模型的向量维度"""
@@ -415,6 +425,8 @@ class MilvusRAGService:
 
             data_section = json_data.get("data", {})
             chunks = data_section.get("chunks", [])
+            document_metadata = data_section.get("metadata", {})
+            document_file_id = document_metadata.get("file_id") or str(uuid.uuid4())
 
             print(f"开始解析文件: {filename}, 包含 {len(chunks)} 个chunks")
 
@@ -438,13 +450,12 @@ class MilvusRAGService:
                 }
 
                 # 添加文档级别的metadata
-                if "metadata" in data_section:
-                    metadata.update(data_section["metadata"])
+                metadata.update(document_metadata)
 
                 doc = DocumentChunk(
                     chunk_text=chunk_text,
                     filename=filename,
-                    file_id=str(uuid.uuid4()),
+                    file_id=document_file_id,
                     metadata=metadata
                 )
                 documents.append(doc)
@@ -479,10 +490,14 @@ class MilvusRAGService:
                 file_ids.append(doc.file_id or str(uuid.uuid4()))
                 metadatas.append(json.dumps(doc.metadata, ensure_ascii=False))
 
+            self.ensure_files_not_present(collection_name, file_ids, filenames)
+
             # 批量生成embeddings
             print(f"批量生成embeddings")
-            EMBED_BATCH_SIZE = 32
-            embeddings = self.generate_embeddings_batch(chunk_texts, batch_size=EMBED_BATCH_SIZE)
+            embeddings = self.generate_embeddings_batch(
+                chunk_texts,
+                batch_size=EMBEDDING_BATCH_SIZE,
+            )
 
             # 检测embedding维度
             embedding_dim = len(embeddings[0])
@@ -514,6 +529,9 @@ class MilvusRAGService:
                 # 插入 - 参考milvus_kb_service.py，不调用flush
                 collection.insert(entities)
 
+            # Make newly inserted documents visible before the upload endpoint
+            # reports success and the frontend immediately refreshes its list.
+            collection.flush()
             print(f"插入完成，共 {len(file_ids)} 条文档")
 
             # 插入完成后，确保collection保持加载状态（虽然理论上已经加载）
@@ -526,6 +544,8 @@ class MilvusRAGService:
 
             return file_ids
 
+        except HTTPException:
+            raise
         except Exception as e:
             print(f"插入文档失败: {e}")
             raise HTTPException(status_code=500, detail=f"插入文档失败: {str(e)}")

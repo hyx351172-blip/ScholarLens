@@ -1,0 +1,6 @@
+filename,pages,images,markdown_chars,chunks,avg_chunk_chars,min_chunk_chars,max_chunk_chars,single_page_chunks,cross_page_chunks,bridge_chunks,continued_chunks,table_like_chunks,table_reference_chunks,image_only_suspects
+2024.acl-long.638.pdf,15,21,59924,63,1044.5,301,1758,42,7,14,21,11,14,0
+2604.19657v1.pdf,18,24,103366,102,1093.8,301,1678,80,5,17,22,0,8,1
+2605.14421v1.pdf,24,34,129218,132,1065.5,301,1795,99,11,22,33,7,22,1
+2608.10509v1.pdf,14,21,68601,70,1058.1,301,1784,52,5,13,18,0,14,0
+TOTAL,71,100,361109,367,1068.4,301,1795,273,28,66,94,18,58,2

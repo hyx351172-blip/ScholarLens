@@ -983,6 +983,28 @@ async def upload_pdf(
                     'error': str(e)
                 }
 
+        # A file is usable by the product only after every requested stage has
+        # completed. Do not report extraction-only success when vector storage
+        # failed, otherwise the frontend shows a document that cannot be found.
+        failed_stage = None
+        for stage_name in ("extraction", "chunking", "storage"):
+            stage = response_data.get(stage_name)
+            if stage and stage.get("status") == "failed":
+                failed_stage = (stage_name, stage.get("error", "未知错误"))
+                break
+
+        if failed_stage:
+            stage_name, stage_error = failed_stage
+            return UploadResponse(
+                success=False,
+                message="文件处理失败",
+                data=response_data,
+                error={
+                    "code": f"{stage_name.upper()}_FAILED",
+                    "message": str(stage_error),
+                },
+            )
+
         # 构建成功消息
         success_msg = "文件上传成功"
         if auto_extract:

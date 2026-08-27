@@ -123,6 +123,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
 
     setUploading(true);
     const API_BASE_URL = 'http://localhost:8006';
+    let successfulUploads = 0;
 
     try {
       // 逐个上传文件
@@ -148,7 +149,10 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
 
           const result = await response.json();
 
-          if (result.success) {
+          const storageCompleted = result.data?.storage?.status === 'completed';
+
+          if (response.ok && result.success && storageCompleted) {
+            successfulUploads += 1;
             setUploadProgress((prev) => ({ ...prev, [file.name]: 'success' }));
 
             // 构建成功消息
@@ -174,7 +178,10 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
           } else {
             setUploadProgress((prev) => ({ ...prev, [file.name]: 'error' }));
             toast.error(`${file.name} 上传失败`, {
-              description: result.error?.message || '未知错误',
+              description:
+                result.error?.message ||
+                result.data?.storage?.error ||
+                '文件未成功写入知识库',
             });
           }
         } catch (error) {
@@ -186,14 +193,18 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
       }
 
       // 所有文件上传完成后，调用父组件的回调
-      onUpload(files, selectedKB, config);
+      if (successfulUploads > 0) {
+        onUpload(files, selectedKB, config);
+      }
 
-      // 延迟关闭对话框，让用户看到结果
-      setTimeout(() => {
-        onClose();
-        setFiles([]);
-        setUploadProgress({});
-      }, 1500);
+      // 全部成功时自动关闭；存在失败时保留弹窗和错误状态，方便重试。
+      if (successfulUploads === files.length) {
+        setTimeout(() => {
+          onClose();
+          setFiles([]);
+          setUploadProgress({});
+        }, 1500);
+      }
 
     } catch (error) {
       toast.error('上传过程中发生错误', {
