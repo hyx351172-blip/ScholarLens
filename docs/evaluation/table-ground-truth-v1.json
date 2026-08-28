@@ -1,0 +1,1126 @@
+{
+  "version": "table-ground-truth-v1",
+  "draft": false,
+  "generated_at": "2026-08-28T13:30:53.631595+08:00",
+  "review_status": "approved",
+  "annotation_scope": "logical tables and table-like false positives; no cell-level ground truth yet",
+  "annotation_guideline": {
+    "page_numbering": "1-based",
+    "logical_table_rule": "one numbered Table caption equals one logical table",
+    "multi_panel_rule": "panels under one caption remain one logical table",
+    "continuation_rule": "continuations without a new numbered caption remain the same logical table",
+    "type_rule": "Figure/chart/heatmap remains a figure even when it contains a grid",
+    "truth_source": "original PDF; Docling artifacts are predictions to be reviewed"
+  },
+  "allowed_docling_status": [
+    "correct",
+    "fragmented",
+    "merged_wrongly",
+    "caption_detached",
+    "caption_misbound",
+    "misclassified",
+    "missing",
+    "incomplete"
+  ],
+  "review_checklist": [
+    "Confirm every numbered Table in the source PDF is present exactly once.",
+    "Confirm pages, captions, table block IDs, and caption block IDs.",
+    "Set header_complete and data_complete to true or false after visual comparison.",
+    "Confirm fragmented blocks belong to one logical table before approving merge.",
+    "Confirm confusing_non_table_elements are truly figures rather than tables.",
+    "Change review_status to approved or corrected and add reviewer_notes."
+  ],
+  "summary": {
+    "papers": 4,
+    "expected_logical_tables": 34,
+    "confusing_non_table_elements": 1,
+    "status_counts": {
+      "caption_detached": 4,
+      "caption_misbound": 1,
+      "correct": 26,
+      "fragmented": 3
+    },
+    "pending_human_review": 0,
+    "approved": 35
+  },
+  "papers": [
+    {
+      "paper_id": "charactereval",
+      "display_name": "CharacterEval",
+      "filename": "file_20260827_c11e9075_2024.acl-long.638.pdf",
+      "source_pdf": "output/uploads/2026/08/27/file_20260827_c11e9075_2024.acl-long.638.pdf",
+      "docling_document": "output/docling_evaluation_v1/charactereval/document.json",
+      "expected_logical_table_count": 5,
+      "elements": [
+        {
+          "element_id": "charactereval-table-1",
+          "ground_truth_type": "table",
+          "label": "Table 1",
+          "pages": [
+            6
+          ],
+          "caption": "Table 1: The statistic of CharacterEval dataset.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000079"
+          ],
+          "caption_block_ids": [
+            "block_000080"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "charactereval-table-2",
+          "ground_truth_type": "table",
+          "label": "Table 2",
+          "pages": [
+            7
+          ],
+          "caption": "Table 2: LLMs evaluated in our experiments.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000083"
+          ],
+          "caption_block_ids": [
+            "block_000084"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "charactereval-table-3",
+          "ground_truth_type": "table",
+          "label": "Table 3",
+          "pages": [
+            7
+          ],
+          "caption": "Table 3: Pearson correlation coefficient (Pearson, 1901) with human judgments of GPT-4 and our CharacterRM (abbr. Char-RM). We report the performance of GPT- 4 under different settings: 1-shot, 2-shot, and 3-shot. Bold indicates the highest score.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000085"
+          ],
+          "caption_block_ids": [
+            "block_000086"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "charactereval-table-4",
+          "ground_truth_type": "table",
+          "label": "Table 4",
+          "pages": [
+            9
+          ],
+          "caption": "Table 4: Detailed evaluation results on CharacterEval. The best performances are highlighted in bold, while sub- optimal ones are marked with underline. It is notable that the score for CharacterGLM in personality back-testing is unavailable, hence it is replaced by a “-”.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "multi_panel",
+          "expected_panels": 2,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000103",
+            "block_000105"
+          ],
+          "caption_block_ids": [
+            "block_000104"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "fragmented",
+          "expected_action": "merge",
+          "issues": [
+            "one_logical_table_split_into_two_table_blocks"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "charactereval-table-5",
+          "ground_truth_type": "table",
+          "label": "Table 5",
+          "pages": [
+            14
+          ],
+          "caption": "Table 5: Detailed evaluation results on CharacterEval. The 12 subjective metrics in conversational ability, character consistency and role-playing attractiveness dimensions are evaluated by GPT-4. The best performances are highlighted in bold, while sub-optimal ones are marked with underline. It is notable that the score for CharacterGLM in personality back-testing is unavailable, hence it is replaced by a “-”.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "multi_panel",
+          "expected_panels": 2,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000174",
+            "block_000176"
+          ],
+          "caption_block_ids": [
+            "block_000175"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "fragmented",
+          "expected_action": "merge",
+          "issues": [
+            "one_logical_table_split_into_two_table_blocks"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        }
+      ],
+      "confusing_non_table_elements": []
+    },
+    {
+      "paper_id": "gaap",
+      "display_name": "GAAP",
+      "filename": "file_20260827_a3b1a024_2604.19657v1.pdf",
+      "source_pdf": "output/uploads/2026/08/27/file_20260827_a3b1a024_2604.19657v1.pdf",
+      "docling_document": "output/docling_evaluation_v1/gaap/document.json",
+      "expected_logical_table_count": 5,
+      "elements": [
+        {
+          "element_id": "gaap-table-1",
+          "ground_truth_type": "table",
+          "label": "Table 1",
+          "pages": [
+            3
+          ],
+          "caption": "Table 1. Features of systems providing privacy for agentic AI (example systems in parentheses). Like other IFC systems, GAAP provides data disclosure guarantees (f1), and does so deterministically (unlike model-generated policies ). GAAP does not rely on trusted data and trust labels (f2), unlike existing IFC and policy systems that aim for integrity and need to ensure only trusted data can influence control flow. Furthermore, GAAP’s confidentiality guarantees do not rely on any trusted model (f3), unlike systems that need trusted models to generate code or policies to restrict control flow. GAAP also builds the user’s data disclosure policy over time (f4), persists it across tasks (f5), and supports multi-shot executions (taints across LLM calls) (f6).",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000030"
+          ],
+          "caption_block_ids": [
+            "block_000031"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "gaap-table-2",
+          "ground_truth_type": "table",
+          "label": "Table 2",
+          "pages": [
+            8
+          ],
+          "caption": "Table 2. GAAP API used by code artifacts.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000098"
+          ],
+          "caption_block_ids": [
+            "block_000099"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "gaap-table-3",
+          "ground_truth_type": "table",
+          "label": "Table 3",
+          "pages": [
+            10
+          ],
+          "caption": "Table 3. A sample of tasks from our benchmark suite, with the number of tools potentially used and the task’s source.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000130"
+          ],
+          "caption_block_ids": [
+            "block_000131"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "gaap-table-4",
+          "ground_truth_type": "table",
+          "label": "Table 4",
+          "pages": [
+            17
+          ],
+          "caption": "Table 4. All benchmark cases in our suite. Sources serving as the basis of tasks are listed to the right, and those without sources were created for this suite.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "column_continuation",
+          "expected_panels": 2,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000268",
+            "block_000270"
+          ],
+          "caption_block_ids": [
+            "block_000269"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "fragmented",
+          "expected_action": "merge",
+          "issues": [
+            "one_logical_table_split_at_column_boundary"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "gaap-table-5",
+          "ground_truth_type": "table",
+          "label": "Table 5",
+          "pages": [
+            18
+          ],
+          "caption": "Table 5. All benchmark cases in our suite. We state a de- scription of the injection, what makes this attack of interest, and the percentage of tests in our suite we run this task on for which we expect this test to apply.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000272"
+          ],
+          "caption_block_ids": [
+            "block_000273"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        }
+      ],
+      "confusing_non_table_elements": []
+    },
+    {
+      "paper_id": "memlineage",
+      "display_name": "MemLineage",
+      "filename": "file_20260827_9e0dae27_2605.14421v1.pdf",
+      "source_pdf": "output/uploads/2026/08/27/file_20260827_9e0dae27_2605.14421v1.pdf",
+      "docling_document": "output/docling_evaluation_v1/memlineage/document.json",
+      "expected_logical_table_count": 13,
+      "elements": [
+        {
+          "element_id": "memlineage-table-1",
+          "ground_truth_type": "table",
+          "label": "Table 1",
+          "pages": [
+            13
+          ],
+          "caption": "Table 1: ASR matrix (deterministic harness). Source: paper/data/asr_matrix_v1.csv; CI verifies byte-equality with the runner output. Lower is better.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000230"
+          ],
+          "caption_block_ids": [
+            "block_000231"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-2",
+          "ground_truth_type": "table",
+          "label": "Table 2",
+          "pages": [
+            14
+          ],
+          "caption": "Table 2: Two-session RAG-to-memory workflow. The EXTER- NAL document is summarised into persistent memory in session 1 and recalled in session 2. MemLineage and coarse taint preserve the untrusted parent edge; Memory Sandbox blocks by removing recall. Source: paper/data/rag_memory_e2e_v1.csv; byte-equal CI in tests/dev/test_rag_memory_e2e.py.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000239"
+          ],
+          "caption_block_ids": [
+            "block_000240"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-3",
+          "ground_truth_type": "table",
+          "label": "Table 3",
+          "pages": [
+            15
+          ],
+          "caption": "Table 3: AgentDojo vulnerable-agent stress test over six banking pairs. ASR is AgentDojo’s strict attack success rate; utility is the original task success rate. Source: agentdojo_toolcall_vulnerable_defenses_v1.csv.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000250"
+          ],
+          "caption_block_ids": [
+            "block_000251"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-4",
+          "ground_truth_type": "table",
+          "label": "Table 4",
+          "pages": [
+            16
+          ],
+          "caption": "Table 4: Authority-repair POC. Source: authority_repair_poc_v1.csv; byte-equal CI in test_authority_repair_poc.py.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000254"
+          ],
+          "caption_block_ids": [],
+          "conflicting_block_ids": [
+            "block_000255"
+          ],
+          "docling_status": "caption_misbound",
+          "expected_action": "split_and_attach_caption",
+          "issues": [
+            "table_4_cells_are_inside_block_000254",
+            "block_000254_is_wrongly_bound_to_table_5_caption"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "memlineage-table-5",
+          "ground_truth_type": "table",
+          "label": "Table 5",
+          "pages": [
+            16
+          ],
+          "caption": "Table 5: Propagation outcome for Coarse. Cells contain propagated (1 = the External ancestor’s label reached the chain tip, so the gate at §3.7 will refuse a sensitive action justified by it; 0 = the chain tip lost the External label, falling back to the no-strong-parent default of Trusted described in §3.5). Source rows: lines tagged algorithm=A in paper/data/r_k_ablation_v1.csv.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000256"
+          ],
+          "caption_block_ids": [
+            "block_000255"
+          ],
+          "conflicting_block_ids": [
+            "block_000254"
+          ],
+          "docling_status": "caption_detached",
+          "expected_action": "attach_caption",
+          "issues": [
+            "table_5_data_is_block_000256",
+            "table_5_caption_is_wrongly_associated_with_block_000254"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "memlineage-table-6",
+          "ground_truth_type": "table",
+          "label": "Table 6",
+          "pages": [
+            16
+          ],
+          "caption": "Table 6: Propagation outcome for LmSelfEval with judge schedule w0 = 0.9, d = 0.7. Cell semantics match Table 5: 1 = External reached the chain tip; 0 = the strong-edge predicate failed somewhere along the chain, falling back to Trusted per §3.5. Bold cells mark the rows where increasing K flips the outcome – the key qualitative behaviour a τ-only ablation would hide. The full 7×4×4 sweep across all four judge schedules is in paper/data/r_k_ablation_v1.csv (140 cells).",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000261"
+          ],
+          "caption_block_ids": [
+            "block_000262"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-7",
+          "ground_truth_type": "table",
+          "label": "Table 7",
+          "pages": [
+            17
+          ],
+          "caption": "Table 7: Per-operation median latency on a single core, n = 200 samples per op (Merkle proofs at n = 100). Source: paper/data/perf_baseline_v1.csv; numbers are wall-clock- dependent and will vary by hardware, so the CSV is regenerated rather than byte-equal CI-verified.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000269"
+          ],
+          "caption_block_ids": [
+            "block_000270"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-8",
+          "ground_truth_type": "table",
+          "label": "Table 8",
+          "pages": [
+            18
+          ],
+          "caption": "Table 8: Legitimate-dispatch rate on benign workflows (determinis- tic harness; ↑= better). All cells reach 1.00, i.e. zero false positives. Source: paper/data/utility_baseline_v1.csv; byte-equal CI in tests/dev/test_utility_baseline.py.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000279"
+          ],
+          "caption_block_ids": [
+            "block_000280"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-9",
+          "ground_truth_type": "table",
+          "label": "Table 9",
+          "pages": [
+            18
+          ],
+          "caption": "Table 9: Harness-level baseline proxy. Attack and benign columns come from coarse_baselines_v1.csv; mixed-context utility comes from coarse_authority_matrix_v1.csv. The rows model mecha- nism families rather than reimplementing the full published Memory Sandbox or RTW-A systems.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000281"
+          ],
+          "caption_block_ids": [
+            "block_000282"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-10",
+          "ground_truth_type": "table",
+          "label": "Table 10",
+          "pages": [
+            18
+          ],
+          "caption": "Table 10: Coarse context taint vs parameter-level authority. Source: coarse_authority_contrast_v1.csv; byte-equal CI in test_coarse_authority_contrast.py.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000290"
+          ],
+          "caption_block_ids": [
+            "block_000291"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-11",
+          "ground_truth_type": "table",
+          "label": "Table 11",
+          "pages": [
+            19
+          ],
+          "caption": "Table 11: Adaptive laundering boundary cells. Each row is one deterministic mechanism check, not a statistical trial. Source: adaptive_laundering_v1.csv.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000296"
+          ],
+          "caption_block_ids": [
+            "block_000297"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-12",
+          "ground_truth_type": "table",
+          "label": "Table 12",
+          "pages": [
+            19
+          ],
+          "caption": "Table 12: Default-vs-strict operating points for adaptive laundering boundaries. Default fired values are the corresponding fail-open cells in adaptive_laundering_v1.csv ; strict columns come from adaptive_mitigations_v1.csv . Byte-equal CI: tests/dev/test_adaptive_laundering.py .",
+          "caption_source": "docling_caption_fallback",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000298"
+          ],
+          "caption_block_ids": [
+            "block_000299"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "memlineage-table-13",
+          "ground_truth_type": "table",
+          "label": "Table 13",
+          "pages": [
+            19
+          ],
+          "caption": "Table 13: Analytic strict-mode utility cost on the four benign workflows from Table 8. Source: strict_utility_v1.csv.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000307"
+          ],
+          "caption_block_ids": [
+            "block_000308"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        }
+      ],
+      "confusing_non_table_elements": [
+        {
+          "element_id": "memlineage-figure-3",
+          "ground_truth_type": "figure",
+          "label": "Figure 3",
+          "pages": [
+            14
+          ],
+          "caption": "Figure 3: ASR matrix on the deterministic harness, rendered from paper/data/asr\\_matrix\\_v1.csv . Green cells are defended ( ASR = 0); red cells are attacker wins ( ASR = 1). Cell text gives the value and verdict, the right strip reports blocked attack families per defence, and the blue outline highlights the all-zero MemLineage row. Same numbers as Table 1; the visual is what reviewers see first, the table is what reviewers cite.",
+          "table_block_ids": [
+            "block_000235"
+          ],
+          "caption_block_ids": [
+            "block_000236"
+          ],
+          "docling_status": "misclassified",
+          "expected_action": "retype_as_figure",
+          "issues": [
+            "heatmap_figure_classified_as_table"
+          ],
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        }
+      ]
+    },
+    {
+      "paper_id": "map_graph",
+      "display_name": "MAP-Graph",
+      "filename": "file_20260827_d6b086f1_2608.10509v1.pdf",
+      "source_pdf": "output/uploads/2026/08/27/file_20260827_d6b086f1_2608.10509v1.pdf",
+      "docling_document": "output/docling_evaluation_v1/map_graph/document.json",
+      "expected_logical_table_count": 11,
+      "elements": [
+        {
+          "element_id": "map_graph-table-1",
+          "ground_truth_type": "table",
+          "label": "Table 1",
+          "pages": [
+            6
+          ],
+          "caption": "Table 1: Main results over 2,700 tasks per method (percent). UAcc is conditional unauthorized access; N/A means no observed attempt. B3–B5 are benchmark adaptations, and B6 is the flat-metadata control. Additional diagnostic rates are reported in Appendix F.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000066"
+          ],
+          "caption_block_ids": [
+            "block_000067"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-2",
+          "ground_truth_type": "table",
+          "label": "Table 2",
+          "pages": [
+            7
+          ],
+          "caption": "Table 2: Single-run ablations over 2,700 tasks per variant (percent). Clean is clean-task TSR; UAcc is conditional unauthorized access. Full diagnostics appear in Appendix F.4.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000082"
+          ],
+          "caption_block_ids": [
+            "block_000083"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-3",
+          "ground_truth_type": "table",
+          "label": "Table 3",
+          "pages": [
+            7
+          ],
+          "caption": "Table 3: Backbone transfer on the same stratified 540-task subset (percent). Boundary-specific diagnostics are reported in Appendix F.5.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000084"
+          ],
+          "caption_block_ids": [
+            "block_000085"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-4",
+          "ground_truth_type": "table",
+          "label": "Table 4",
+          "pages": [
+            9
+          ],
+          "caption": "Table 4: Correspondence between the appendix sections and the main text.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000127"
+          ],
+          "caption_block_ids": [
+            "block_000128"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-5",
+          "ground_truth_type": "table",
+          "label": "Table 5",
+          "pages": [
+            10
+          ],
+          "caption": "Table 5: Registered node and edge types emitted by the graph builder.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000144"
+          ],
+          "caption_block_ids": [
+            "block_000145"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-6",
+          "ground_truth_type": "table",
+          "label": "Table 6",
+          "pages": [
+            10
+          ],
+          "caption": "Table 6: Implemented MAP-Graph memory operations.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000146"
+          ],
+          "caption_block_ids": [
+            "block_000147"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-7",
+          "ground_truth_type": "table",
+          "label": "Table 7",
+          "pages": [
+            13
+          ],
+          "caption": "Table 7: Scenario-level results (percent; 450 tasks per row). “Best baseline” is selected for the quantity shown within that experiment group.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000201"
+          ],
+          "caption_block_ids": [
+            "block_000202"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-8",
+          "ground_truth_type": "table",
+          "label": "Table 8",
+          "pages": [
+            13
+          ],
+          "caption": "Table 8: MAP-Graph results by domain (percent; 900 tasks per row).",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000203"
+          ],
+          "caption_block_ids": [
+            "block_000204"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "correct",
+          "expected_action": "keep",
+          "issues": [],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "medium"
+        },
+        {
+          "element_id": "map_graph-table-9",
+          "ground_truth_type": "table",
+          "label": "Table 9",
+          "pages": [
+            13
+          ],
+          "caption": "Table 9: Additional full-run diagnostics (percent except tokens/task). Correct and false block use their conditional denominators; Cap calls is the fraction of outer calls reaching 2,048 completion tokens.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000206"
+          ],
+          "caption_block_ids": [
+            "block_000205"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "caption_detached",
+          "expected_action": "attach_caption",
+          "issues": [
+            "caption_precedes_table_as_independent_block"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "map_graph-table-10",
+          "ground_truth_type": "table",
+          "label": "Table 10",
+          "pages": [
+            13
+          ],
+          "caption": "Table 10: Diagnostics supplementing the main-text ablation table (percent except tokens and graph size). CBlock/FBlock denote conditional correct/false block.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000208"
+          ],
+          "caption_block_ids": [
+            "block_000207"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "caption_detached",
+          "expected_action": "attach_caption",
+          "issues": [
+            "caption_precedes_table_as_independent_block"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        },
+        {
+          "element_id": "map_graph-table-11",
+          "ground_truth_type": "table",
+          "label": "Table 11",
+          "pages": [
+            13
+          ],
+          "caption": "Table 11: Unauthorized-access diagnostics on the common 540-task transfer subset. Each backbone block reports unauthorized reads (R), observed attempts (A), and conditional UAcc in percent.",
+          "caption_source": "original_pdf_text_block",
+          "pdf_caption_page_matches_expected": true,
+          "layout": "single_table",
+          "expected_panels": 1,
+          "cross_page": false,
+          "table_block_ids": [
+            "block_000210"
+          ],
+          "caption_block_ids": [
+            "block_000209"
+          ],
+          "conflicting_block_ids": [],
+          "docling_status": "caption_detached",
+          "expected_action": "attach_caption",
+          "issues": [
+            "caption_precedes_table_as_independent_block"
+          ],
+          "header_complete": true,
+          "data_complete": true,
+          "review_status": "approved",
+          "reviewer_notes": "Human-reviewed and approved.",
+          "draft_confidence": "high"
+        }
+      ],
+      "confusing_non_table_elements": []
+    }
+  ],
+  "reviewed_at": "2026-08-28T13:30:53.631595+08:00"
+}
