@@ -24,6 +24,11 @@ from .models import (
     ParserInfo,
     Section,
 )
+from .evidence_context_postprocessor import (
+    EvidenceContextPostProcessor,
+    LogicalFigure,
+    LogicalFormula,
+)
 from .section_hierarchy_postprocessor import SectionHierarchyPostProcessor
 from .table_postprocessor import LogicalTable, TablePostProcessor
 
@@ -54,6 +59,8 @@ class DoclingParseResult:
     markdown: str
     raw_document: Dict[str, Any]
     logical_tables: List[LogicalTable]
+    logical_figures: List[LogicalFigure]
+    logical_formulas: List[LogicalFormula]
 
 
 class DoclingParser:
@@ -65,6 +72,9 @@ class DoclingParser:
         *,
         table_mode: str = "accurate",
         do_ocr: bool = False,
+        evidence_context_postprocessor: Optional[
+            EvidenceContextPostProcessor
+        ] = None,
         section_hierarchy_postprocessor: Optional[
             SectionHierarchyPostProcessor
         ] = None,
@@ -73,6 +83,9 @@ class DoclingParser:
         self.table_mode = table_mode.lower()
         self.do_ocr = do_ocr
         self._converter = converter
+        self.evidence_context_postprocessor = (
+            evidence_context_postprocessor or EvidenceContextPostProcessor()
+        )
         self.section_hierarchy_postprocessor = (
             section_hierarchy_postprocessor or SectionHierarchyPostProcessor()
         )
@@ -137,6 +150,8 @@ class DoclingParser:
         sections = section_result.sections
         table_result = self.table_postprocessor.process(blocks)
         blocks = table_result.blocks
+        evidence_result = self.evidence_context_postprocessor.process(blocks)
+        blocks = evidence_result.blocks
         total_pages = _page_count(docling_document, raw_document)
         metadata = _extract_metadata(
             blocks,
@@ -150,6 +165,7 @@ class DoclingParser:
             metadata=metadata,
         )
         quality.warnings.extend(section_result.warnings)
+        quality.warnings.extend(evidence_result.warnings)
 
         try:
             parser_version = importlib.metadata.version("docling-slim")
@@ -176,6 +192,8 @@ class DoclingParser:
             markdown=markdown,
             raw_document=raw_document,
             logical_tables=table_result.tables,
+            logical_figures=evidence_result.figures,
+            logical_formulas=evidence_result.formulas,
         )
 
     def _normalize_items(self, document: Any) -> Tuple[List[ContentBlock], List[Section]]:
@@ -226,6 +244,8 @@ def save_parse_result(output_dir: Path | str, result: DoclingParseResult) -> Dic
         "docling_document": destination / "docling-document.json",
         "quality_report": destination / "quality-report.json",
         "tables": destination / "tables.json",
+        "figures": destination / "figures.json",
+        "formulas": destination / "formulas.json",
     }
     paths["markdown"].write_text(result.markdown, encoding="utf-8")
     paths["document"].write_text(
@@ -243,6 +263,22 @@ def save_parse_result(output_dir: Path | str, result: DoclingParseResult) -> Dic
     paths["tables"].write_text(
         json.dumps(
             [asdict(table) for table in result.logical_tables],
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    paths["figures"].write_text(
+        json.dumps(
+            [asdict(figure) for figure in result.logical_figures],
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    paths["formulas"].write_text(
+        json.dumps(
+            [asdict(formula) for formula in result.logical_formulas],
             ensure_ascii=False,
             indent=2,
         ),

@@ -17,6 +17,10 @@ _NUMBER_TOKEN_RE = re.compile(r"(?<!\S)(?P<number>\d+(?:\.\d+)*)[.)]?\s+")
 _APPENDIX_RE = re.compile(
     r"^\s*(?P<number>[A-Z](?:\.\d+)*)[.)]?\s+(?P<title>.+?)\s*$"
 )
+_APPENDIX_PREFIX_RE = re.compile(
+    r"^\s*Appendix\s+(?P<number>[A-Z](?:\.\d+)*)[.):]?\s+(?P<title>.+?)\s*$",
+    re.IGNORECASE,
+)
 _TOP_LEVEL_HEADINGS = {
     "abstract",
     "references",
@@ -53,6 +57,7 @@ class _HeadingInfo:
     level: int
     number: Optional[str]
     inferred: bool
+    kind: str = "regular"
 
 
 class SectionHierarchyPostProcessor:
@@ -67,12 +72,16 @@ class SectionHierarchyPostProcessor:
             )
             for block in blocks
         ]
+        for block in processed:
+            block.relations.pop("containing_section_id", None)
+            block.relations.pop("section_kind", None)
         sections: List[Section] = []
         stack: List[Section] = []
         last_numbered_stack: List[Section] = []
         anchor_ids = set()
         warnings: List[str] = []
         title_index = _find_title_index(processed)
+        explicit_appendix_root: Optional[Section] = None
 
         for index, block in enumerate(processed):
             if index == title_index:
@@ -88,6 +97,7 @@ class SectionHierarchyPostProcessor:
 
             if block.type != "heading":
                 block.section_path = [section.title for section in stack]
+                _bind_special_section(block, stack)
                 continue
 
             parts = split_merged_heading(block.text)
@@ -111,6 +121,7 @@ class SectionHierarchyPostProcessor:
                         level=level,
                         number=None,
                         inferred=False,
+                        kind=_inherited_special_kind(stack),
                     )
                     used_fallback = True
                     warnings.append(
@@ -118,32 +129,40 @@ class SectionHierarchyPostProcessor:
                         f"{level} for {part!r}"
                     )
 
-                while stack and stack[-1].level >= info.level:
+                effective_level = info.level
+                if info.kind == "appendix" and _is_lettered_appendix(part):
+                    if explicit_appendix_root is not None:
+                        effective_level += 1
+
+                while stack and stack[-1].level >= effective_level:
                     stack.pop()
 
-                if stack and info.level > stack[-1].level + 1:
+                if stack and effective_level > stack[-1].level + 1:
                     warnings.append(
                         f"{block.block_id}: level jump from {stack[-1].level} "
-                        f"to {info.level} for {part!r}"
+                        f"to {effective_level} for {part!r}"
                     )
 
                 parent = stack[-1] if stack else None
                 section = Section(
                     section_id=f"section_{len(sections):04d}",
                     title=info.title,
-                    level=info.level,
+                    level=effective_level,
                     parent_id=parent.section_id if parent else None,
                     page=block.page,
+                    kind=info.kind,
                 )
                 sections.append(section)
                 stack.append(section)
                 generated.append(section)
                 numbers.append(info.number)
-                levels.append(info.level)
+                levels.append(effective_level)
                 if info.inferred:
                     anchor_ids.add(section.section_id)
                 if info.number and info.number[0].isdigit():
                     last_numbered_stack = list(stack)
+                if _is_explicit_appendix_root(part):
+                    explicit_appendix_root = section
 
             if len(parts) > 1:
                 status = "split_merged_heading"
@@ -170,6 +189,8 @@ class SectionHierarchyPostProcessor:
                     "section_postprocess_status": status,
                 }
             )
+            if deepest.kind != "regular":
+                block.relations["section_kind"] = deepest.kind
             if used_fallback:
                 block.relations["section_warning"] = "level_inferred_by_context"
 
@@ -229,8 +250,23 @@ def _find_title_index(blocks: Sequence[ContentBlock]) -> Optional[int]:
 def _heading_info(text: str) -> Optional[_HeadingInfo]:
     value = (text or "").strip()
     normalized = _normalized_heading(value)
-    if normalized in _TOP_LEVEL_HEADINGS or normalized.startswith("appendix "):
+    if normalized == "abstract":
+        return _HeadingInfo(value, 1, None, True, "abstract")
+    if _is_explicit_appendix_root(value):
+        return _HeadingInfo(value, 1, None, True, "appendix")
+    if normalized in _TOP_LEVEL_HEADINGS:
         return _HeadingInfo(value, 1, None, True)
+
+    prefixed_appendix = _APPENDIX_PREFIX_RE.match(value)
+    if prefixed_appendix:
+        number = prefixed_appendix.group("number").upper()
+        return _HeadingInfo(
+            value,
+            number.count(".") + 1,
+            number,
+            True,
+            "appendix",
+        )
 
     numbered = _NUMBERED_HEADING_RE.match(value)
     if numbered:
@@ -240,8 +276,39 @@ def _heading_info(text: str) -> Optional[_HeadingInfo]:
     appendix = _APPENDIX_RE.match(value)
     if appendix:
         number = appendix.group("number")
-        return _HeadingInfo(value, number.count(".") + 1, number, True)
+        return _HeadingInfo(
+            value,
+            number.count(".") + 1,
+            number,
+            True,
+            "appendix",
+        )
     return None
+
+
+def _is_explicit_appendix_root(text: str) -> bool:
+    normalized = _normalized_heading(text)
+    return normalized in {"appendix", "appendices", "appendix overview"}
+
+
+def _is_lettered_appendix(text: str) -> bool:
+    value = (text or "").strip()
+    return bool(_APPENDIX_RE.match(value) or _APPENDIX_PREFIX_RE.match(value))
+
+
+def _inherited_special_kind(stack: Sequence[Section]) -> str:
+    for section in reversed(stack):
+        if section.kind in {"abstract", "appendix"}:
+            return section.kind
+    return "regular"
+
+
+def _bind_special_section(block: ContentBlock, stack: Sequence[Section]) -> None:
+    for section in reversed(stack):
+        if section.kind in {"abstract", "appendix"}:
+            block.relations["containing_section_id"] = stack[-1].section_id
+            block.relations["section_kind"] = section.kind
+            return
 
 
 def _normalized_heading(value: str) -> str:

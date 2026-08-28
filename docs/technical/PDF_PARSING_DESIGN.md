@@ -88,6 +88,18 @@ SectionHierarchyPostProcessor 使用受约束的章节编号规则和栈重建 S
 block 回填完整 `section_path`。合并 heading 只生成多个逻辑 Section，不拆除原始
 物理 block；无编号标题使用最近的编号章节作为上下文回退并写入质量警告。
 
+特殊章节通过 `Section.kind` 和 block relations 显式标记，不依赖标题文本在检索阶段
+重复判断：
+
+- `Abstract` 生成 `kind=abstract` 的一级 Section；其后直到下一个标题的正文写入
+  `relations.section_kind=abstract` 和 `containing_section_id`。
+- `Appendix Overview`/`Appendix` 可作为附录根节点；其后的 `A`、`A.1` 等字母编号
+  分别成为二、三级子节点。
+- 没有显式附录根节点时，`A` 保持一级、`A.1` 保持二级；同时兼容
+  `Appendix A: Reproducibility Details` 格式。
+- 附录中的正文、表格、Figure 和 Formula 都绑定到最深层附录 Section，并写入
+  `relations.section_kind=appendix`。本迭代不处理页眉、页脚检测或删除。
+
 TablePostProcessor 不删除物理块，而是在 `relations` 中写入
 `logical_table_id`、`logical_table_label`、`source_block_ids`、
 `caption_block_ids`、`fragment_index`、`fragment_count` 和
@@ -96,6 +108,17 @@ TablePostProcessor 不删除物理块，而是在 `relations` 中写入
 公式块优先使用 Docling 的标准化 `text`；当 `text` 为空时回退到原始识别字段
 `orig`，并在 `relations.formula_text_source` 中记录 `text`、
 `orig_fallback` 或 `missing`。该回退只恢复 Unicode 数学文本，不声称生成了精确 LaTeX。
+
+EvidenceContextPostProcessor 在章节、表格后处理完成后运行，建立可追溯的双向证据关系：
+
+- Figure 与同页最近 Caption 绑定，并优先匹配 `Figure/Fig. N` 编号；Figure 保存
+  `caption_block_ids`，Caption 保存 `describes_block_ids`。
+- 显式提及对应 `Figure/Fig. N` 的正文保存 `figure_ids`，Figure 保存
+  `explanation_block_ids`；不使用“仅仅相邻”推断解释段。
+- Formula 与同章节内前后最近正文绑定，在标题或另一公式处停止；Formula 保存
+  `context_block_ids`，正文保存 `formula_ids`。
+- 公式末尾的 `(N)` 保存为 `equation_number`；所有生成 ID 均能回指原始
+  `source_block_id(s)`，缺失 Caption 或上下文只产生质量警告，不伪造内容。
 
 ### 4.3 ScientificChunk
 
@@ -160,6 +183,7 @@ backend/output/extraction_results/{file_id}/
 ├── chunks.json
 ├── tables.json
 ├── figures.json
+├── formulas.json
 └── quality-report.json
 ```
 
@@ -186,9 +210,13 @@ backend/output/extraction_results/{file_id}/
 - `AC-106`：对四篇论文的 34 张人工标注逻辑表，逻辑表召回率、Source block 精确映射率、Caption block 精确映射率和 Figure/Table 类型修正率均为 100%。
 - `AC-107`：四篇测试论文中 Docling 已识别的 9 个公式均能生成非空公式文本，且保留页码、BBox 和文本来源。
 - `AC-108`：四篇测试论文均只有一个 `title` block；78 个编号子章节父节点一致率为 100%，进入章节后的 block 的 `section_path` 覆盖率为 100%，MAP-Graph 合并标题得到修复。
+- `AC-109`：Figure、Caption、显式解释段，以及 Formula、上下文正文均建立双向 block 关系，关系目标不存在的悬空引用为 0。
+- `AC-110`：现有四篇解析产物中 Figure Caption 覆盖率为 20/22（90.9%），Formula 上下文覆盖率为 9/9（100%）；该结果衡量结构覆盖，不代表人工标注语义准确率。
+- `AC-111`：四篇论文识别 4 个 Abstract Section 和 25 个 Appendix Section；特殊章节正文绑定率为 100%，字母附录父子关系不一致为 0。
 - 完整数据见 `docs/evaluation/docling-parsing-v1.md`。
 - TablePostProcessor 评测见 `docs/evaluation/table-postprocessor-v1.md`。
 - SectionHierarchyPostProcessor 评测见 `docs/evaluation/section-hierarchy-v1.md`。
+- EvidenceContextPostProcessor 评测见 `docs/evaluation/evidence-context-v1.md`。
 
 ### 8.2 后续端到端迭代
 

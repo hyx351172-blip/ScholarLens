@@ -26,6 +26,7 @@ class Section:
     level: int
     parent_id: Optional[str] = None
     page: Optional[int] = None
+    kind: str = "regular"
 
 
 @dataclass

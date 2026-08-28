@@ -229,7 +229,15 @@ class DoclingParserTests(unittest.TestCase):
 
             self.assertEqual(
                 set(paths),
-                {"markdown", "document", "docling_document", "quality_report", "tables"},
+                {
+                    "markdown",
+                    "document",
+                    "docling_document",
+                    "quality_report",
+                    "tables",
+                    "figures",
+                    "formulas",
+                },
             )
             self.assertFalse((tmp_path / "result" / "chunks.json").exists())
             stored = json.loads(Path(paths["document"]).read_text(encoding="utf-8"))

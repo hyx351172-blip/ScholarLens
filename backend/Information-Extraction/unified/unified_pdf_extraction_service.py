@@ -412,6 +412,8 @@ class PDFExtractionService:
         print(f"  - 结构块: {quality['total_blocks']}")
         print(f"  - 表格: {quality['block_counts'].get('table', 0)}")
         print(f"  - 逻辑表: {len(parse_result.logical_tables)}")
+        print(f"  - 逻辑图: {len(parse_result.logical_figures)}")
+        print(f"  - 逻辑公式: {len(parse_result.logical_formulas)}")
         print(f"  - 章节: {len(document.sections)}")
         print(f"  - 耗时: {quality['duration_seconds']} 秒")
 
@@ -424,6 +426,8 @@ class PDFExtractionService:
                 "total_blocks": quality["total_blocks"],
                 "total_tables": quality["block_counts"].get("table", 0),
                 "logical_table_count": len(parse_result.logical_tables),
+                "logical_figure_count": len(parse_result.logical_figures),
+                "logical_formula_count": len(parse_result.logical_formulas),
                 "section_count": len(document.sections),
                 "parser": asdict(document.parser),
                 "paper_metadata": asdict(document.metadata),
@@ -434,6 +438,8 @@ class PDFExtractionService:
             "docling_document": parse_result.raw_document,
             "quality_report": quality,
             "tables": [asdict(table) for table in parse_result.logical_tables],
+            "figures": [asdict(figure) for figure in parse_result.logical_figures],
+            "formulas": [asdict(formula) for formula in parse_result.logical_formulas],
         }
 
     async def extract_from_pdf(self, pdf_path: str, original_filename: Optional[str] = None) -> ExtractionResult:
@@ -640,6 +646,20 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
         with open(tables_path, 'w', encoding='utf-8') as f:
             json.dump(logical_tables, f, ensure_ascii=False, indent=2)
         saved_paths['tables'] = str(tables_path)
+
+    logical_figures = result_data.get('figures')
+    if logical_figures is not None:
+        figures_path = result_dir / "figures.json"
+        with open(figures_path, 'w', encoding='utf-8') as f:
+            json.dump(logical_figures, f, ensure_ascii=False, indent=2)
+        saved_paths['figures'] = str(figures_path)
+
+    logical_formulas = result_data.get('formulas')
+    if logical_formulas is not None:
+        formulas_path = result_dir / "formulas.json"
+        with open(formulas_path, 'w', encoding='utf-8') as f:
+            json.dump(logical_formulas, f, ensure_ascii=False, indent=2)
+        saved_paths['formulas'] = str(formulas_path)
 
     return saved_paths
 

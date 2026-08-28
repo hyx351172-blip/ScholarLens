@@ -24,6 +24,7 @@ from parsers.section_hierarchy_postprocessor import (  # noqa: E402
 
 PAPERS = ("charactereval", "gaap", "memlineage", "map_graph")
 NUMBER_RE = re.compile(r"^\s*(\d+(?:\.\d+)*)[.)]?\s+")
+APPENDIX_RE = re.compile(r"^\s*(?:Appendix\s+)?([A-Z](?:\.\d+)*)[.):]?\s+")
 
 
 def evaluate(input_dir: Path) -> Dict[str, Any]:
@@ -87,6 +88,30 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
         )
         level_counts = Counter(section.level for section in result.sections)
         title_count = sum(block.type == "title" for block in result.blocks)
+        abstract_sections = [section for section in result.sections if section.kind == "abstract"]
+        appendix_sections = [section for section in result.sections if section.kind == "appendix"]
+        special_body_blocks = [
+            block
+            for block in result.blocks
+            if block.type not in {"heading", "title"}
+            and block.relations.get("section_kind") in {"abstract", "appendix"}
+        ]
+        special_body_bound = sum(
+            bool(block.relations.get("containing_section_id"))
+            for block in special_body_blocks
+        )
+        appendix_by_number = {}
+        for section in appendix_sections:
+            match = APPENDIX_RE.match(section.title)
+            if match:
+                appendix_by_number[match.group(1)] = section
+        appendix_parent_mismatches = []
+        for number, section in appendix_by_number.items():
+            if "." not in number:
+                continue
+            parent = appendix_by_number.get(number.rsplit(".", 1)[0])
+            if not parent or section.parent_id != parent.section_id:
+                appendix_parent_mismatches.append(section.title)
         paper_result = {
             "paper_id": paper_id,
             "source_blocks": len(source_blocks),
@@ -105,6 +130,11 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
             "fallback_headings": statuses["hierarchy_fallback"],
             "warnings": result.warnings,
             "parent_mismatches": parent_mismatches,
+            "abstract_sections": len(abstract_sections),
+            "appendix_sections": len(appendix_sections),
+            "special_body_blocks": len(special_body_blocks),
+            "special_body_bound": special_body_bound,
+            "appendix_parent_mismatches": appendix_parent_mismatches,
         }
         papers.append(paper_result)
         totals["papers"] += 1
@@ -116,6 +146,11 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
         totals["merged_repairs"] += statuses["split_merged_heading"]
         totals["fallback_headings"] += statuses["hierarchy_fallback"]
         totals["parent_mismatches"] += len(parent_mismatches)
+        totals["abstract_sections"] += len(abstract_sections)
+        totals["appendix_sections"] += len(appendix_sections)
+        totals["special_body_blocks"] += len(special_body_blocks)
+        totals["special_body_bound"] += special_body_bound
+        totals["appendix_parent_mismatches"] += len(appendix_parent_mismatches)
 
     return {
         "version": "section-hierarchy-evaluation-v1",
@@ -144,6 +179,14 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
             "merged_heading_repairs": totals["merged_repairs"],
             "fallback_headings_needing_review": totals["fallback_headings"],
             "parent_mismatch_count": totals["parent_mismatches"],
+            "abstract_sections": totals["abstract_sections"],
+            "appendix_sections": totals["appendix_sections"],
+            "special_body_binding_coverage": (
+                totals["special_body_bound"] / totals["special_body_blocks"]
+                if totals["special_body_blocks"]
+                else 1.0
+            ),
+            "appendix_parent_mismatch_count": totals["appendix_parent_mismatches"],
         },
         "papers": papers,
     }
@@ -172,6 +215,10 @@ def write_markdown(path: Path, report: Dict[str, Any]) -> None:
         f"| 合并标题修复 | {summary['merged_heading_repairs']} |",
         f"| 待人工复核无编号标题 | {summary['fallback_headings_needing_review']} |",
         f"| 编号父节点不一致 | {summary['parent_mismatch_count']} |",
+        f"| Abstract 章节 | {summary['abstract_sections']} |",
+        f"| Appendix 章节 | {summary['appendix_sections']} |",
+        f"| 特殊章节正文绑定率 | {summary['special_body_binding_coverage']:.1%} |",
+        f"| Appendix 字母层级不一致 | {summary['appendix_parent_mismatch_count']} |",
         "",
         "## 分论文结果",
         "",
@@ -240,7 +287,10 @@ def main() -> int:
     print(json.dumps(report["summary"], ensure_ascii=False, indent=2))
     print(f"JSON: {args.json_output}")
     print(f"Report: {args.report_output}")
-    return 0 if report["summary"]["parent_mismatch_count"] == 0 else 1
+    return 0 if (
+        report["summary"]["parent_mismatch_count"] == 0
+        and report["summary"]["appendix_parent_mismatch_count"] == 0
+    ) else 1
 
 
 if __name__ == "__main__":

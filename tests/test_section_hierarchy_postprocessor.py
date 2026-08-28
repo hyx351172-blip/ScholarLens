@@ -176,6 +176,110 @@ class SectionHierarchyPostProcessorTests(unittest.TestCase):
         self.assertEqual(first.blocks, second.blocks)
         self.assertEqual(first.sections, second.sections)
 
+    def test_binds_abstract_heading_and_body_as_special_section(self):
+        blocks = [
+            block(0, "heading", "Paper Title"),
+            block(1, "heading", "Abstract"),
+            block(2, "paragraph", "This paper proposes a method."),
+            block(3, "heading", "1 Introduction"),
+            block(4, "paragraph", "Introduction text."),
+        ]
+
+        result = self.processor.process(blocks)
+
+        abstract = next(section for section in result.sections if section.title == "Abstract")
+        self.assertEqual(abstract.kind, "abstract")
+        self.assertEqual(result.blocks[1].relations["section_kind"], "abstract")
+        self.assertEqual(result.blocks[2].section_path, ["Abstract"])
+        self.assertEqual(
+            result.blocks[2].relations["containing_section_id"],
+            abstract.section_id,
+        )
+        self.assertEqual(result.blocks[2].relations["section_kind"], "abstract")
+        self.assertNotIn("section_kind", result.blocks[4].relations)
+
+    def test_explicit_appendix_root_owns_lettered_sections_and_body(self):
+        blocks = [
+            block(0, "heading", "Paper Title"),
+            block(1, "heading", "1 Introduction"),
+            block(2, "heading", "References"),
+            block(3, "heading", "Appendix Overview"),
+            block(4, "paragraph", "Appendix introduction."),
+            block(5, "heading", "A Data Details"),
+            block(6, "paragraph", "Data details."),
+            block(7, "heading", "A.1 Filtering"),
+            block(8, "formula", "x = y"),
+            block(9, "heading", "B Extra Results"),
+        ]
+
+        result = self.processor.process(blocks)
+        sections = {section.title: section for section in result.sections}
+
+        self.assertEqual(sections["Appendix Overview"].kind, "appendix")
+        self.assertEqual(sections["Appendix Overview"].level, 1)
+        self.assertEqual(sections["A Data Details"].level, 2)
+        self.assertEqual(
+            sections["A Data Details"].parent_id,
+            sections["Appendix Overview"].section_id,
+        )
+        self.assertEqual(sections["A.1 Filtering"].level, 3)
+        self.assertEqual(
+            sections["A.1 Filtering"].parent_id,
+            sections["A Data Details"].section_id,
+        )
+        self.assertEqual(sections["B Extra Results"].level, 2)
+        self.assertEqual(
+            result.blocks[8].section_path,
+            ["Appendix Overview", "A Data Details", "A.1 Filtering"],
+        )
+        self.assertEqual(result.blocks[8].relations["section_kind"], "appendix")
+        self.assertEqual(
+            result.blocks[8].relations["containing_section_id"],
+            sections["A.1 Filtering"].section_id,
+        )
+
+    def test_lettered_appendix_without_root_remains_top_level(self):
+        blocks = [
+            block(0, "heading", "Paper Title"),
+            block(1, "heading", "References"),
+            block(2, "heading", "A Robustness"),
+            block(3, "paragraph", "Robustness text."),
+            block(4, "heading", "A.1 More Results"),
+            block(5, "paragraph", "More results."),
+        ]
+
+        result = self.processor.process(blocks)
+        sections = {section.title: section for section in result.sections}
+
+        self.assertEqual(sections["A Robustness"].kind, "appendix")
+        self.assertEqual(sections["A Robustness"].level, 1)
+        self.assertIsNone(sections["A Robustness"].parent_id)
+        self.assertEqual(sections["A.1 More Results"].level, 2)
+        self.assertEqual(
+            sections["A.1 More Results"].parent_id,
+            sections["A Robustness"].section_id,
+        )
+        self.assertEqual(result.blocks[5].relations["section_kind"], "appendix")
+
+    def test_appendix_prefixed_letter_heading_is_recognized(self):
+        blocks = [
+            block(0, "heading", "Paper Title"),
+            block(1, "heading", "References"),
+            block(2, "heading", "Appendix A: Reproducibility Details"),
+            block(3, "paragraph", "Environment and seeds."),
+        ]
+
+        result = self.processor.process(blocks)
+        appendix = next(
+            section
+            for section in result.sections
+            if section.title == "Appendix A: Reproducibility Details"
+        )
+
+        self.assertEqual(appendix.kind, "appendix")
+        self.assertEqual(appendix.level, 1)
+        self.assertEqual(result.blocks[3].relations["section_kind"], "appendix")
+
 
 if __name__ == "__main__":
     unittest.main()
