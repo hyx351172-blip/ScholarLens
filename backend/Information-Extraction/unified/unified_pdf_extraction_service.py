@@ -2,7 +2,7 @@
 PDF提取服务 - FastAPI接口版本
 支持快速模式和精确模式的HTTP API调用
 """
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import io
 import base64
 import asyncio
@@ -28,6 +28,7 @@ import uvicorn # type: ignore
 import httpx # type: ignore
 from llm_extraction import PAGES_PER_REQUEST, CONCURRENT_REQUESTS # type: ignore
 from dotenv import load_dotenv # type: ignore
+from parsers.docling_parser import DoclingParser
 
 # Windows commonly defaults redirected console output to GBK.  This service
 # prints Unicode status symbols, so force UTF-8 to prevent uploads from failing
@@ -158,6 +159,14 @@ class PDFExtractionService:
         self.default_pages_per_request = PAGES_PER_REQUEST  # 修改这里
         self.default_concurrent_requests = CONCURRENT_REQUESTS
         self.default_dpi = 100
+        self._docling_parser = None
+
+    @property
+    def docling_parser(self) -> DoclingParser:
+        """Lazy initialization avoids loading local layout models at startup."""
+        if self._docling_parser is None:
+            self._docling_parser = DoclingParser(table_mode="accurate", do_ocr=False)
+        return self._docling_parser
 
     async def extract_fast(self, file_path: str, original_filename: Optional[str] = None) -> Dict[str, Any]:
         """快速模式：使用PyMuPDF4LLM提取
@@ -378,6 +387,50 @@ class PDFExtractionService:
             }
         }
 
+    async def extract_docling(
+        self,
+        file_path: str,
+        original_filename: Optional[str] = None,
+        file_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Use local Docling models to produce a structured, non-chunked document."""
+        print(f"\n{'='*60}")
+        print("Docling 结构化解析（不执行切分）")
+        print(f"{'='*60}\n")
+
+        parse_result = await asyncio.to_thread(
+            self.docling_parser.parse,
+            Path(file_path),
+            file_id=file_id,
+            original_filename=original_filename,
+        )
+        document = parse_result.document
+        quality = asdict(document.quality)
+
+        print("✓ Docling 解析完成")
+        print(f"  - 页数: {quality['total_pages']}")
+        print(f"  - 结构块: {quality['total_blocks']}")
+        print(f"  - 表格: {quality['block_counts'].get('table', 0)}")
+        print(f"  - 耗时: {quality['duration_seconds']} 秒")
+
+        return {
+            "filename": document.filename,
+            "markdown": parse_result.markdown,
+            "images": [],
+            "metadata": {
+                "total_pages": quality["total_pages"],
+                "total_blocks": quality["total_blocks"],
+                "total_tables": quality["block_counts"].get("table", 0),
+                "parser": asdict(document.parser),
+                "paper_metadata": asdict(document.metadata),
+                "quality": quality,
+                "chunking_performed": False,
+            },
+            "structured_document": document.to_dict(),
+            "docling_document": parse_result.raw_document,
+            "quality_report": quality,
+        }
+
     async def extract_from_pdf(self, pdf_path: str, original_filename: Optional[str] = None) -> ExtractionResult:
         """从PDF文件中提取完整信息"""
         import time
@@ -553,6 +606,28 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
     with open(metadata_path, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, ensure_ascii=False, indent=2)
     saved_paths['metadata'] = str(metadata_path)
+
+    # 4. Docling structured artifacts. These are parser outputs, not chunks.
+    structured_document = result_data.get('structured_document')
+    if structured_document is not None:
+        document_path = result_dir / "document.json"
+        with open(document_path, 'w', encoding='utf-8') as f:
+            json.dump(structured_document, f, ensure_ascii=False, indent=2)
+        saved_paths['document'] = str(document_path)
+
+    docling_document = result_data.get('docling_document')
+    if docling_document is not None:
+        docling_path = result_dir / "docling-document.json"
+        with open(docling_path, 'w', encoding='utf-8') as f:
+            json.dump(docling_document, f, ensure_ascii=False, indent=2)
+        saved_paths['docling_document'] = str(docling_path)
+
+    quality_report = result_data.get('quality_report')
+    if quality_report is not None:
+        quality_path = result_dir / "quality-report.json"
+        with open(quality_path, 'w', encoding='utf-8') as f:
+            json.dump(quality_report, f, ensure_ascii=False, indent=2)
+        saved_paths['quality_report'] = str(quality_path)
 
     return saved_paths
 
@@ -768,7 +843,7 @@ async def upload_pdf(
         file: PDF 文件
         knowledge_base_id: 知识库 ID（可选）
         auto_extract: 是否自动提取内容（默认 False）
-        extraction_mode: 提取模式，"fast" 或 "accurate"（仅当 auto_extract=True 时有效）
+        extraction_mode: 提取模式，"fast"、"accurate" 或 "docling"（仅当 auto_extract=True 时有效）
         auto_chunk: 是否自动切分（默认 False，需要 auto_extract=True）
         chunking_method: 切分方法，"header_recursive" 或 "markdown_only"
         chunk_size: 目标chunk大小（默认 1500）
@@ -863,13 +938,19 @@ async def upload_pdf(
                         model_url=model_url,
                         original_filename=safe_filename
                     )
+                elif extraction_mode == "docling":
+                    extraction_result = await service.extract_docling(
+                        file_path=str(file_path),
+                        original_filename=safe_filename,
+                        file_id=file_id,
+                    )
                 else:
                     return UploadResponse(
                         success=False,
                         message="自动提取失败",
                         error={
                             "code": "INVALID_MODE",
-                            "message": f"不支持的提取模式: {extraction_mode}，仅支持 'fast' 或 'accurate'"
+                            "message": f"不支持的提取模式: {extraction_mode}，仅支持 'fast'、'accurate' 或 'docling'"
                         }
                     )
 
@@ -894,7 +975,12 @@ async def upload_pdf(
                 }
 
                 # 9. 如果启用自动切分，执行切分操作
-                if auto_chunk and CHUNKING_SERVICE_ENABLED:
+                if auto_chunk and extraction_mode == "docling":
+                    response_data['chunking'] = {
+                        'status': 'skipped',
+                        'message': 'Docling 当前阶段仅执行解析，未接入切分',
+                    }
+                elif auto_chunk and CHUNKING_SERVICE_ENABLED:
                     print(f"\n开始自动切分...")
                     try:
                         chunking_result = await call_chunking_service(
@@ -1009,7 +1095,7 @@ async def upload_pdf(
         success_msg = "文件上传成功"
         if auto_extract:
             success_msg += "并已完成提取"
-        if auto_chunk and CHUNKING_SERVICE_ENABLED:
+        if response_data.get('chunking', {}).get('status') == 'completed':
             success_msg += "和切分"
         if response_data.get('storage', {}).get('status') == 'completed':
             success_msg += "，已入库"
@@ -1204,6 +1290,75 @@ async def extract_accurate(
                 pass
 
 
+@app.post("/extract/docling", response_model=ExtractionResponse)
+async def extract_docling(
+    file: UploadFile = File(...),
+    save_file: bool = Form(True),
+    knowledge_base_id: Optional[str] = Form(None),
+):
+    """Docling structured parsing endpoint. This endpoint never performs chunking."""
+    temp_file = None
+    try:
+        safe_filename = Path(file.filename).name if file.filename else "unknown.pdf"
+        if not safe_filename.lower().endswith(".pdf"):
+            raise ValueError("仅支持 PDF 文件")
+        content = await file.read()
+        if len(content) > MAX_FILE_SIZE:
+            raise ValueError(f"文件大小超过 {MAX_FILE_SIZE_MB}MB 限制")
+
+        file_id = f"file_{datetime.now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
+        if save_file:
+            date_path = datetime.now().strftime('%Y/%m/%d')
+            upload_dir = UPLOAD_BASE_DIR / date_path
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            extraction_path = upload_dir / f"{file_id}_{safe_filename}"
+            with open(extraction_path, 'wb') as f:
+                f.write(content)
+        else:
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+            temp_file.write(content)
+            temp_file.close()
+            extraction_path = Path(temp_file.name)
+
+        result = await service.extract_docling(
+            file_path=str(extraction_path),
+            original_filename=safe_filename,
+            file_id=file_id,
+        )
+        if save_file:
+            saved_paths = save_extraction_results(file_id, safe_filename, result)
+            result['saved_info'] = {
+                'file_id': file_id,
+                'file_path': str(extraction_path),
+                'file_size': len(content),
+                'knowledge_base_id': knowledge_base_id,
+                'paths': saved_paths,
+                'chunking_performed': False,
+            }
+
+        return ExtractionResponse(
+            success=True,
+            message="Docling 解析成功（未执行切分）",
+            filename=safe_filename,
+            data=result,
+        )
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return ExtractionResponse(
+            success=False,
+            message="Docling 解析失败",
+            filename=Path(file.filename).name if file.filename else None,
+            error=str(exc),
+        )
+    finally:
+        if temp_file and os.path.exists(temp_file.name):
+            try:
+                os.unlink(temp_file.name)
+            except OSError:
+                pass
+
+
 @app.get("/health")
 async def health_check():
     """服务健康检查"""
@@ -1257,6 +1412,15 @@ async def debug_extract(pdf_path: str, mode: str = "fast", **kwargs):
             print(f"  表格数: {result['metadata']['total_tables']}")
             print(f"  公式数: {result['metadata']['total_formulas']}")
             print(f"  Markdown长度: {len(result['markdown'])} 字符")
+            return result
+
+        elif mode == "docling":
+            print(f"开始 Docling 结构化解析: {pdf_path}")
+            result = await service.extract_docling(pdf_path)
+            print("解析完成（未执行切分），结果:")
+            print(f"  页数: {result['metadata']['total_pages']}")
+            print(f"  结构块: {result['metadata']['total_blocks']}")
+            print(f"  表格: {result['metadata']['total_tables']}")
             return result
 
         else:
