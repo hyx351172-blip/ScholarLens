@@ -410,6 +410,7 @@ class PDFExtractionService:
         print("✓ Docling 解析完成")
         print(f"  - 页数: {quality['total_pages']}")
         print(f"  - 结构块: {quality['total_blocks']}")
+        print(f"  - Reading Order 重排页: {quality['reading_order_pages_reordered']}")
         print(f"  - 表格: {quality['block_counts'].get('table', 0)}")
         print(f"  - 逻辑表: {len(parse_result.logical_tables)}")
         print(f"  - 逻辑图: {len(parse_result.logical_figures)}")

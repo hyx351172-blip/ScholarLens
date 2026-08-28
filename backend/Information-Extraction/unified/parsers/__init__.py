@@ -8,6 +8,10 @@ from .evidence_context_postprocessor import (
     LogicalFormula,
 )
 from .models import ContentBlock, PaperDocument, PaperMetadata, ParseQualityReport
+from .reading_order_postprocessor import (
+    ReadingOrderPostProcessor,
+    ReadingOrderResult,
+)
 from .section_hierarchy_postprocessor import (
     SectionHierarchyPostProcessor,
     SectionHierarchyResult,
@@ -25,6 +29,8 @@ __all__ = [
     "PaperDocument",
     "PaperMetadata",
     "ParseQualityReport",
+    "ReadingOrderPostProcessor",
+    "ReadingOrderResult",
     "SectionHierarchyPostProcessor",
     "SectionHierarchyResult",
     "LogicalTable",

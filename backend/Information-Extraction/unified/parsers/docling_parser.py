@@ -29,6 +29,7 @@ from .evidence_context_postprocessor import (
     LogicalFigure,
     LogicalFormula,
 )
+from .reading_order_postprocessor import ReadingOrderPostProcessor
 from .section_hierarchy_postprocessor import SectionHierarchyPostProcessor
 from .table_postprocessor import LogicalTable, TablePostProcessor
 
@@ -75,6 +76,7 @@ class DoclingParser:
         evidence_context_postprocessor: Optional[
             EvidenceContextPostProcessor
         ] = None,
+        reading_order_postprocessor: Optional[ReadingOrderPostProcessor] = None,
         section_hierarchy_postprocessor: Optional[
             SectionHierarchyPostProcessor
         ] = None,
@@ -85,6 +87,9 @@ class DoclingParser:
         self._converter = converter
         self.evidence_context_postprocessor = (
             evidence_context_postprocessor or EvidenceContextPostProcessor()
+        )
+        self.reading_order_postprocessor = (
+            reading_order_postprocessor or ReadingOrderPostProcessor()
         )
         self.section_hierarchy_postprocessor = (
             section_hierarchy_postprocessor or SectionHierarchyPostProcessor()
@@ -145,6 +150,8 @@ class DoclingParser:
         raw_document = _export_dict(docling_document)
         markdown = _export_markdown(docling_document)
         blocks, _ = self._normalize_items(docling_document)
+        reading_order_result = self.reading_order_postprocessor.process(blocks)
+        blocks = reading_order_result.blocks
         section_result = self.section_hierarchy_postprocessor.process(blocks)
         blocks = section_result.blocks
         sections = section_result.sections
@@ -166,6 +173,9 @@ class DoclingParser:
         )
         quality.warnings.extend(section_result.warnings)
         quality.warnings.extend(evidence_result.warnings)
+        quality.warnings.extend(reading_order_result.warnings)
+        quality.reading_order_pages_reordered = reading_order_result.pages_reordered
+        quality.reading_order_page_methods = reading_order_result.page_methods
 
         try:
             parser_version = importlib.metadata.version("docling-slim")

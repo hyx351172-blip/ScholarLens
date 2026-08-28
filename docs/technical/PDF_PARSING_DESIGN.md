@@ -83,6 +83,13 @@ PDF 上传
 
 `type` 允许：`title`、`abstract`、`heading`、`paragraph`、`table`、`table_caption`、`figure`、`figure_caption`、`formula`、`reference`、`footnote`。
 
+ReadingOrderPostProcessor 在所有语义后处理之前按页运行。它使用 Docling 左下角
+坐标系，将单栏页面按 `top` 降序排列，将双栏页面按“跨栏阅读带 → 左栏 → 右栏”
+排列，并保留 `relations.original_order`、`reading_order`、`column_index`、
+`reading_band_index`、`reading_order_method` 和置信度。页面存在缺失/非法 BBox 时整页
+回退 Docling 原顺序；连续 Table/Figure/Caption 证据组保持内部原始顺序，防止几何
+排序拆散多片段表格。本阶段不检测或删除页眉页脚。
+
 SectionHierarchyPostProcessor 使用受约束的章节编号规则和栈重建 Section 树，
 将论文标题从 `heading` 修正为 `title`，并为标题、正文、表格、公式等所有后续
 block 回填完整 `section_path`。合并 heading 只生成多个逻辑 Section，不拆除原始
@@ -213,10 +220,12 @@ backend/output/extraction_results/{file_id}/
 - `AC-109`：Figure、Caption、显式解释段，以及 Formula、上下文正文均建立双向 block 关系，关系目标不存在的悬空引用为 0。
 - `AC-110`：现有四篇解析产物中 Figure Caption 覆盖率为 20/22（90.9%），Formula 上下文覆盖率为 9/9（100%）；该结果衡量结构覆盖，不代表人工标注语义准确率。
 - `AC-111`：四篇论文识别 4 个 Abstract Section 和 25 个 Appendix Section；特殊章节正文绑定率为 100%，字母附录父子关系不一致为 0。
+- `AC-112`：四篇论文 1,042 个 blocks、71 页完成 Reading Order 结构评测；Block 身份丢失、Page 归属改变、幂等性失败和 BBox 回退页均为 0，3 页发生确定性重排。
 - 完整数据见 `docs/evaluation/docling-parsing-v1.md`。
 - TablePostProcessor 评测见 `docs/evaluation/table-postprocessor-v1.md`。
 - SectionHierarchyPostProcessor 评测见 `docs/evaluation/section-hierarchy-v1.md`。
 - EvidenceContextPostProcessor 评测见 `docs/evaluation/evidence-context-v1.md`。
+- ReadingOrderPostProcessor 评测见 `docs/evaluation/reading-order-v1.md`。
 
 ### 8.2 后续端到端迭代
 

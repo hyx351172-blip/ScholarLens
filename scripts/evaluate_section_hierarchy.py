@@ -17,6 +17,7 @@ UNIFIED_DIR = PROJECT_ROOT / "backend" / "Information-Extraction" / "unified"
 sys.path.insert(0, str(UNIFIED_DIR))
 
 from parsers.models import ContentBlock  # noqa: E402
+from parsers.reading_order_postprocessor import ReadingOrderPostProcessor  # noqa: E402
 from parsers.section_hierarchy_postprocessor import (  # noqa: E402
     SectionHierarchyPostProcessor,
 )
@@ -29,6 +30,7 @@ APPENDIX_RE = re.compile(r"^\s*(?:Appendix\s+)?([A-Z](?:\.\d+)*)[.):]?\s+")
 
 def evaluate(input_dir: Path) -> Dict[str, Any]:
     processor = SectionHierarchyPostProcessor()
+    reading_order_processor = ReadingOrderPostProcessor()
     papers: List[Dict[str, Any]] = []
     totals = Counter()
 
@@ -36,7 +38,8 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
         document_path = input_dir / paper_id / "document.json"
         document = json.loads(document_path.read_text(encoding="utf-8"))
         source_blocks = [ContentBlock(**block) for block in document["blocks"]]
-        result = processor.process(source_blocks)
+        reading_order_result = reading_order_processor.process(source_blocks)
+        result = processor.process(reading_order_result.blocks)
         sections_by_number = {}
         numbered_sections = []
         for section in result.sections:

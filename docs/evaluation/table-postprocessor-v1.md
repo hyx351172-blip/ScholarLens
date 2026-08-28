@@ -1,6 +1,6 @@
 # TablePostProcessor 评测（v1）
 
-> 生成时间：2026-08-28T17:45:46.383204+08:00
+> 生成时间：2026-08-28T19:39:03.238447+08:00
 > 人工基准：`docs/evaluation/table-ground-truth-v1.json`
 
 ## 评测边界

@@ -44,11 +44,12 @@ class _Item:
         level=1,
         table_markdown=None,
         orig="",
+        bbox=None,
     ):
         self.label = _Label(label)
         self.text = text
         self.level = level
-        self.prov = [_Prov(page, _BBox(10, 20, 100, 120))]
+        self.prov = [_Prov(page, _BBox(*(bbox or (10, 20, 100, 120))))]
         self._table_markdown = table_markdown
         self.orig = orig
 
@@ -246,6 +247,35 @@ class DoclingParserTests(unittest.TestCase):
             tables = json.loads(Path(paths["tables"]).read_text(encoding="utf-8"))
             self.assertEqual(len(tables), 1)
             self.assertEqual(tables[0]["source_block_ids"], ["block_000007"])
+
+    def test_reading_order_runs_before_section_binding(self):
+        items = [
+            _Item("section_header", "Geometry Paper", page=1, bbox=(50, 780, 560, 740)),
+            _Item("section_header", "Abstract", page=1, bbox=(50, 700, 120, 680)),
+            _Item("text", "Abstract text.", page=1, bbox=(50, 660, 560, 600)),
+            _Item("section_header", "2 Method", page=2, bbox=(320, 700, 430, 680)),
+            _Item("text", "Method text.", page=2, bbox=(320, 660, 560, 600)),
+            _Item("section_header", "1 Introduction", page=2, bbox=(50, 700, 190, 680)),
+            _Item("text", "Introduction text.", page=2, bbox=(50, 660, 290, 600)),
+        ]
+        parser = DoclingParser(converter=_Converter(_Document(items)))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf_path = Path(tmp) / "geometry.pdf"
+            pdf_path.write_bytes(b"%PDF-1.4 fixture")
+            result = parser.parse(pdf_path)
+
+        page_two = [block for block in result.document.blocks if block.page == 2]
+        self.assertEqual(
+            [block.text for block in page_two],
+            ["1 Introduction", "Introduction text.", "2 Method", "Method text."],
+        )
+        self.assertEqual(page_two[1].section_path, ["1 Introduction"])
+        self.assertEqual(page_two[3].section_path, ["2 Method"])
+        self.assertEqual(
+            result.document.quality.reading_order_page_methods[2],
+            "two_column_geometry",
+        )
 
 
 if __name__ == "__main__":

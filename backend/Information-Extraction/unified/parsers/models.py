@@ -61,6 +61,8 @@ class ParseQualityReport:
     empty_page_numbers: List[int] = field(default_factory=list)
     empty_block_count: int = 0
     duration_seconds: float = 0.0
+    reading_order_pages_reordered: int = 0
+    reading_order_page_methods: Dict[int, str] = field(default_factory=dict)
     warnings: List[str] = field(default_factory=list)
 
 

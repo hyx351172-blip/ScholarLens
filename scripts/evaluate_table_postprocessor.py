@@ -17,12 +17,14 @@ UNIFIED_DIR = PROJECT_ROOT / "backend" / "Information-Extraction" / "unified"
 sys.path.insert(0, str(UNIFIED_DIR))
 
 from parsers.models import ContentBlock  # noqa: E402
+from parsers.reading_order_postprocessor import ReadingOrderPostProcessor  # noqa: E402
 from parsers.table_postprocessor import TablePostProcessor  # noqa: E402
 
 
 def evaluate(ground_truth_path: Path) -> Dict[str, Any]:
     ground_truth = json.loads(ground_truth_path.read_text(encoding="utf-8"))
     processor = TablePostProcessor()
+    reading_order_processor = ReadingOrderPostProcessor()
     paper_results: List[Dict[str, Any]] = []
     mismatches: List[Dict[str, Any]] = []
 
@@ -32,7 +34,8 @@ def evaluate(ground_truth_path: Path) -> Dict[str, Any]:
         document_path = PROJECT_ROOT / paper["docling_document"]
         document = json.loads(document_path.read_text(encoding="utf-8"))
         blocks = [ContentBlock(**block) for block in document["blocks"]]
-        result = processor.process(blocks)
+        reading_order_result = reading_order_processor.process(blocks)
+        result = processor.process(reading_order_result.blocks)
         actual_by_label = {
             table.label: table for table in result.tables if table.label is not None
         }

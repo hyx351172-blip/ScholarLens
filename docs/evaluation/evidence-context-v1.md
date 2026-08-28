@@ -1,6 +1,6 @@
 # Figure / Formula Context Binding Evaluation v1
 
-生成时间：2026-08-28T18:14:34
+生成时间：2026-08-28T19:39:04
 
 ## 汇总
 

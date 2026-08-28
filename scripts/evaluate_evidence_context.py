@@ -17,6 +17,7 @@ sys.path.insert(0, str(UNIFIED_DIR))
 
 from parsers.evidence_context_postprocessor import EvidenceContextPostProcessor  # noqa: E402
 from parsers.models import ContentBlock  # noqa: E402
+from parsers.reading_order_postprocessor import ReadingOrderPostProcessor  # noqa: E402
 from parsers.section_hierarchy_postprocessor import SectionHierarchyPostProcessor  # noqa: E402
 from parsers.table_postprocessor import TablePostProcessor  # noqa: E402
 
@@ -30,6 +31,7 @@ def _rate(numerator: int, denominator: int) -> float:
 
 def evaluate(input_dir: Path) -> Dict[str, Any]:
     section_processor = SectionHierarchyPostProcessor()
+    reading_order_processor = ReadingOrderPostProcessor()
     table_processor = TablePostProcessor()
     evidence_processor = EvidenceContextPostProcessor()
     papers: List[Dict[str, Any]] = []
@@ -39,7 +41,8 @@ def evaluate(input_dir: Path) -> Dict[str, Any]:
         document_path = input_dir / paper_id / "document.json"
         document = json.loads(document_path.read_text(encoding="utf-8"))
         blocks = [ContentBlock(**block) for block in document["blocks"]]
-        section_result = section_processor.process(blocks)
+        reading_order_result = reading_order_processor.process(blocks)
+        section_result = section_processor.process(reading_order_result.blocks)
         table_result = table_processor.process(section_result.blocks)
         result = evidence_processor.process(table_result.blocks)
 
