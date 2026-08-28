@@ -36,12 +36,21 @@ class _Prov:
 
 
 class _Item:
-    def __init__(self, label, text="", page=1, level=1, table_markdown=None):
+    def __init__(
+        self,
+        label,
+        text="",
+        page=1,
+        level=1,
+        table_markdown=None,
+        orig="",
+    ):
         self.label = _Label(label)
         self.text = text
         self.level = level
         self.prov = [_Prov(page, _BBox(10, 20, 100, 120))]
         self._table_markdown = table_markdown
+        self.orig = orig
 
     def export_to_markdown(self, _document):
         return self._table_markdown or self.text
@@ -164,6 +173,49 @@ class DoclingParserTests(unittest.TestCase):
         self.assertEqual(table.section_path, ["1 Introduction"])
         self.assertEqual(result.document.quality.block_counts["table"], 1)
 
+    def test_formula_prefers_text_then_falls_back_to_orig_and_reports_missing(self):
+        """Formula text is preserved without inventing LaTeX content."""
+        items = [
+            _Item("section_header", "Formula Paper", page=1),
+            _Item("section_header", "Abstract", page=1),
+            _Item("text", "This paper contains formulas.", page=1),
+            _Item(
+                "formula",
+                text="E = mc² (1)",
+                orig="E = m c 2 (1)",
+                page=1,
+            ),
+            _Item(
+                "formula",
+                text="",
+                orig="Score( m,q,a ) = s ( m,q ) ρ ( m,a ) . (3)",
+                page=1,
+            ),
+            _Item("formula", text="", orig="", page=1),
+        ]
+        parser = DoclingParser(converter=_Converter(_Document(items)))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf_path = Path(tmp) / "formulas.pdf"
+            pdf_path.write_bytes(b"%PDF-1.4 fixture")
+            result = parser.parse(pdf_path)
+
+        formulas = [
+            block for block in result.document.blocks if block.type == "formula"
+        ]
+        self.assertEqual(formulas[0].text, "E = mc² (1)")
+        self.assertEqual(formulas[0].relations["formula_text_source"], "text")
+        self.assertEqual(
+            formulas[1].text,
+            "Score( m,q,a ) = s ( m,q ) ρ ( m,a ) . (3)",
+        )
+        self.assertEqual(
+            formulas[1].relations["formula_text_source"], "orig_fallback"
+        )
+        self.assertEqual(formulas[2].text, "")
+        self.assertEqual(formulas[2].relations["formula_text_source"], "missing")
+        self.assertIn("1 个公式没有可用文本", result.document.quality.warnings)
+
     def test_save_writes_parse_artifacts_but_never_chunks(self):
         """AC-101/AC-104: persist parser artifacts, never chunks.json."""
         parser, _ = self._build_parser()
@@ -177,12 +229,15 @@ class DoclingParserTests(unittest.TestCase):
 
             self.assertEqual(
                 set(paths),
-                {"markdown", "document", "docling_document", "quality_report"},
+                {"markdown", "document", "docling_document", "quality_report", "tables"},
             )
             self.assertFalse((tmp_path / "result" / "chunks.json").exists())
             stored = json.loads(Path(paths["document"]).read_text(encoding="utf-8"))
             self.assertEqual(stored["schema_version"], "1.0")
             self.assertEqual(stored["parser"]["name"], "docling")
+            tables = json.loads(Path(paths["tables"]).read_text(encoding="utf-8"))
+            self.assertEqual(len(tables), 1)
+            self.assertEqual(tables[0]["source_block_ids"], ["block_000007"])
 
 
 if __name__ == "__main__":

@@ -24,6 +24,8 @@ from .models import (
     ParserInfo,
     Section,
 )
+from .section_hierarchy_postprocessor import SectionHierarchyPostProcessor
+from .table_postprocessor import LogicalTable, TablePostProcessor
 
 
 LABEL_MAP = {
@@ -51,6 +53,7 @@ class DoclingParseResult:
     document: PaperDocument
     markdown: str
     raw_document: Dict[str, Any]
+    logical_tables: List[LogicalTable]
 
 
 class DoclingParser:
@@ -62,10 +65,18 @@ class DoclingParser:
         *,
         table_mode: str = "accurate",
         do_ocr: bool = False,
+        section_hierarchy_postprocessor: Optional[
+            SectionHierarchyPostProcessor
+        ] = None,
+        table_postprocessor: Optional[TablePostProcessor] = None,
     ) -> None:
         self.table_mode = table_mode.lower()
         self.do_ocr = do_ocr
         self._converter = converter
+        self.section_hierarchy_postprocessor = (
+            section_hierarchy_postprocessor or SectionHierarchyPostProcessor()
+        )
+        self.table_postprocessor = table_postprocessor or TablePostProcessor()
 
     def _build_converter(self) -> Any:
         try:
@@ -120,7 +131,12 @@ class DoclingParser:
         docling_document = conversion.document
         raw_document = _export_dict(docling_document)
         markdown = _export_markdown(docling_document)
-        blocks, sections = self._normalize_items(docling_document)
+        blocks, _ = self._normalize_items(docling_document)
+        section_result = self.section_hierarchy_postprocessor.process(blocks)
+        blocks = section_result.blocks
+        sections = section_result.sections
+        table_result = self.table_postprocessor.process(blocks)
+        blocks = table_result.blocks
         total_pages = _page_count(docling_document, raw_document)
         metadata = _extract_metadata(
             blocks,
@@ -133,6 +149,7 @@ class DoclingParser:
             duration_seconds=time.perf_counter() - started,
             metadata=metadata,
         )
+        quality.warnings.extend(section_result.warnings)
 
         try:
             parser_version = importlib.metadata.version("docling-slim")
@@ -158,37 +175,28 @@ class DoclingParser:
             document=document,
             markdown=markdown,
             raw_document=raw_document,
+            logical_tables=table_result.tables,
         )
 
     def _normalize_items(self, document: Any) -> Tuple[List[ContentBlock], List[Section]]:
         blocks: List[ContentBlock] = []
-        sections: List[Section] = []
-        section_stack: List[Section] = []
 
         for order, (item, traversal_level) in enumerate(_iterate_items(document)):
             source_label = _label_value(getattr(item, "label", None))
             block_type = LABEL_MAP.get(source_label, source_label or "unknown")
             page, bbox = _provenance(item)
             heading_level = _heading_level(item, traversal_level)
+            relations: Dict[str, Any] = {}
+            if block_type == "heading":
+                relations["docling_heading_level"] = heading_level
 
             if block_type == "table":
                 text = _table_markdown(item, document)
+            elif block_type == "formula":
+                text, formula_source = _formula_text(item)
+                relations["formula_text_source"] = formula_source
             else:
                 text = str(getattr(item, "text", "") or "").strip()
-
-            if block_type == "heading" and text:
-                while section_stack and section_stack[-1].level >= heading_level:
-                    section_stack.pop()
-                parent_id = section_stack[-1].section_id if section_stack else None
-                section = Section(
-                    section_id=f"section_{len(sections):04d}",
-                    title=text,
-                    level=heading_level,
-                    parent_id=parent_id,
-                    page=page,
-                )
-                sections.append(section)
-                section_stack.append(section)
 
             blocks.append(
                 ContentBlock(
@@ -198,13 +206,14 @@ class DoclingParser:
                     text=text,
                     page=page,
                     bbox=bbox,
-                    section_path=[section.title for section in section_stack],
+                    section_path=[],
                     confidence=_confidence(item),
                     source_label=source_label or None,
+                    relations=relations,
                 )
             )
 
-        return blocks, sections
+        return blocks, []
 
 
 def save_parse_result(output_dir: Path | str, result: DoclingParseResult) -> Dict[str, str]:
@@ -216,6 +225,7 @@ def save_parse_result(output_dir: Path | str, result: DoclingParseResult) -> Dic
         "document": destination / "document.json",
         "docling_document": destination / "docling-document.json",
         "quality_report": destination / "quality-report.json",
+        "tables": destination / "tables.json",
     }
     paths["markdown"].write_text(result.markdown, encoding="utf-8")
     paths["document"].write_text(
@@ -228,6 +238,14 @@ def save_parse_result(output_dir: Path | str, result: DoclingParseResult) -> Dic
     )
     paths["quality_report"].write_text(
         json.dumps(asdict(result.document.quality), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    paths["tables"].write_text(
+        json.dumps(
+            [asdict(table) for table in result.logical_tables],
+            ensure_ascii=False,
+            indent=2,
+        ),
         encoding="utf-8",
     )
     return {name: str(path) for name, path in paths.items()}
@@ -333,6 +351,17 @@ def _table_markdown(item: Any, document: Any) -> str:
         except TypeError:
             return str(exporter()).strip()
     return str(getattr(item, "text", "") or "").strip()
+
+
+def _formula_text(item: Any) -> Tuple[str, str]:
+    """Return Docling's normalized formula text or its raw recognition fallback."""
+    text = str(getattr(item, "text", "") or "").strip()
+    if text:
+        return text, "text"
+    original = str(getattr(item, "orig", "") or "").strip()
+    if original:
+        return original, "orig_fallback"
+    return "", "missing"
 
 
 def _page_count(document: Any, raw_document: Dict[str, Any]) -> int:
@@ -508,6 +537,11 @@ def _build_quality_report(
         warnings.append("未识别论文摘要")
     if total_pages and len(pages_with_content) < total_pages:
         warnings.append("部分页面没有带文本的结构块")
+    empty_formula_count = sum(
+        block.type == "formula" and not block.text.strip() for block in blocks
+    )
+    if empty_formula_count:
+        warnings.append(f"{empty_formula_count} 个公式没有可用文本")
 
     return ParseQualityReport(
         total_pages=total_pages,

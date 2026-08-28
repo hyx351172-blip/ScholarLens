@@ -1,7 +1,7 @@
 # ScholarLens PDF 解析模块技术设计
 
-> 状态：Docling 解析 v1 已实现并评测；结构感知切分仍为 Proposed
-> 本次实现范围：科研论文 PDF 解析、结构归一化与解析质量评测
+> 状态：Docling 解析 v1、SectionHierarchyPostProcessor 与 TablePostProcessor 已实现并评测；结构感知切分仍为 Proposed
+> 本次实现范围：科研论文 PDF 解析、章节树重建、逻辑表后处理与解析质量评测
 > 后续范围：结构化 Chunk、Embedding、Milvus 与 RAG 回归
 > 不包含：检索、Reranker、答案生成和前端改版
 
@@ -27,6 +27,8 @@ PDF 上传
   → 文件校验与 SHA-256 去重
   → ParserAdapter 结构化解析
   → 论文结构归一化
+  → SectionHierarchyPostProcessor（标题类型、合并标题、父子层级、section_path）
+  → TablePostProcessor（Caption 绑定、碎片归并、Figure/Table 类型纠正）
   → 解析质量检查
   ← 当前迭代止于此处
   → 科研结构感知切分
@@ -80,6 +82,20 @@ PDF 上传
 ```
 
 `type` 允许：`title`、`abstract`、`heading`、`paragraph`、`table`、`table_caption`、`figure`、`figure_caption`、`formula`、`reference`、`footnote`。
+
+SectionHierarchyPostProcessor 使用受约束的章节编号规则和栈重建 Section 树，
+将论文标题从 `heading` 修正为 `title`，并为标题、正文、表格、公式等所有后续
+block 回填完整 `section_path`。合并 heading 只生成多个逻辑 Section，不拆除原始
+物理 block；无编号标题使用最近的编号章节作为上下文回退并写入质量警告。
+
+TablePostProcessor 不删除物理块，而是在 `relations` 中写入
+`logical_table_id`、`logical_table_label`、`source_block_ids`、
+`caption_block_ids`、`fragment_index`、`fragment_count` 和
+`postprocess_status`。同时生成 `tables.json`，供后续结构感知切分消费。
+
+公式块优先使用 Docling 的标准化 `text`；当 `text` 为空时回退到原始识别字段
+`orig`，并在 `relations.formula_text_source` 中记录 `text`、
+`orig_fallback` 或 `missing`。该回退只恢复 Unicode 数学文本，不声称生成了精确 LaTeX。
 
 ### 4.3 ScientificChunk
 
@@ -166,8 +182,13 @@ backend/output/extraction_results/{file_id}/
 - `AC-102`：71/71 页解析成功，标题、人工标注作者列表和摘要识别率均为 100%。
 - `AC-103`：结构块的页码与 BBox 覆盖率为 100%。
 - `AC-104`：本阶段没有生成 `chunks.json`，Docling 上传模式不会调用切分服务。
-- `AC-105`：表格保持独立结构块，并如实记录复杂多面板表格碎片化、Figure 热力图误判为 Table 等剩余缺陷。
+- `AC-105`：表格保持独立物理结构块，通过 relations 归并为逻辑表，并修正带明确 Figure Caption 的 Table 误判。
+- `AC-106`：对四篇论文的 34 张人工标注逻辑表，逻辑表召回率、Source block 精确映射率、Caption block 精确映射率和 Figure/Table 类型修正率均为 100%。
+- `AC-107`：四篇测试论文中 Docling 已识别的 9 个公式均能生成非空公式文本，且保留页码、BBox 和文本来源。
+- `AC-108`：四篇测试论文均只有一个 `title` block；78 个编号子章节父节点一致率为 100%，进入章节后的 block 的 `section_path` 覆盖率为 100%，MAP-Graph 合并标题得到修复。
 - 完整数据见 `docs/evaluation/docling-parsing-v1.md`。
+- TablePostProcessor 评测见 `docs/evaluation/table-postprocessor-v1.md`。
+- SectionHierarchyPostProcessor 评测见 `docs/evaluation/section-hierarchy-v1.md`。
 
 ### 8.2 后续端到端迭代
 
@@ -192,8 +213,10 @@ backend/output/extraction_results/{file_id}/
 1. 定义并测试 `PaperDocument`、`ContentBlock`、`ScientificChunk`。
 2. 实现 `ParserAdapter` 和 Docling Adapter。
 3. 实现结构归一化及质量报告。
-4. 实现论文结构感知切分。
-5. 调整 Milvus Schema 和入库契约。
-6. 用四篇论文重建测试知识库并生成 baseline v2。
+4. 实现 SectionHierarchyPostProcessor 与章节结构评测。
+5. 实现 TablePostProcessor 与逻辑表评测。
+6. 实现论文结构感知切分。
+7. 调整 Milvus Schema 和入库契约。
+8. 用四篇论文重建测试知识库并生成 baseline v2。
 
 本设计通过评审后再进入实现；现有 `test2` 和 baseline v1 在新链路验收前保持不变。

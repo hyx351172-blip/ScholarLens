@@ -411,6 +411,8 @@ class PDFExtractionService:
         print(f"  - 页数: {quality['total_pages']}")
         print(f"  - 结构块: {quality['total_blocks']}")
         print(f"  - 表格: {quality['block_counts'].get('table', 0)}")
+        print(f"  - 逻辑表: {len(parse_result.logical_tables)}")
+        print(f"  - 章节: {len(document.sections)}")
         print(f"  - 耗时: {quality['duration_seconds']} 秒")
 
         return {
@@ -421,6 +423,8 @@ class PDFExtractionService:
                 "total_pages": quality["total_pages"],
                 "total_blocks": quality["total_blocks"],
                 "total_tables": quality["block_counts"].get("table", 0),
+                "logical_table_count": len(parse_result.logical_tables),
+                "section_count": len(document.sections),
                 "parser": asdict(document.parser),
                 "paper_metadata": asdict(document.metadata),
                 "quality": quality,
@@ -429,6 +433,7 @@ class PDFExtractionService:
             "structured_document": document.to_dict(),
             "docling_document": parse_result.raw_document,
             "quality_report": quality,
+            "tables": [asdict(table) for table in parse_result.logical_tables],
         }
 
     async def extract_from_pdf(self, pdf_path: str, original_filename: Optional[str] = None) -> ExtractionResult:
@@ -628,6 +633,13 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
         with open(quality_path, 'w', encoding='utf-8') as f:
             json.dump(quality_report, f, ensure_ascii=False, indent=2)
         saved_paths['quality_report'] = str(quality_path)
+
+    logical_tables = result_data.get('tables')
+    if logical_tables is not None:
+        tables_path = result_dir / "tables.json"
+        with open(tables_path, 'w', encoding='utf-8') as f:
+            json.dump(logical_tables, f, ensure_ascii=False, indent=2)
+        saved_paths['tables'] = str(tables_path)
 
     return saved_paths
 
