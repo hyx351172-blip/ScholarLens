@@ -432,7 +432,8 @@ class MilvusRAGService:
 
             # 为每个chunk创建DocumentChunk
             for i, chunk in enumerate(chunks):
-                chunk_text = chunk.get("text", "")
+                original_text = chunk.get("text", "")
+                chunk_text = chunk.get("retrieval_text") or original_text
                 if not chunk_text.strip():
                     print(f"跳过空chunk {i}")
                     continue
@@ -446,8 +447,16 @@ class MilvusRAGService:
                     "continued": chunk.get("continued", False),
                     "cross_page_bridge": chunk.get("cross_page_bridge", False),
                     "is_table_like": chunk.get("is_table_like", False),
-                    "chunk_index": i
+                    "chunk_index": chunk.get("chunk_index", i)
                 }
+                metadata.update(
+                    {
+                        key: value
+                        for key, value in chunk.items()
+                        if key not in {"retrieval_text"}
+                    }
+                )
+                metadata["text"] = original_text
 
                 # 添加文档级别的metadata
                 metadata.update(document_metadata)

@@ -28,6 +28,7 @@ import uvicorn # type: ignore
 import httpx # type: ignore
 from llm_extraction import PAGES_PER_REQUEST, CONCURRENT_REQUESTS # type: ignore
 from dotenv import load_dotenv # type: ignore
+from chunkers.structure_aware_chunker import StructureAwareChunker
 from parsers.docling_parser import DoclingParser
 
 # Windows commonly defaults redirected console output to GBK.  This service
@@ -160,6 +161,7 @@ class PDFExtractionService:
         self.default_concurrent_requests = CONCURRENT_REQUESTS
         self.default_dpi = 100
         self._docling_parser = None
+        self.structure_aware_chunker = StructureAwareChunker()
 
     @property
     def docling_parser(self) -> DoclingParser:
@@ -392,10 +394,12 @@ class PDFExtractionService:
         file_path: str,
         original_filename: Optional[str] = None,
         file_id: Optional[str] = None,
+        perform_chunking: bool = False,
     ) -> Dict[str, Any]:
-        """Use local Docling models to produce a structured, non-chunked document."""
+        """Use Docling and optionally build provenance-preserving chunks."""
         print(f"\n{'='*60}")
-        print("Docling 结构化解析（不执行切分）")
+        mode_label = "并执行结构感知切分" if perform_chunking else "不执行切分"
+        print(f"Docling 结构化解析（{mode_label}）")
         print(f"{'='*60}\n")
 
         parse_result = await asyncio.to_thread(
@@ -406,6 +410,14 @@ class PDFExtractionService:
         )
         document = parse_result.document
         quality = asdict(document.quality)
+        chunking_result = None
+        if perform_chunking:
+            chunking_result = self.structure_aware_chunker.chunk(
+                document,
+                logical_tables=parse_result.logical_tables,
+                logical_figures=parse_result.logical_figures,
+                logical_formulas=parse_result.logical_formulas,
+            ).to_dict()
 
         print("✓ Docling 解析完成")
         print(f"  - 页数: {quality['total_pages']}")
@@ -416,6 +428,8 @@ class PDFExtractionService:
         print(f"  - 逻辑图: {len(parse_result.logical_figures)}")
         print(f"  - 逻辑公式: {len(parse_result.logical_formulas)}")
         print(f"  - 章节: {len(document.sections)}")
+        if chunking_result is not None:
+            print(f"  - 结构化 Chunks: {chunking_result['chunk_stats']['total_chunks']}")
         print(f"  - 耗时: {quality['duration_seconds']} 秒")
 
         return {
@@ -433,7 +447,7 @@ class PDFExtractionService:
                 "parser": asdict(document.parser),
                 "paper_metadata": asdict(document.metadata),
                 "quality": quality,
-                "chunking_performed": False,
+                "chunking_performed": chunking_result is not None,
             },
             "structured_document": document.to_dict(),
             "docling_document": parse_result.raw_document,
@@ -441,6 +455,10 @@ class PDFExtractionService:
             "tables": [asdict(table) for table in parse_result.logical_tables],
             "figures": [asdict(figure) for figure in parse_result.logical_figures],
             "formulas": [asdict(formula) for formula in parse_result.logical_formulas],
+            "chunks": chunking_result["chunks"] if chunking_result else None,
+            "chunk_stats": chunking_result["chunk_stats"] if chunking_result else None,
+            "chunking_warnings": chunking_result["warnings"] if chunking_result else [],
+            "chunk_schema_version": chunking_result["schema_version"] if chunking_result else None,
         }
 
     async def extract_from_pdf(self, pdf_path: str, original_filename: Optional[str] = None) -> ExtractionResult:
@@ -662,6 +680,20 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
             json.dump(logical_formulas, f, ensure_ascii=False, indent=2)
         saved_paths['formulas'] = str(formulas_path)
 
+    # 8. Scientific chunks generated from the canonical Docling structure.
+    scientific_chunks = result_data.get('chunks')
+    if scientific_chunks is not None:
+        chunks_path = result_dir / "chunks.json"
+        chunks_payload = {
+            "schema_version": result_data.get('chunk_schema_version', '1.0'),
+            "chunks": scientific_chunks,
+            "chunk_stats": result_data.get('chunk_stats', {}),
+            "warnings": result_data.get('chunking_warnings', []),
+        }
+        with open(chunks_path, 'w', encoding='utf-8') as f:
+            json.dump(chunks_payload, f, ensure_ascii=False, indent=2)
+        saved_paths['chunks'] = str(chunks_path)
+
     return saved_paths
 
 
@@ -777,10 +809,12 @@ async def call_milvus_api(
         # 转换chunks为Milvus API期望的格式
         converted_chunks = []
         for i, chunk in enumerate(chunks):
-            # 获取文本内容（切分服务返回的字段名是"text"）
             chunk_text = chunk.get("text", "")
-
-            converted_chunk = {
+            # Preserve the ScientificChunk contract in Milvus metadata.  The
+            # receiver embeds retrieval_text while retaining original text for
+            # citations and answer generation.
+            converted_chunk = dict(chunk)
+            converted_chunk.update({
                 "text": chunk_text,
                 "page_start": chunk.get("page_start", 1),
                 "page_end": chunk.get("page_end", 1),
@@ -789,11 +823,11 @@ async def call_milvus_api(
                 "continued": chunk.get("continued", False),
                 "cross_page_bridge": chunk.get("cross_page_bridge", False),
                 "is_table_like": chunk.get("is_table_like", False),
-                "chunk_index": i,
+                "chunk_index": chunk.get("chunk_index", i),
                 # 添加额外的metadata
                 "headers": chunk.get("headers", []),
                 "file_id": file_id
-            }
+            })
             converted_chunks.append(converted_chunk)
 
         # 构建file_data格式（符合Milvus API的UploadKBRequest）
@@ -976,6 +1010,7 @@ async def upload_pdf(
                         file_path=str(file_path),
                         original_filename=safe_filename,
                         file_id=file_id,
+                        perform_chunking=auto_chunk,
                     )
                 else:
                     return UploadResponse(
@@ -1009,10 +1044,45 @@ async def upload_pdf(
 
                 # 9. 如果启用自动切分，执行切分操作
                 if auto_chunk and extraction_mode == "docling":
-                    response_data['chunking'] = {
-                        'status': 'skipped',
-                        'message': 'Docling 当前阶段仅执行解析，未接入切分',
-                    }
+                    chunks = extraction_result.get('chunks') or []
+                    chunk_stats = extraction_result.get('chunk_stats') or {}
+                    if not chunks:
+                        response_data['chunking'] = {
+                            'status': 'failed',
+                            'error': '结构化切分未生成任何 Chunk',
+                        }
+                    else:
+                        response_data['chunking'] = {
+                            'status': 'completed',
+                            'method': 'structure_aware',
+                            'total_chunks': chunk_stats.get('total_chunks', len(chunks)),
+                            'avg_chunk_tokens': chunk_stats.get('avg_chunk_tokens', 0),
+                            'chunks_path': saved_paths.get('chunks'),
+                        }
+                        if MILVUS_API_ENABLED:
+                            try:
+                                storage_result = await call_milvus_api(
+                                    file_id=file_id,
+                                    filename=safe_filename,
+                                    chunks=chunks,
+                                    knowledge_base_id=knowledge_base_id,
+                                )
+                                response_data['storage'] = {
+                                    'status': 'completed',
+                                    'inserted_count': storage_result.get('inserted_count'),
+                                    'collection_name': storage_result.get('collection_name'),
+                                    'storage_file_id': storage_result.get('file_id'),
+                                }
+                            except Exception as storage_error:
+                                response_data['storage'] = {
+                                    'status': 'failed',
+                                    'error': str(storage_error),
+                                }
+                        else:
+                            response_data['storage'] = {
+                                'status': 'skipped',
+                                'message': 'Milvus API服务未启用',
+                            }
                 elif auto_chunk and CHUNKING_SERVICE_ENABLED:
                     print(f"\n开始自动切分...")
                     try:

@@ -229,6 +229,10 @@ backend/output/extraction_results/{file_id}/
 
 ### 8.2 后续端到端迭代
 
+> 2026-08-29：结构感知切分与 Docling 上传接入已经实现；单元/契约测试及
+> BERT、Mamba 真实 PDF 冒烟结果见 `docs/evaluation/structure-aware-chunking-v1.md`。
+> 在线 Embedding、真实 Milvus 检索和 baseline v2 仍属于后续验收范围。
+
 - `AC-PDF-001`：现有四篇测试论文均能生成合法的 `document.json` 和 `chunks.json`。
 - `AC-PDF-002`：每个 Chunk 都包含 `paper_id`、页码、章节路径和 `source_block_ids`。
 - `AC-PDF-003`：四篇论文的标题、作者和摘要均能生成独立元数据及摘要 Chunk。
