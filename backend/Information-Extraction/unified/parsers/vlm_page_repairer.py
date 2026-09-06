@@ -111,6 +111,7 @@ class OpenAICompatibleVLMClient:
             model=self.model_name,
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body={"enable_thinking": False},
             messages=[
                 {"role": "system", "content": system_prompt},
                 {
