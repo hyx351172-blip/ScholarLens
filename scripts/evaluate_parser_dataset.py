@@ -23,7 +23,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 UNIFIED_DIR = PROJECT_ROOT / "backend" / "Information-Extraction" / "unified"
 sys.path.insert(0, str(UNIFIED_DIR))
 
-from parsers.docling_parser import DoclingParser  # noqa: E402
+from parsers.docling_parser import DoclingParser, save_parse_result  # noqa: E402
 
 
 def ratio(numerator: int, denominator: int) -> float:
@@ -51,10 +51,18 @@ def dangling_relationships(blocks: list[Any]) -> list[str]:
     return sorted(dangling)
 
 
-def evaluate_one(parser: DoclingParser, pdf_path: Path) -> dict[str, Any]:
+def evaluate_one(
+    parser: DoclingParser,
+    pdf_path: Path,
+    *,
+    artifact_dir: Path | None = None,
+) -> dict[str, Any]:
     with pymupdf.open(pdf_path) as pdf:
         expected_pages = pdf.page_count
     parsed = parser.parse(pdf_path, original_filename=pdf_path.name)
+    artifact_paths = (
+        save_parse_result(artifact_dir, parsed) if artifact_dir is not None else {}
+    )
     document = parsed.document
     quality = document.quality
     blocks = document.blocks
@@ -141,6 +149,7 @@ def evaluate_one(parser: DoclingParser, pdf_path: Path) -> dict[str, Any]:
         "warnings": quality.warnings,
         "gates": gates,
         "gate_pass_rate": round(ratio(sum(gates.values()), len(gates)), 4),
+        "artifact_paths": artifact_paths,
     }
 
 
@@ -386,6 +395,14 @@ def main() -> int:
     )
     cli.add_argument("--limit", type=int)
     cli.add_argument(
+        "--artifact-dir",
+        type=Path,
+        help=(
+            "Persist complete parser artifacts under one subdirectory per PDF. "
+            "No chunks.json is generated."
+        ),
+    )
+    cli.add_argument(
         "--reuse-json",
         action="store_true",
         help="Reuse paper metrics from --json-output and only regenerate summaries/report.",
@@ -425,7 +442,16 @@ def main() -> int:
     for index, pdf_path in enumerate(pdfs, start=1):
         print(f"[{index}/{len(pdfs)}] {pdf_path.name}", flush=True)
         try:
-            papers.append(evaluate_one(parser, pdf_path))
+            paper_artifact_dir = (
+                args.artifact_dir / pdf_path.stem if args.artifact_dir else None
+            )
+            papers.append(
+                evaluate_one(
+                    parser,
+                    pdf_path,
+                    artifact_dir=paper_artifact_dir,
+                )
+            )
         except Exception as exc:  # noqa: BLE001 - one bad PDF must not abort the corpus
             failures.append(
                 {
