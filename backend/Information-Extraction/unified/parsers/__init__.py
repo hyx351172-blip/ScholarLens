@@ -17,6 +17,13 @@ from .section_hierarchy_postprocessor import (
     SectionHierarchyResult,
 )
 from .table_postprocessor import LogicalTable, TablePostProcessResult, TablePostProcessor
+from .vlm_page_repairer import (
+    OpenAICompatibleVLMClient,
+    VLMPageRepairConfig,
+    VLMPageRepairResult,
+    VLMPageRepairer,
+    render_pdf_page_data_url,
+)
 
 __all__ = [
     "ContentBlock",
@@ -36,5 +43,10 @@ __all__ = [
     "LogicalTable",
     "TablePostProcessResult",
     "TablePostProcessor",
+    "OpenAICompatibleVLMClient",
+    "VLMPageRepairConfig",
+    "VLMPageRepairResult",
+    "VLMPageRepairer",
+    "render_pdf_page_data_url",
     "save_parse_result",
 ]
