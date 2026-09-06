@@ -20,6 +20,8 @@ from parsers.models import (  # noqa: E402
     ParseQualityReport,
     ParserInfo,
 )
+from parsers.table_postprocessor import LogicalTable  # noqa: E402
+from parsers.vlm_page_repairer import VLMPageRepairer  # noqa: E402
 
 
 def block(order, block_type, text, *, section=None, relations=None):
@@ -43,7 +45,107 @@ class _FakeParser:
         return self.result
 
 
+class _FakeVLMClient:
+    def analyze_page(self, *, page, image_data_url, context):
+        return {
+            "title_block_ids": ["block_000001"],
+            "abstract_block_ids": ["block_000002"],
+            "bindings": [
+                {
+                    "kind": "table",
+                    "object_block_ids": ["block_000004"],
+                    "caption_block_ids": ["block_000003"],
+                    "confidence": 0.95,
+                    "reason": "Caption is directly above the table.",
+                }
+            ],
+        }
+
+
 class DoclingChunkingIntegrationTests(unittest.TestCase):
+    def test_vlm_repair_runs_before_chunking_and_persists_audit(self):
+        """AC-VLM-005: repaired structure reaches chunks and audit storage."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            title = block(1, "title", "Recovered Research Title")
+            abstract = block(2, "paragraph", "Recovered abstract evidence.")
+            caption = block(3, "caption", "Table 1: Evaluation results")
+            table_block = block(4, "table", "| Model | Score |\n|---|---|\n| A | 9 |")
+            document = PaperDocument(
+                schema_version="1.0",
+                paper_id="paper-vlm",
+                file_id="file-vlm",
+                filename="vlm.pdf",
+                parser=ParserInfo(),
+                metadata=PaperMetadata(
+                    title="https://arxiv.org/abs/1234.5678",
+                    abstract=None,
+                ),
+                sections=[],
+                blocks=[title, abstract, caption, table_block],
+                quality=ParseQualityReport(
+                    total_pages=1,
+                    parsed_pages=1,
+                    total_blocks=4,
+                    block_counts={"title": 1, "paragraph": 1, "caption": 1, "table": 1},
+                ),
+            )
+            table = LogicalTable(
+                table_id="table_1",
+                label=None,
+                number=None,
+                caption=None,
+                page_start=1,
+                page_end=1,
+                section_path=[],
+                source_block_ids=[table_block.block_id],
+                caption_block_ids=[],
+                text=table_block.text,
+                status="unlabelled",
+            )
+            parse_result = SimpleNamespace(
+                document=document,
+                markdown="# original",
+                raw_document={},
+                logical_tables=[table],
+                logical_figures=[],
+                logical_formulas=[],
+            )
+
+            import unified_pdf_extraction_service as extraction_service  # noqa: E402
+
+            service = extraction_service.PDFExtractionService()
+            service._docling_parser = _FakeParser(parse_result)
+            service._vlm_page_repairer = VLMPageRepairer(
+                client=_FakeVLMClient(),
+                renderer=lambda _path, page, _dpi: f"data:image/png;base64,page-{page}",
+            )
+            pdf_path = Path(temp_dir) / "vlm.pdf"
+            pdf_path.write_bytes(b"%PDF-1.4\n%%EOF")
+
+            result = asyncio.run(
+                service.extract_docling(
+                    str(pdf_path),
+                    perform_vlm_repair=True,
+                    perform_chunking=True,
+                )
+            )
+
+            self.assertTrue(result["metadata"]["vlm_repair_performed"])
+            self.assertEqual(
+                result["metadata"]["paper_metadata"]["title"],
+                "Recovered Research Title",
+            )
+            self.assertEqual(result["tables"][0]["caption_block_ids"], [caption.block_id])
+            self.assertEqual(len(result["vlm_repair"]["accepted_repairs"]), 3)
+            self.assertTrue(any(chunk["content_type"] == "table" for chunk in result["chunks"]))
+
+            extraction_service.EXTRACTION_RESULTS_DIR = Path(temp_dir) / "results"
+            paths = extraction_service.save_extraction_results(
+                "file-vlm", "vlm.pdf", result
+            )
+            audit = json.loads(Path(paths["vlm_repair"]).read_text(encoding="utf-8"))
+            self.assertEqual(len(audit["accepted_repairs"]), 3)
+
     def test_extract_docling_chunks_and_persists_scientific_contract(self):
         """AC-PDF-001/002: Docling output persists valid chunks.json."""
         with tempfile.TemporaryDirectory() as temp_dir:

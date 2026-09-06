@@ -30,6 +30,11 @@ from llm_extraction import PAGES_PER_REQUEST, CONCURRENT_REQUESTS # type: ignore
 from dotenv import load_dotenv # type: ignore
 from chunkers.structure_aware_chunker import StructureAwareChunker
 from parsers.docling_parser import DoclingParser
+from parsers.vlm_page_repairer import (
+    OpenAICompatibleVLMClient,
+    VLMPageRepairConfig,
+    VLMPageRepairer,
+)
 
 # Windows commonly defaults redirected console output to GBK.  This service
 # prints Unicode status symbols, so force UTF-8 to prevent uploads from failing
@@ -161,6 +166,7 @@ class PDFExtractionService:
         self.default_concurrent_requests = CONCURRENT_REQUESTS
         self.default_dpi = 100
         self._docling_parser = None
+        self._vlm_page_repairer = None
         self.structure_aware_chunker = StructureAwareChunker()
 
     @property
@@ -169,6 +175,32 @@ class PDFExtractionService:
         if self._docling_parser is None:
             self._docling_parser = DoclingParser(table_mode="accurate", do_ocr=False)
         return self._docling_parser
+
+    @property
+    def vlm_page_repairer(self) -> VLMPageRepairer:
+        """Lazily build the paid VLM client only when repair is requested."""
+        if self._vlm_page_repairer is None:
+            api_key = os.getenv("VLM_REPAIR_API_KEY") or os.getenv("API_KEY", "")
+            model_name = os.getenv("VLM_REPAIR_MODEL_NAME") or os.getenv(
+                "MODEL_NAME", "qwen3-vl-plus"
+            )
+            base_url = os.getenv("VLM_REPAIR_BASE_URL") or os.getenv("MODEL_URL", "")
+            client = OpenAICompatibleVLMClient(
+                api_key=api_key,
+                model_name=model_name,
+                base_url=base_url,
+            )
+            self._vlm_page_repairer = VLMPageRepairer(
+                client=client,
+                config=VLMPageRepairConfig(
+                    min_confidence=float(
+                        os.getenv("VLM_REPAIR_MIN_CONFIDENCE", "0.8")
+                    ),
+                    max_pages=int(os.getenv("VLM_REPAIR_MAX_PAGES", "8")),
+                    render_dpi=int(os.getenv("VLM_REPAIR_RENDER_DPI", "144")),
+                ),
+            )
+        return self._vlm_page_repairer
 
     async def extract_fast(self, file_path: str, original_filename: Optional[str] = None) -> Dict[str, Any]:
         """快速模式：使用PyMuPDF4LLM提取
@@ -395,8 +427,9 @@ class PDFExtractionService:
         original_filename: Optional[str] = None,
         file_id: Optional[str] = None,
         perform_chunking: bool = False,
+        perform_vlm_repair: bool = False,
     ) -> Dict[str, Any]:
-        """Use Docling and optionally build provenance-preserving chunks."""
+        """Use Docling, optionally repair difficult pages, then optionally chunk."""
         print(f"\n{'='*60}")
         mode_label = "并执行结构感知切分" if perform_chunking else "不执行切分"
         print(f"Docling 结构化解析（{mode_label}）")
@@ -408,6 +441,14 @@ class PDFExtractionService:
             file_id=file_id,
             original_filename=original_filename,
         )
+        vlm_repair_result = None
+        if perform_vlm_repair:
+            vlm_repair_result = await asyncio.to_thread(
+                self.vlm_page_repairer.repair,
+                Path(file_path),
+                parse_result,
+            )
+            parse_result = vlm_repair_result.parse_result
         document = parse_result.document
         quality = asdict(document.quality)
         chunking_result = None
@@ -428,6 +469,10 @@ class PDFExtractionService:
         print(f"  - 逻辑图: {len(parse_result.logical_figures)}")
         print(f"  - 逻辑公式: {len(parse_result.logical_formulas)}")
         print(f"  - 章节: {len(document.sections)}")
+        if vlm_repair_result is not None:
+            print(f"  - VLM 候选页: {len(vlm_repair_result.candidate_pages)}")
+            print(f"  - VLM 接受修复: {len(vlm_repair_result.accepted_repairs)}")
+            print(f"  - VLM 拒绝修复: {len(vlm_repair_result.rejected_repairs)}")
         if chunking_result is not None:
             print(f"  - 结构化 Chunks: {chunking_result['chunk_stats']['total_chunks']}")
         print(f"  - 耗时: {quality['duration_seconds']} 秒")
@@ -448,6 +493,7 @@ class PDFExtractionService:
                 "paper_metadata": asdict(document.metadata),
                 "quality": quality,
                 "chunking_performed": chunking_result is not None,
+                "vlm_repair_performed": vlm_repair_result is not None,
             },
             "structured_document": document.to_dict(),
             "docling_document": parse_result.raw_document,
@@ -459,6 +505,11 @@ class PDFExtractionService:
             "chunk_stats": chunking_result["chunk_stats"] if chunking_result else None,
             "chunking_warnings": chunking_result["warnings"] if chunking_result else [],
             "chunk_schema_version": chunking_result["schema_version"] if chunking_result else None,
+            "vlm_repair": (
+                vlm_repair_result.audit_dict()
+                if vlm_repair_result is not None
+                else None
+            ),
         }
 
     async def extract_from_pdf(self, pdf_path: str, original_filename: Optional[str] = None) -> ExtractionResult:
@@ -680,7 +731,15 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
             json.dump(logical_formulas, f, ensure_ascii=False, indent=2)
         saved_paths['formulas'] = str(formulas_path)
 
-    # 8. Scientific chunks generated from the canonical Docling structure.
+    # 8. Auditable VLM repair decisions. Original Docling data remains separate.
+    vlm_repair = result_data.get('vlm_repair')
+    if vlm_repair is not None:
+        vlm_repair_path = result_dir / "vlm-repair.json"
+        with open(vlm_repair_path, 'w', encoding='utf-8') as f:
+            json.dump(vlm_repair, f, ensure_ascii=False, indent=2)
+        saved_paths['vlm_repair'] = str(vlm_repair_path)
+
+    # 9. Scientific chunks generated from the canonical Docling structure.
     scientific_chunks = result_data.get('chunks')
     if scientific_chunks is not None:
         chunks_path = result_dir / "chunks.json"
@@ -898,6 +957,7 @@ async def upload_pdf(
     auto_extract: bool = Form(False),
     extraction_mode: str = Form("fast"),
     auto_chunk: bool = Form(False),
+    enable_vlm_repair: bool = Form(False),
     chunking_method: str = Form("header_recursive"),
     chunk_size: int = Form(1500),
     chunk_overlap: int = Form(200),
@@ -912,6 +972,7 @@ async def upload_pdf(
         auto_extract: 是否自动提取内容（默认 False）
         extraction_mode: 提取模式，"fast"、"accurate" 或 "docling"（仅当 auto_extract=True 时有效）
         auto_chunk: 是否自动切分（默认 False，需要 auto_extract=True）
+        enable_vlm_repair: 是否使用 VLM 修复 Docling 困难页面（默认 False）
         chunking_method: 切分方法，"header_recursive" 或 "markdown_only"
         chunk_size: 目标chunk大小（默认 1500）
         chunk_overlap: chunk重叠长度（默认 200）
@@ -1011,6 +1072,7 @@ async def upload_pdf(
                         original_filename=safe_filename,
                         file_id=file_id,
                         perform_chunking=auto_chunk,
+                        perform_vlm_repair=enable_vlm_repair,
                     )
                 else:
                     return UploadResponse(
@@ -1398,8 +1460,9 @@ async def extract_docling(
     file: UploadFile = File(...),
     save_file: bool = Form(True),
     knowledge_base_id: Optional[str] = Form(None),
+    enable_vlm_repair: bool = Form(False),
 ):
-    """Docling structured parsing endpoint. This endpoint never performs chunking."""
+    """Docling parsing with optional VLM repair. This endpoint never chunks."""
     temp_file = None
     try:
         safe_filename = Path(file.filename).name if file.filename else "unknown.pdf"
@@ -1427,6 +1490,7 @@ async def extract_docling(
             file_path=str(extraction_path),
             original_filename=safe_filename,
             file_id=file_id,
+            perform_vlm_repair=enable_vlm_repair,
         )
         if save_file:
             saved_paths = save_extraction_results(file_id, safe_filename, result)
@@ -1437,11 +1501,16 @@ async def extract_docling(
                 'knowledge_base_id': knowledge_base_id,
                 'paths': saved_paths,
                 'chunking_performed': False,
+                'vlm_repair_performed': enable_vlm_repair,
             }
 
         return ExtractionResponse(
             success=True,
-            message="Docling 解析成功（未执行切分）",
+            message=(
+                "Docling + VLM 修复成功（未执行切分）"
+                if enable_vlm_repair
+                else "Docling 解析成功（未执行切分）"
+            ),
             filename=safe_filename,
             data=result,
         )
