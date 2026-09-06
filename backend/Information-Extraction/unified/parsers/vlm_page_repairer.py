@@ -18,11 +18,18 @@ from typing import Any, Callable, Dict, List, Optional, Protocol
 import pymupdf
 
 from .docling_parser import DoclingParseResult
+from .evidence_context_postprocessor import LogicalFigure
+from .models import ContentBlock
+from .table_postprocessor import LogicalTable
 
 
 _CAPTION_TYPES = {"caption", "figure_caption", "paragraph", "text", "list_item"}
 _GENERIC_TITLES = {"perspective", "article", "research article", "contents"}
 _LABEL_RE = re.compile(r"\b(Table|Figure|Fig\.)\s*(\d+)\b", re.IGNORECASE)
+_LEADING_OBJECT_LABEL_RE = re.compile(
+    r"^\s*(Table|Fig(?:ure)?\.?)\s*([A-Za-z]*\.?\d+[A-Za-z]?)\b",
+    re.IGNORECASE,
+)
 
 
 class VLMPageClient(Protocol):
@@ -104,8 +111,11 @@ class OpenAICompatibleVLMClient:
             "You may select only block_id values present in allowed_blocks. Never transcribe, "
             "rewrite, infer, or correct table cells, equations, or body text. For metadata, "
             "return source block IDs rather than generated text. For bindings, connect an "
-            "existing table/figure block to existing caption text on this page. If uncertain, "
-            "return empty arrays."
+            "existing table/figure block to existing caption text on this page. If a block is "
+            "typed as table but the author explicitly labels it Figure/Fig. in an existing "
+            "caption, put it only in reclassifications with from_kind=table and "
+            "to_kind=figure; do not also emit a binding for it. Never infer a reclassification "
+            "from visual appearance alone. If uncertain, return empty arrays."
         )
         response = self._client.chat.completions.create(
             model=self.model_name,
@@ -124,6 +134,9 @@ class OpenAICompatibleVLMClient:
                                 f"{page}. Output schema: "
                                 '{"title_block_ids":[],"abstract_block_ids":[],"bindings":['
                                 '{"kind":"table|figure","object_block_ids":[],"caption_block_ids":[],'
+                                '"confidence":0.0,"reason":""}],"reclassifications":['
+                                '{"from_kind":"table","to_kind":"figure",'
+                                '"object_block_ids":[],"caption_block_ids":[],'
                                 '"confidence":0.0,"reason":""}]}. Context:\n'
                                 + json.dumps(context, ensure_ascii=False)
                             ),
@@ -193,6 +206,7 @@ class VLMPageRepairer:
                 if not isinstance(payload, dict):
                     raise TypeError("VLM response is not a JSON object")
                 self._apply_metadata(page, payload, repaired, result)
+                self._apply_reclassifications(page, payload, repaired, result)
                 self._apply_bindings(page, payload, repaired, result)
             except Exception as exc:  # one paid-page failure must not discard Docling output
                 result.warnings.append(
@@ -227,6 +241,7 @@ class VLMPageRepairer:
                 {
                     "table_id": table.table_id,
                     "source_block_ids": table.source_block_ids,
+                    "reclassification_allowed": "table_to_figure_only_with_explicit_figure_caption",
                 }
                 for table in parsed.logical_tables
                 if not table.caption_block_ids
@@ -242,6 +257,266 @@ class VLMPageRepairer:
                 if not figure.caption_block_ids and figure.page == page
             ],
         }
+
+    def _apply_reclassifications(
+        self,
+        page: int,
+        payload: Dict[str, Any],
+        parsed: DoclingParseResult,
+        result: VLMPageRepairResult,
+    ) -> None:
+        proposals = payload.get("reclassifications", [])
+        if not isinstance(proposals, list):
+            result.rejected_repairs.append(
+                {
+                    "type": "object_reclassification",
+                    "page": page,
+                    "reason": "reclassifications_not_a_list",
+                }
+            )
+            return
+        block_map = {block.block_id: block for block in parsed.document.blocks}
+        for raw in proposals:
+            if not isinstance(raw, dict):
+                result.rejected_repairs.append(
+                    {
+                        "type": "object_reclassification",
+                        "page": page,
+                        "reason": "not_an_object",
+                    }
+                )
+                continue
+            from_kind = str(raw.get("from_kind", "")).lower()
+            to_kind = str(raw.get("to_kind", "")).lower()
+            object_ids = _string_list(raw.get("object_block_ids", []))
+            caption_ids = _string_list(raw.get("caption_block_ids", []))
+            try:
+                confidence = float(raw.get("confidence", 0.0))
+            except (TypeError, ValueError):
+                confidence = 0.0
+            reject_reason = self._reclassification_rejection_reason(
+                from_kind=from_kind,
+                to_kind=to_kind,
+                object_ids=object_ids,
+                caption_ids=caption_ids,
+                confidence=confidence,
+                page=page,
+                block_map=block_map,
+            )
+            logical_table = None
+            if reject_reason is None:
+                logical_table = self._find_exact_logical_table(object_ids, parsed)
+                if logical_table is None:
+                    reject_reason = "no_exact_logical_table"
+                elif logical_table.caption_block_ids:
+                    reject_reason = "logical_object_already_has_caption"
+                elif (
+                    logical_table.page_start != page
+                    or logical_table.page_end != page
+                ):
+                    reject_reason = "multi_or_cross_page_reclassification_not_allowed"
+            caption_text = " ".join(
+                block_map[block_id].text.strip()
+                for block_id in caption_ids
+                if block_id in block_map
+            )
+            label = _leading_object_label(caption_text)
+            if reject_reason is None and (label is None or label[0] != "figure"):
+                reject_reason = "caption_not_explicitly_figure"
+            if reject_reason is None:
+                for caption_id in caption_ids:
+                    describes = block_map[caption_id].relations.get(
+                        "describes_block_ids", []
+                    )
+                    if isinstance(describes, str):
+                        describes = [describes]
+                    if describes and not set(describes).issubset(set(object_ids)):
+                        reject_reason = "caption_already_bound"
+                        break
+            if reject_reason is not None:
+                result.rejected_repairs.append(
+                    {
+                        "type": "object_reclassification",
+                        "page": page,
+                        "from_kind": from_kind,
+                        "to_kind": to_kind,
+                        "object_block_ids": object_ids,
+                        "caption_block_ids": caption_ids,
+                        "confidence": confidence,
+                        "reason": reject_reason,
+                    }
+                )
+                continue
+            assert logical_table is not None and label is not None
+            self._reclassify_table_as_figure(
+                page=page,
+                table=logical_table,
+                object_ids=object_ids,
+                caption_ids=caption_ids,
+                caption_text=caption_text,
+                label=label,
+                confidence=confidence,
+                reason=str(raw.get("reason", ""))[:500],
+                parsed=parsed,
+                block_map=block_map,
+                result=result,
+            )
+
+    def _reclassification_rejection_reason(
+        self,
+        *,
+        from_kind: str,
+        to_kind: str,
+        object_ids: List[str],
+        caption_ids: List[str],
+        confidence: float,
+        page: int,
+        block_map: Dict[str, ContentBlock],
+    ) -> Optional[str]:
+        if confidence < self.config.min_confidence:
+            return "confidence_below_threshold"
+        if (from_kind, to_kind) != ("table", "figure"):
+            return "unsupported_reclassification"
+        if not object_ids or len(caption_ids) != 1:
+            return "missing_or_ambiguous_block_ids"
+        all_ids = object_ids + caption_ids
+        if any(block_id not in block_map for block_id in all_ids):
+            return "unknown_block_id"
+        if any(block_map[block_id].page != page for block_id in all_ids):
+            return "cross_page_reclassification_not_allowed"
+        if any(block_map[block_id].type != "table" for block_id in object_ids):
+            return "source_type_mismatch"
+        if any(block_map[block_id].type not in _CAPTION_TYPES for block_id in caption_ids):
+            return "caption_type_not_allowed"
+        if any(not block_map[block_id].text.strip() for block_id in caption_ids):
+            return "empty_caption_text"
+        if any(
+            block_map[block_id].relations.get("semantic_type")
+            for block_id in object_ids
+        ):
+            return "already_semantically_classified"
+        return None
+
+    @staticmethod
+    def _find_exact_logical_table(
+        object_ids: List[str], parsed: DoclingParseResult
+    ) -> Optional[LogicalTable]:
+        requested = set(object_ids)
+        matches = [
+            table
+            for table in parsed.logical_tables
+            if requested == set(table.source_block_ids)
+        ]
+        return matches[0] if len(matches) == 1 else None
+
+    @staticmethod
+    def _reclassify_table_as_figure(
+        *,
+        page: int,
+        table: LogicalTable,
+        object_ids: List[str],
+        caption_ids: List[str],
+        caption_text: str,
+        label: tuple[str, str, Optional[int]],
+        confidence: float,
+        reason: str,
+        parsed: DoclingParseResult,
+        block_map: Dict[str, ContentBlock],
+        result: VLMPageRepairResult,
+    ) -> None:
+        _, full_label, numeric_label = label
+        figure_id = f"figure_reclassified_{table.table_id}"
+        existing_ids = {figure.figure_id for figure in parsed.logical_figures}
+        if figure_id in existing_ids:
+            suffix = min(block_map[block_id].order for block_id in object_ids)
+            figure_id = f"{figure_id}_{suffix:06d}"
+        figure = LogicalFigure(
+            figure_id=figure_id,
+            label=full_label,
+            number=numeric_label,
+            caption=caption_text,
+            page=page,
+            section_path=list(table.section_path),
+            source_block_ids=list(table.source_block_ids),
+            caption_block_ids=list(caption_ids),
+            explanation_block_ids=[],
+            status="vlm_reclassified",
+            is_generated_description=False,
+            warnings=["figure_classified_as_table"],
+        )
+        audit = {
+            "type": "object_reclassification",
+            "page": page,
+            "from_kind": "table",
+            "to_kind": "figure",
+            "previous_logical_object_id": table.table_id,
+            "logical_object_id": figure_id,
+            "object_block_ids": list(object_ids),
+            "caption_block_ids": list(caption_ids),
+            "label": full_label,
+            "confidence": confidence,
+            "reason": reason,
+        }
+        parsed.logical_tables = [
+            candidate for candidate in parsed.logical_tables if candidate is not table
+        ]
+        parsed.logical_figures.append(figure)
+        parsed.logical_figures.sort(
+            key=lambda candidate: min(
+                (
+                    block_map[block_id].order
+                    for block_id in candidate.source_block_ids
+                    if block_id in block_map
+                ),
+                default=10**9,
+            )
+        )
+        for object_id in object_ids:
+            block = block_map[object_id]
+            for key in (
+                "logical_table_id",
+                "logical_table_label",
+                "fragment_index",
+                "fragment_count",
+            ):
+                block.relations.pop(key, None)
+            block.relations.update(
+                {
+                    "source_type": block.type,
+                    "semantic_type": "figure",
+                    "classification_source": "vlm_repair",
+                    "semantic_confidence": confidence,
+                    "logical_figure_id": figure_id,
+                    "figure_label": full_label,
+                    "source_block_ids": list(table.source_block_ids),
+                    "caption_block_ids": list(caption_ids),
+                    "postprocess_status": "vlm_reclassified_as_figure",
+                }
+            )
+            warnings = block.relations.get("warnings", [])
+            if not isinstance(warnings, list):
+                warnings = []
+            block.relations["warnings"] = [
+                item for item in warnings if item != "caption_missing"
+            ]
+            _append_unique_relation(
+                block.relations, "warnings", ["figure_classified_as_table"]
+            )
+            block.relations.setdefault("vlm_repairs", []).append(audit)
+        for caption_id in caption_ids:
+            caption = block_map[caption_id]
+            caption.relations.pop("logical_table_id", None)
+            caption.relations.pop("logical_table_label", None)
+            caption.relations.update(
+                {
+                    "logical_figure_id": figure_id,
+                    "figure_label": full_label,
+                    "describes_block_ids": list(object_ids),
+                    "postprocess_status": "attached_to_reclassified_figure",
+                }
+            )
+            caption.relations.setdefault("vlm_repairs", []).append(audit)
+        result.accepted_repairs.append(audit)
 
     def _apply_metadata(
         self,
@@ -335,6 +610,18 @@ class VLMPageRepairer:
                 page=page,
                 block_map=block_map,
             )
+            caption_text = " ".join(
+                block_map[block_id].text.strip()
+                for block_id in caption_ids
+                if block_id in block_map
+            )
+            leading_label = _leading_object_label(caption_text)
+            if (
+                reject_reason is None
+                and leading_label is not None
+                and leading_label[0] != kind
+            ):
+                reject_reason = "caption_label_object_kind_mismatch"
             logical_object = None
             if reject_reason is None:
                 logical_object = self._find_logical_object(kind, object_ids, parsed)
@@ -355,9 +642,6 @@ class VLMPageRepairer:
                     }
                 )
                 continue
-            caption_text = " ".join(
-                block_map[block_id].text.strip() for block_id in caption_ids
-            )
             logical_object.caption_block_ids = caption_ids
             logical_object.caption = caption_text
             logical_object.status = "vlm_bound"
@@ -469,6 +753,20 @@ def _is_suspicious_title(value: Optional[str]) -> bool:
         or normalized.casefold() in _GENERIC_TITLES
         or len(normalized) < 8
     )
+
+
+def _leading_object_label(
+    text: str,
+) -> Optional[tuple[str, str, Optional[int]]]:
+    match = _LEADING_OBJECT_LABEL_RE.search(text or "")
+    if not match:
+        return None
+    raw_kind = match.group(1).casefold()
+    kind = "table" if raw_kind == "table" else "figure"
+    identifier = match.group(2)
+    label_prefix = "Table" if kind == "table" else "Figure"
+    number = int(identifier) if identifier.isdigit() else None
+    return kind, f"{label_prefix} {identifier}", number
 
 
 def _string_list(value: Any) -> List[str]:

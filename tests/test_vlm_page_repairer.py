@@ -26,7 +26,9 @@ from parsers.table_postprocessor import LogicalTable  # noqa: E402
 from parsers.vlm_page_repairer import (  # noqa: E402
     VLMPageRepairConfig,
     VLMPageRepairer,
+    _leading_object_label,
 )
+from chunkers.structure_aware_chunker import StructureAwareChunker  # noqa: E402
 
 
 class FakeVLMClient:
@@ -133,6 +135,19 @@ def fixture() -> DoclingParseResult:
 
 
 class VLMPageRepairerTests(unittest.TestCase):
+    def test_scientific_object_labels_support_main_and_supplementary_forms(self) -> None:
+        """Scientific captions commonly use numeric and appendix-style labels."""
+        expected = {
+            "Figure 2: Main result": ("figure", "Figure 2", 2),
+            "Fig. G.1: Appendix result": ("figure", "Figure G.1", None),
+            "Figure S1: Supplementary result": ("figure", "Figure S1", None),
+            "Fig A1: Appendix result": ("figure", "Figure A1", None),
+            "Table 3a: Ablation": ("table", "Table 3a", None),
+        }
+        for caption, label in expected.items():
+            with self.subTest(caption=caption):
+                self.assertEqual(_leading_object_label(caption), label)
+
     def test_repairs_metadata_and_caption_bindings_using_existing_blocks(self) -> None:
         """AC-VLM-001/002: difficult pages are repaired with auditable block IDs."""
         parsed = fixture()
@@ -244,6 +259,173 @@ class VLMPageRepairerTests(unittest.TestCase):
         self.assertEqual(result.parse_result.document.metadata.title, parsed.document.metadata.title)
         self.assertEqual(result.accepted_repairs, [])
         self.assertGreaterEqual(len(result.rejected_repairs), 3)
+
+    def test_reclassifies_table_shaped_figure_and_routes_it_to_figure_chunker(self) -> None:
+        """AC-VLM-006: author-labelled figures override Docling's table shape."""
+        parsed = fixture()
+        parsed.document.metadata.abstract = "Existing abstract."
+        parsed.document.metadata.title = "A Reliable Paper Title"
+        block_map = {item.block_id: item for item in parsed.document.blocks}
+        block_map["table_caption"].text = "Figure G.1: Formatted dataset example"
+        original = copy.deepcopy(parsed)
+        client = FakeVLMClient(
+            {
+                2: {
+                    "reclassifications": [
+                        {
+                            "from_kind": "table",
+                            "to_kind": "figure",
+                            "object_block_ids": ["table_body"],
+                            "caption_block_ids": ["table_caption"],
+                            "confidence": 0.98,
+                            "reason": "The author explicitly labels this object Figure G.1.",
+                        }
+                    ],
+                    "bindings": [],
+                },
+                3: {"reclassifications": [], "bindings": []},
+            }
+        )
+        repairer = VLMPageRepairer(
+            client=client,
+            config=VLMPageRepairConfig(min_confidence=0.8),
+            renderer=lambda _path, page, _dpi: f"data:image/png;base64,page-{page}",
+        )
+
+        result = repairer.repair(Path("paper.pdf"), parsed)
+
+        self.assertEqual(result.parse_result.logical_tables, [])
+        reclassified = next(
+            item
+            for item in result.parse_result.logical_figures
+            if item.source_block_ids == ["table_body"]
+        )
+        self.assertEqual(reclassified.label, "Figure G.1")
+        self.assertIsNone(reclassified.number)
+        self.assertEqual(reclassified.caption_block_ids, ["table_caption"])
+        repaired_blocks = {
+            item.block_id: item for item in result.parse_result.document.blocks
+        }
+        self.assertEqual(repaired_blocks["table_body"].type, "table")
+        self.assertEqual(
+            repaired_blocks["table_body"].relations["source_type"], "table"
+        )
+        self.assertEqual(
+            repaired_blocks["table_body"].relations["semantic_type"], "figure"
+        )
+        self.assertEqual(
+            repaired_blocks["table_caption"].relations["describes_block_ids"],
+            ["table_body"],
+        )
+        audit = next(
+            item
+            for item in result.accepted_repairs
+            if item["type"] == "object_reclassification"
+        )
+        self.assertEqual(audit["from_kind"], "table")
+        self.assertEqual(audit["to_kind"], "figure")
+
+        chunks = StructureAwareChunker().chunk(
+            result.parse_result.document,
+            logical_tables=result.parse_result.logical_tables,
+            logical_figures=result.parse_result.logical_figures,
+            logical_formulas=result.parse_result.logical_formulas,
+        ).chunks
+        source_chunks = [
+            item for item in chunks if "table_body" in item.source_block_ids
+        ]
+        self.assertTrue(source_chunks)
+        self.assertTrue(all(item.content_type == "figure" for item in source_chunks))
+        self.assertEqual(parsed, original)
+
+    def test_reclassification_rejects_unsupported_or_unlabelled_evidence(self) -> None:
+        """AC-VLM-007: reclassification requires explicit author-labelled evidence."""
+        parsed = fixture()
+        parsed.document.metadata.abstract = "Existing abstract."
+        parsed.document.metadata.title = "A Reliable Paper Title"
+        client = FakeVLMClient(
+            {
+                2: {
+                    "reclassifications": [
+                        {
+                            "from_kind": "table",
+                            "to_kind": "figure",
+                            "object_block_ids": ["table_body"],
+                            "caption_block_ids": ["table_caption"],
+                            "confidence": 0.99,
+                            "reason": "The layout looks like a figure.",
+                        },
+                        {
+                            "from_kind": "figure",
+                            "to_kind": "table",
+                            "object_block_ids": ["table_body"],
+                            "caption_block_ids": ["table_caption"],
+                            "confidence": 0.99,
+                            "reason": "Unsupported reverse conversion.",
+                        },
+                    ],
+                    "bindings": [],
+                },
+                3: {"reclassifications": [], "bindings": []},
+            }
+        )
+
+        result = VLMPageRepairer(
+            client=client,
+            config=VLMPageRepairConfig(min_confidence=0.8),
+            renderer=lambda _path, page, _dpi: f"data:image/png;base64,page-{page}",
+        ).repair(Path("paper.pdf"), parsed)
+
+        self.assertEqual(len(result.parse_result.logical_tables), 1)
+        self.assertNotIn(
+            "semantic_type", result.parse_result.document.blocks[4].relations
+        )
+        reasons = {
+            item["reason"]
+            for item in result.rejected_repairs
+            if item["type"] == "object_reclassification"
+        }
+        self.assertIn("caption_not_explicitly_figure", reasons)
+        self.assertIn("unsupported_reclassification", reasons)
+
+    def test_table_binding_rejects_an_explicit_figure_caption(self) -> None:
+        """AC-VLM-009: type-conflicting captions cannot inflate table coverage."""
+        parsed = fixture()
+        parsed.document.metadata.abstract = "Existing abstract."
+        parsed.document.metadata.title = "A Reliable Paper Title"
+        block_map = {item.block_id: item for item in parsed.document.blocks}
+        block_map["table_caption"].text = "Figure G.1: Formatted dataset example"
+        client = FakeVLMClient(
+            {
+                2: {
+                    "reclassifications": [],
+                    "bindings": [
+                        {
+                            "kind": "table",
+                            "object_block_ids": ["table_body"],
+                            "caption_block_ids": ["table_caption"],
+                            "confidence": 0.99,
+                            "reason": "The caption is adjacent.",
+                        }
+                    ],
+                },
+                3: {"reclassifications": [], "bindings": []},
+            }
+        )
+
+        result = VLMPageRepairer(
+            client=client,
+            config=VLMPageRepairConfig(min_confidence=0.8),
+            renderer=lambda _path, page, _dpi: f"data:image/png;base64,page-{page}",
+        ).repair(Path("paper.pdf"), parsed)
+
+        self.assertEqual(result.parse_result.logical_tables[0].caption_block_ids, [])
+        self.assertTrue(
+            any(
+                item.get("reason") == "caption_label_object_kind_mismatch"
+                for item in result.rejected_repairs
+            )
+        )
 
     def test_page_selection_is_deduplicated_limited_and_deterministic(self) -> None:
         """AC-VLM-004: only high-value difficult pages are sent to the paid model."""

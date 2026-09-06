@@ -62,7 +62,134 @@ class _FakeVLMClient:
         }
 
 
+class _FakeReclassifyingVLMClient:
+    def analyze_page(self, *, page, image_data_url, context):
+        return {
+            "reclassifications": [
+                {
+                    "from_kind": "table",
+                    "to_kind": "figure",
+                    "object_block_ids": ["block_000004"],
+                    "caption_block_ids": ["block_000003"],
+                    "confidence": 0.97,
+                    "reason": "The author labels the table-shaped object Figure G.1.",
+                }
+            ],
+            "bindings": [],
+        }
+
+
 class DoclingChunkingIntegrationTests(unittest.TestCase):
+    def test_vlm_reclassification_updates_service_contract_and_figure_chunk(self):
+        """AC-VLM-008: the service exposes reclassified evidence consistently."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            title = block(1, "title", "Semantic Classification Paper")
+            body = block(2, "paragraph", "Existing abstract evidence.")
+            caption = block(3, "caption", "Figure G.1: Formatted dataset example")
+            table_block = block(
+                4,
+                "table",
+                "| Context | Answer |\n|---|---|\n| Example | Yes |",
+                relations={
+                    "logical_table_id": "logical_table_unlabelled_0001",
+                    "caption_block_ids": [],
+                    "postprocess_status": "caption_missing",
+                    "warnings": ["caption_missing"],
+                },
+            )
+            document = PaperDocument(
+                schema_version="1.0",
+                paper_id="paper-reclassify",
+                file_id="file-reclassify",
+                filename="reclassify.pdf",
+                parser=ParserInfo(),
+                metadata=PaperMetadata(
+                    title=title.text,
+                    abstract=body.text,
+                ),
+                sections=[],
+                blocks=[title, body, caption, table_block],
+                quality=ParseQualityReport(
+                    total_pages=1,
+                    parsed_pages=1,
+                    total_blocks=4,
+                    block_counts={
+                        "title": 1,
+                        "paragraph": 1,
+                        "caption": 1,
+                        "table": 1,
+                    },
+                ),
+            )
+            table = LogicalTable(
+                table_id="logical_table_unlabelled_0001",
+                label=None,
+                number=None,
+                caption=None,
+                page_start=1,
+                page_end=1,
+                section_path=["Appendix G"],
+                source_block_ids=[table_block.block_id],
+                caption_block_ids=[],
+                text=table_block.text,
+                status="caption_missing",
+                warnings=["caption_missing"],
+            )
+            parse_result = SimpleNamespace(
+                document=document,
+                markdown="# Semantic Classification Paper",
+                raw_document={},
+                logical_tables=[table],
+                logical_figures=[],
+                logical_formulas=[],
+            )
+
+            import unified_pdf_extraction_service as extraction_service  # noqa: E402
+
+            service = extraction_service.PDFExtractionService()
+            service._docling_parser = _FakeParser(parse_result)
+            service._vlm_page_repairer = VLMPageRepairer(
+                client=_FakeReclassifyingVLMClient(),
+                renderer=lambda _path, page, _dpi: f"data:image/png;base64,page-{page}",
+            )
+            pdf_path = Path(temp_dir) / "reclassify.pdf"
+            pdf_path.write_bytes(b"%PDF-1.4\n%%EOF")
+
+            result = asyncio.run(
+                service.extract_docling(
+                    str(pdf_path),
+                    perform_vlm_repair=True,
+                    perform_chunking=True,
+                )
+            )
+
+            self.assertEqual(result["metadata"]["logical_table_count"], 0)
+            self.assertEqual(result["metadata"]["logical_figure_count"], 1)
+            self.assertEqual(result["tables"], [])
+            self.assertEqual(result["figures"][0]["label"], "Figure G.1")
+            source = next(
+                item
+                for item in result["structured_document"]["blocks"]
+                if item["block_id"] == table_block.block_id
+            )
+            self.assertEqual(source["type"], "table")
+            self.assertEqual(source["relations"]["semantic_type"], "figure")
+            evidence_chunks = [
+                item
+                for item in result["chunks"]
+                if table_block.block_id in item["source_block_ids"]
+            ]
+            self.assertTrue(evidence_chunks)
+            self.assertTrue(
+                all(item["content_type"] == "figure" for item in evidence_chunks)
+            )
+            self.assertTrue(
+                any(
+                    item["type"] == "object_reclassification"
+                    for item in result["vlm_repair"]["accepted_repairs"]
+                )
+            )
+
     def test_vlm_repair_runs_before_chunking_and_persists_audit(self):
         """AC-VLM-005: repaired structure reaches chunks and audit storage."""
         with tempfile.TemporaryDirectory() as temp_dir:
