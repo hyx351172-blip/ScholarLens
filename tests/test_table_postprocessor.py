@@ -138,6 +138,122 @@ class TablePostProcessorTests(unittest.TestCase):
         self.assertEqual(result.tables[1].source_block_ids, ["block_000062"])
         self.assertEqual(result.tables[1].caption_block_ids, ["block_000063"])
 
+    def test_full_identifiers_keep_decimal_tables_in_distinct_caption_groups(self):
+        """AC-TABLE-OWN-001: Table 3.1 and 3.2 are distinct logical tables."""
+        blocks = [
+            block(70, "caption", "Table 3.1: Zero-shot results."),
+            block(71, "table", "| Model | Score |\n|---|---:|\n| A | 1 |"),
+            block(72, "caption", "Table 3.2: Few-shot results."),
+            block(73, "table", "| Model | Score |\n|---|---:|\n| B | 2 |"),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual([table.label for table in result.tables], ["Table 3.1", "Table 3.2"])
+        self.assertEqual([table.identifier for table in result.tables], ["3.1", "3.2"])
+        self.assertEqual(result.tables[0].source_block_ids, ["block_000071"])
+        self.assertEqual(result.tables[0].caption_block_ids, ["block_000070"])
+        self.assertEqual(result.tables[1].source_block_ids, ["block_000073"])
+        self.assertEqual(result.tables[1].caption_block_ids, ["block_000072"])
+
+        repeated = self.processor.process(result.blocks)
+        self.assertEqual(result.tables, repeated.tables)
+        self.assertEqual(result.blocks, repeated.blocks)
+
+    def test_leading_caption_owns_contiguous_unlabelled_tables_until_boundary(self):
+        """AC-TABLE-OWN-002: one caption owns its bounded following table region."""
+        blocks = [
+            block(80, "caption", "Table A.1: Results split into two physical grids."),
+            block(81, "table", "| A | B |\n|---|---|\n| 1 | 2 |"),
+            block(82, "table", "| C | D |\n|---|---|\n| 3 | 4 |"),
+            block(83, "paragraph", "The next grid is unrelated."),
+            block(84, "table", "| X | Y |\n|---|---|\n| 5 | 6 |"),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual(len(result.tables), 2)
+        self.assertEqual(result.tables[0].label, "Table A.1")
+        self.assertEqual(
+            result.tables[0].source_block_ids,
+            ["block_000081", "block_000082"],
+        )
+        self.assertEqual(result.tables[0].caption_block_ids, ["block_000080"])
+        self.assertEqual(result.tables[1].source_block_ids, ["block_000084"])
+        self.assertEqual(result.blocks[1].relations["fragment_count"], 2)
+        self.assertEqual(result.blocks[2].relations["fragment_index"], 2)
+
+    def test_trailing_caption_owns_contiguous_unlabelled_tables_above(self):
+        """AC-TABLE-OWN-003: a trailing caption can own a bounded preceding group."""
+        blocks = [
+            block(90, "table", "| A | B |\n|---|---|\n| 1 | 2 |"),
+            block(91, "table", "| C | D |\n|---|---|\n| 3 | 4 |"),
+            block(92, "caption", "Table S1: Supplementary results."),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual(len(result.tables), 1)
+        self.assertEqual(result.tables[0].label, "Table S1")
+        self.assertEqual(result.tables[0].identifier, "S1")
+        self.assertEqual(
+            result.tables[0].source_block_ids,
+            ["block_000090", "block_000091"],
+        )
+        self.assertEqual(result.tables[0].caption_block_ids, ["block_000092"])
+
+    def test_caption_region_stops_at_a_different_explicit_table(self):
+        """AC-TABLE-OWN-004: ownership never crosses another table identity."""
+        blocks = [
+            block(100, "caption", "Table 1: Primary results."),
+            block(101, "table", "| A |\n|---|\n| 1 |"),
+            block(102, "table", "Table 2: Ablation.\n| B |\n|---|\n| 2 |"),
+            block(103, "caption", "Table 2: Ablation."),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual([table.label for table in result.tables], ["Table 1", "Table 2"])
+        self.assertEqual(result.tables[0].source_block_ids, ["block_000101"])
+        self.assertEqual(result.tables[1].source_block_ids, ["block_000102"])
+        self.assertEqual(result.tables[0].caption_block_ids, ["block_000100"])
+        self.assertEqual(result.tables[1].caption_block_ids, ["block_000103"])
+
+    def test_leading_caption_does_not_absorb_an_unlabelled_table_above(self):
+        """AC-TABLE-OWN-005: caption ownership follows its selected direction."""
+        blocks = [
+            block(110, "table", "| Previous |\n|---|\n| unrelated |"),
+            block(111, "caption", "Table 7: Current results."),
+            block(112, "table", "| Current |\n|---|\n| result |"),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual(len(result.tables), 2)
+        self.assertEqual(result.tables[0].source_block_ids, ["block_000110"])
+        self.assertEqual(result.tables[0].caption_block_ids, [])
+        self.assertEqual(result.tables[1].label, "Table 7")
+        self.assertEqual(result.tables[1].source_block_ids, ["block_000112"])
+        self.assertEqual(result.tables[1].caption_block_ids, ["block_000111"])
+
+    def test_two_captions_cannot_both_own_the_same_physical_table(self):
+        """AC-TABLE-OWN-006: one physical table has one primary caption."""
+        blocks = [
+            block(120, "caption", "Table 8: Caption before the table."),
+            block(121, "table", "| Result |\n|---|\n| 8 |"),
+            block(122, "caption", "Table 8: Duplicate caption after the table."),
+        ]
+
+        result = self.processor.process(blocks)
+
+        self.assertEqual(len(result.tables), 1)
+        self.assertEqual(result.tables[0].label, "Table 8")
+        self.assertEqual(result.tables[0].source_block_ids, ["block_000121"])
+        self.assertEqual(len(result.tables[0].caption_block_ids), 1)
+        self.assertTrue(
+            any("caption target already owned" in warning for warning in result.warnings)
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

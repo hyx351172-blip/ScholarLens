@@ -7,7 +7,7 @@ ScholarLens 是一个面向学生与科研人员的论文阅读工作台。系�
 ## 当前能力
 
 - 上传 PDF，并使用快速、视觉语言模型或 Docling 模式提取结构化论文内容。
-- 可选使用 VLM 对 Docling 困难页面进行证据受限的标题、摘要、Caption 关系修复及 Table→Figure 语义重分类。
+- 可选使用 VLM 对 Docling 困难页面进行证据受限的标题、摘要、Caption 关系修复及 Table→Figure 语义重分类；逻辑表按完整表号和主 Caption 的有界所有权归并。
 - 按章节及表格、Figure、Formula 绑定关系生成可追溯的 ScientificChunk。
 - 按标题与页面边界切分文档，保留跨页上下文。
 - 使用 Embedding 模型生成向量，并通过 Milvus 完成 Dense Top-K 检索。

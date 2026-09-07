@@ -151,6 +151,7 @@ class VLMPageRepairerTests(unittest.TestCase):
     def test_repairs_metadata_and_caption_bindings_using_existing_blocks(self) -> None:
         """AC-VLM-001/002: difficult pages are repaired with auditable block IDs."""
         parsed = fixture()
+        parsed.document.blocks[3].text = "Table 3.1: Main results"
         original = copy.deepcopy(parsed)
         client = FakeVLMClient(
             {
@@ -202,6 +203,9 @@ class VLMPageRepairerTests(unittest.TestCase):
             "This study evaluates robust repair.",
         )
         self.assertEqual(result.parse_result.logical_tables[0].caption_block_ids, ["table_caption"])
+        self.assertEqual(result.parse_result.logical_tables[0].label, "Table 3.1")
+        self.assertEqual(result.parse_result.logical_tables[0].identifier, "3.1")
+        self.assertIsNone(result.parse_result.logical_tables[0].number)
         self.assertEqual(result.parse_result.logical_figures[0].caption_block_ids, ["figure_caption"])
         repaired_blocks = {
             item.block_id: item for item in result.parse_result.document.blocks
@@ -209,6 +213,10 @@ class VLMPageRepairerTests(unittest.TestCase):
         self.assertEqual(
             repaired_blocks["table_body"].relations["caption_block_ids"],
             ["table_caption"],
+        )
+        self.assertEqual(
+            repaired_blocks["table_body"].relations["logical_table_identifier"],
+            "3.1",
         )
         self.assertEqual(
             repaired_blocks["table_caption"].relations["describes_block_ids"],
