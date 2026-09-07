@@ -25,9 +25,8 @@ from .table_postprocessor import LogicalTable
 
 _CAPTION_TYPES = {"caption", "figure_caption", "paragraph", "text", "list_item"}
 _GENERIC_TITLES = {"perspective", "article", "research article", "contents"}
-_LABEL_RE = re.compile(r"\b(Table|Figure|Fig\.)\s*(\d+)\b", re.IGNORECASE)
 _LEADING_OBJECT_LABEL_RE = re.compile(
-    r"^\s*(Table|Fig(?:ure)?\.?)\s*([A-Za-z]*\.?\d+[A-Za-z]?)\b",
+    r"^\s*(Table|Fig(?:ure)?\.?)\s*([A-Za-z]*\.?\d+(?:\.\d+)*[A-Za-z]?)\b",
     re.IGNORECASE,
 )
 
@@ -645,10 +644,11 @@ class VLMPageRepairer:
             logical_object.caption_block_ids = caption_ids
             logical_object.caption = caption_text
             logical_object.status = "vlm_bound"
-            label_match = _LABEL_RE.search(caption_text)
-            if label_match:
-                logical_object.label = label_match.group(0)
-                logical_object.number = int(label_match.group(2))
+            if leading_label is not None:
+                logical_object.label = leading_label[1]
+                logical_object.number = leading_label[2]
+                if kind == "table":
+                    logical_object.identifier = leading_label[1].split(" ", 1)[1]
             bound_object_ids = list(logical_object.source_block_ids)
             audit = {
                 "type": "caption_binding",
@@ -667,6 +667,13 @@ class VLMPageRepairer:
                 _append_unique_relation(
                     block_map[object_id].relations, "caption_block_ids", caption_ids
                 )
+                if kind == "table":
+                    block_map[object_id].relations.update(
+                        {
+                            "logical_table_label": logical_object.label,
+                            "logical_table_identifier": logical_object.identifier,
+                        }
+                    )
                 block_map[object_id].relations.setdefault("vlm_repairs", []).append(audit)
             for caption_id in caption_ids:
                 _append_unique_relation(

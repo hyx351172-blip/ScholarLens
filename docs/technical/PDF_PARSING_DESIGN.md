@@ -112,6 +112,12 @@ TablePostProcessor 不删除物理块，而是在 `relations` 中写入
 `caption_block_ids`、`fragment_index`、`fragment_count` 和
 `postprocess_status`。同时生成 `tables.json`，供后续结构感知切分消费。
 
+逻辑表采用 Caption ownership：一个主 Caption 只绑定一个有界的物理 table 区域，
+一个物理 table 也只能属于一个主 Caption。前置 Caption 向后、后置 Caption 向前
+扫描同页连续 table block，遇到语义边界或不同的完整表标识符即停止。表标识符保留
+`3.1`、`A.1`、`S1`、`3a` 等完整形式，并额外写入
+`logical_table_identifier`，禁止再按首个整数全局归并。
+
 公式块优先使用 Docling 的标准化 `text`；当 `text` 为空时回退到原始识别字段
 `orig`，并在 `relations.formula_text_source` 中记录 `text`、
 `orig_fallback` 或 `missing`。该回退只恢复 Unicode 数学文本，不声称生成了精确 LaTeX。
@@ -221,11 +227,13 @@ backend/output/extraction_results/{file_id}/
 - `AC-110`：现有四篇解析产物中 Figure Caption 覆盖率为 20/22（90.9%），Formula 上下文覆盖率为 9/9（100%）；该结果衡量结构覆盖，不代表人工标注语义准确率。
 - `AC-111`：四篇论文识别 4 个 Abstract Section 和 25 个 Appendix Section；特殊章节正文绑定率为 100%，字母附录父子关系不一致为 0。
 - `AC-112`：四篇论文 1,042 个 blocks、71 页完成 Reading Order 结构评测；Block 身份丢失、Page 归属改变、幂等性失败和 BBox 回退页均为 0，3 页发生确定性重排。
+- `AC-113`：Caption ownership 的 6 类归属与边界场景通过；GPT-3 论文中的 `Table 3.1` 至 `Table 3.12` 保持为 12 个独立逻辑表，重复 Caption owner、重复 Source owner 和悬空 block 引用均为 0。
 - 完整数据见 `docs/evaluation/docling-parsing-v1.md`。
 - TablePostProcessor 评测见 `docs/evaluation/table-postprocessor-v1.md`。
 - SectionHierarchyPostProcessor 评测见 `docs/evaluation/section-hierarchy-v1.md`。
 - EvidenceContextPostProcessor 评测见 `docs/evaluation/evidence-context-v1.md`。
 - ReadingOrderPostProcessor 评测见 `docs/evaluation/reading-order-v1.md`。
+- Caption ownership 评测见 `docs/evaluation/caption-owned-logical-tables-v1.md`。
 
 ### 8.2 后续端到端迭代
 
