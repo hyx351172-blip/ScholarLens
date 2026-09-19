@@ -1,5 +1,8 @@
 # Structure-Aware Chunker 评测（v1）
 
+> 后续版本：Chunker v2 的大型证据切分、精确来源和 19 篇论文回归见
+> `docs/evaluation/structure-aware-chunking-v2.md`。
+
 > 日期：2026-08-29
 > 范围：Docling 结构化结果 → ScientificChunk；不包含在线 Embedding 质量和检索指标
 

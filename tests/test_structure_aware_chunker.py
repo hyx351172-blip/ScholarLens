@@ -14,6 +14,7 @@ sys.path.insert(0, str(UNIFIED_DIR))
 from chunkers.structure_aware_chunker import (  # noqa: E402
     ChunkingConfig,
     StructureAwareChunker,
+    estimate_tokens,
 )
 from parsers.evidence_context_postprocessor import (  # noqa: E402
     LogicalFigure,
@@ -279,10 +280,226 @@ class StructureAwareChunkerTests(unittest.TestCase):
 
         self.assertEqual(first, second)
         chunk = first["chunks"][0]
-        self.assertEqual(chunk["chunk_id"], "paper-sha256:chunk_0001")
+        self.assertEqual(
+            chunk["chunk_id"],
+            "paper-sha256:paragraph:block_000060:part_0001",
+        )
+        self.assertEqual(chunk["legacy_chunk_id"], "paper-sha256:chunk_0001")
         self.assertEqual(chunk["pages"], [1])
         self.assertFalse(chunk["cross_page_bridge"])
         self.assertIn("text_length", chunk)
+
+    def test_unstructured_large_table_is_bounded_without_losing_caption(self):
+        """AC-CHUNK-V2-001: fallback table chunks respect the hard budget."""
+        table_block = block(
+            70,
+            "table",
+            "\n".join(
+                f"Model {index} reports accuracy {80 + index} with detailed evidence"
+                for index in range(1, 15)
+            ),
+            page=8,
+            section=["5 Results"],
+        )
+        caption_block = block(
+            71,
+            "caption",
+            "Table A.1: Detailed results.",
+            page=8,
+            section=["5 Results"],
+        )
+        table = LogicalTable(
+            table_id="logical_table_a_1",
+            label="Table A.1",
+            number=None,
+            caption=caption_block.text,
+            page_start=8,
+            page_end=8,
+            section_path=["5 Results"],
+            source_block_ids=[table_block.block_id],
+            caption_block_ids=[caption_block.block_id],
+            text=table_block.text,
+            status="correct",
+            identifier="A.1",
+        )
+        chunker = StructureAwareChunker(ChunkingConfig(target_tokens=24, max_tokens=32))
+
+        result = chunker.chunk(
+            document([table_block, caption_block]), logical_tables=[table]
+        )
+        chunks = [item for item in result.chunks if item.content_type == "table"]
+
+        self.assertGreater(len(chunks), 1)
+        self.assertTrue(all(item.token_count <= 32 for item in chunks))
+        self.assertTrue(all(table.caption in item.text for item in chunks))
+        self.assertTrue(all(item.table_identifier == "A.1" for item in chunks))
+        self.assertFalse(
+            any("oversized_atomic_unit" in item.warnings for item in chunks)
+        )
+
+    def test_multiblock_table_chunks_have_precise_page_and_source_provenance(self):
+        """AC-CHUNK-V2-002: each table part cites only blocks it actually uses."""
+        first = block(
+            80,
+            "table",
+            "| Model | Score |\n|---|---|\n| A | 1 |\n| B | 2 |",
+            page=10,
+            section=["6 Evaluation"],
+        )
+        second = block(
+            81,
+            "table",
+            "| Model | Score |\n|---|---|\n| C | 3 |\n| D | 4 |",
+            page=11,
+            section=["6 Evaluation"],
+        )
+        caption = block(
+            82,
+            "caption",
+            "Table 6.1: Results continued across pages.",
+            page=10,
+            section=["6 Evaluation"],
+        )
+        table = LogicalTable(
+            table_id="logical_table_6_1",
+            label="Table 6.1",
+            number=None,
+            caption=caption.text,
+            page_start=10,
+            page_end=11,
+            section_path=["6 Evaluation"],
+            source_block_ids=[first.block_id, second.block_id],
+            caption_block_ids=[caption.block_id],
+            text=f"{first.text}\n\n{second.text}",
+            status="merged_fragments",
+            identifier="6.1",
+        )
+        chunker = StructureAwareChunker(ChunkingConfig(target_tokens=12, max_tokens=22))
+
+        result = chunker.chunk(
+            document([first, second, caption]), logical_tables=[table]
+        )
+        chunks = [item for item in result.chunks if item.content_type == "table"]
+
+        self.assertGreaterEqual(len(chunks), 2)
+        for item in chunks:
+            self.assertEqual(item.page_start, item.page_end)
+            expected_source = first.block_id if item.page_start == 10 else second.block_id
+            self.assertEqual(item.source_block_ids, [expected_source])
+            self.assertEqual(item.table_identifier, "6.1")
+
+    def test_long_figure_description_splits_and_repeats_caption(self):
+        """AC-CHUNK-V2-003: a long Figure core no longer creates an oversized chunk."""
+        figure_block = block(
+            90,
+            "figure",
+            " ".join(f"visual-token-{index}" for index in range(80)),
+            page=12,
+            section=["7 Analysis"],
+        )
+        caption_block = block(
+            91,
+            "caption",
+            "Figure 7: Error categories.",
+            page=12,
+            section=["7 Analysis"],
+        )
+        figure = LogicalFigure(
+            figure_id="logical_figure_7",
+            label="Figure 7",
+            number=7,
+            caption=caption_block.text,
+            page=12,
+            section_path=["7 Analysis"],
+            source_block_ids=[figure_block.block_id],
+            caption_block_ids=[caption_block.block_id],
+            explanation_block_ids=[],
+            status="context_bound",
+        )
+        chunker = StructureAwareChunker(ChunkingConfig(target_tokens=24, max_tokens=32))
+
+        result = chunker.chunk(
+            document([figure_block, caption_block]), logical_figures=[figure]
+        )
+        chunks = [item for item in result.chunks if item.content_type == "figure"]
+
+        self.assertGreater(len(chunks), 1)
+        self.assertTrue(all(item.token_count <= 32 for item in chunks))
+        self.assertTrue(all(caption_block.text in item.text for item in chunks))
+
+    def test_paragraphs_do_not_merge_across_structural_evidence(self):
+        """AC-CHUNK-V2-004: Figure/Table/Formula blocks are paragraph barriers."""
+        before = block(100, "paragraph", "Evidence before the figure.", section=["8 Results"])
+        figure = block(101, "figure", "figure.png", section=["8 Results"])
+        after = block(102, "paragraph", "Evidence after the figure.", section=["8 Results"])
+
+        result = StructureAwareChunker().chunk(document([before, figure, after]))
+        chunks = [item for item in result.chunks if item.content_type == "paragraph"]
+
+        self.assertEqual(len(chunks), 2)
+        self.assertEqual(chunks[0].source_block_ids, [before.block_id])
+        self.assertEqual(chunks[1].source_block_ids, [after.block_id])
+
+    def test_chunk_identity_is_stable_when_an_earlier_chunk_is_inserted(self):
+        """AC-CHUNK-V2-005: stable IDs derive from evidence, not global position."""
+        target = block(111, "paragraph", "Stable target evidence.", section=["2 Method"])
+        original = StructureAwareChunker().chunk(document([target]))
+        inserted = block(110, "paragraph", "Earlier evidence.", section=["1 Intro"])
+        changed = StructureAwareChunker().chunk(document([inserted, target]))
+
+        original_target = next(
+            item for item in original.chunks if target.block_id in item.source_block_ids
+        )
+        changed_target = next(
+            item for item in changed.chunks if target.block_id in item.source_block_ids
+        )
+        self.assertEqual(original_target.chunk_id, changed_target.chunk_id)
+        self.assertNotEqual(original_target.chunk_index, changed_target.chunk_index)
+
+    def test_custom_token_counter_controls_chunk_budget(self):
+        """AC-CHUNK-V2-006: production tokenizers can replace the local estimator."""
+        counter = lambda value: len(value.split())  # noqa: E731
+        text = "one two three four five six seven eight nine ten"
+        chunker = StructureAwareChunker(
+            ChunkingConfig(target_tokens=3, max_tokens=4), token_counter=counter
+        )
+
+        result = chunker.chunk(
+            document([block(120, "paragraph", text, section=["9 Appendix"])])
+        )
+
+        self.assertTrue(all(item.token_count <= 4 for item in result.chunks))
+        self.assertEqual(
+            [item.token_count for item in result.chunks],
+            [counter(item.text) for item in result.chunks],
+        )
+        self.assertGreater(estimate_tokens("visual-token-1"), counter("visual-token-1"))
+
+    def test_empty_table_is_skipped_with_an_explicit_quality_warning(self):
+        """AC-CHUNK-V2-007: empty parser artifacts never become empty chunks."""
+        table_block = block(130, "table", "", page=14, section=["Appendix"])
+        table = LogicalTable(
+            table_id="logical_table_empty",
+            label=None,
+            number=None,
+            caption=None,
+            page_start=14,
+            page_end=14,
+            section_path=["Appendix"],
+            source_block_ids=[table_block.block_id],
+            caption_block_ids=[],
+            text="",
+            status="caption_missing",
+        )
+
+        result = StructureAwareChunker().chunk(
+            document([table_block]), logical_tables=[table]
+        )
+
+        self.assertEqual(result.chunks, [])
+        self.assertTrue(
+            any("no textual table evidence" in warning for warning in result.warnings)
+        )
 
 
 if __name__ == "__main__":

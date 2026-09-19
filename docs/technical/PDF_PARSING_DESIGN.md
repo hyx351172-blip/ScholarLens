@@ -149,9 +149,16 @@ EvidenceContextPostProcessor 在章节、表格后处理完成后运行，建立
   "section_path": ["3 Method", "3.2 Architecture"],
   "source_block_ids": ["block_0042", "block_0043"],
   "table_id": null,
+  "table_identifier": null,
+  "fragment_indexes": [],
   "is_generated_description": false
 }
 ```
+
+Chunk Schema `1.1` 使用基于证据对象和 `part_index` 的稳定 `chunk_id`，并在
+`legacy_chunk_id` 中保留旧版全局顺序 ID。多物理 block 表格子 Chunk 只记录实际
+使用的 source block、fragment 和页码；生产环境可向 Chunker 注入 Embedding 模型
+对应的 tokenizer，默认本地计数器只用于确定性离线评测。
 
 Milvus 必须保存可过滤字段：`paper_id`、`file_id`、`content_type`、`page_start`、`page_end`、`section_path` 和 `chunk_index`。
 
@@ -174,6 +181,7 @@ Milvus 必须保存可过滤字段：`paper_id`、`file_id`、`content_type`、`
 - 表格标题、表头、数据和脚注绑定为同一逻辑证据。
 - 大表按行组切分，每个子 Chunk 重复表格标题和表头。
 - 保存 `table_id` 与行范围；禁止在表格行中间按字符截断。
+- 无标准表头时按物理 block 和非空行有界降级；超长单行保留行号并生成 continuation part。
 
 ### 图片与公式
 
@@ -249,6 +257,7 @@ backend/output/extraction_results/{file_id}/
 - `AC-PDF-006`：解析失败或向量入库失败时，前端不得显示上传成功。
 - `AC-PDF-007`：重新运行 baseline 后，Q01 能召回完整表格证据，Q03 能召回包含 GAAP 全称的摘要证据。
 - `AC-PDF-008`：同一文件重复解析时，`paper_id` 和结构顺序保持稳定。
+- `AC-PDF-009`：19 篇论文的 2,057 个 Chunk 均不超过 900-token 上限，悬空引用、重复 Chunk ID 和未覆盖的非空 table source 均为 0。
 
 ## 9. 测试计划
 
