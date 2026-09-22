@@ -57,7 +57,10 @@ def _validate_gold_against_corpus(
 ) -> dict[str, Any]:
     """Rebuild chunks and ensure every gold reference still matches the corpus."""
 
-    from reindex_structured_dataset import ChunkingConfig, _chunk_document
+    try:
+        from scripts.reindex_structured_dataset import ChunkingConfig, _chunk_document
+    except ModuleNotFoundError:  # Direct execution from the scripts directory.
+        from reindex_structured_dataset import ChunkingConfig, _chunk_document
 
     paths = [corpus] if corpus.is_file() else sorted(corpus.rglob("document.json"))
     if not paths:
