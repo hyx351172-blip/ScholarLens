@@ -356,9 +356,15 @@ class DoclingChunkingIntegrationTests(unittest.TestCase):
 
             self.assertTrue(result["metadata"]["chunking_performed"])
             self.assertGreater(result["chunk_stats"]["total_chunks"], 0)
-            self.assertEqual(result["chunk_schema_version"], "1.0")
+            self.assertEqual(result["chunk_schema_version"], "1.1")
             self.assertTrue(all(chunk["source_block_ids"] for chunk in result["chunks"]))
             self.assertTrue(all("retrieval_text" in chunk for chunk in result["chunks"]))
+            self.assertTrue(
+                all(chunk["schema_version"] == "1.1" for chunk in result["chunks"])
+            )
+            self.assertTrue(
+                all(chunk["legacy_chunk_id"] for chunk in result["chunks"])
+            )
 
             extraction_service.EXTRACTION_RESULTS_DIR = Path(temp_dir) / "results"
             paths = extraction_service.save_extraction_results(
@@ -366,7 +372,7 @@ class DoclingChunkingIntegrationTests(unittest.TestCase):
             )
             chunks_path = Path(paths["chunks"])
             payload = json.loads(chunks_path.read_text(encoding="utf-8"))
-            self.assertEqual(payload["schema_version"], "1.0")
+            self.assertEqual(payload["schema_version"], "1.1")
             self.assertEqual(len(payload["chunks"]), result["chunk_stats"]["total_chunks"])
             self.assertEqual(payload["chunk_stats"]["bridge_chunks"], 0)
 

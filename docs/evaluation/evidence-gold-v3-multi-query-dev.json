@@ -1,0 +1,273 @@
+{
+  "schema_version": "1.1",
+  "dataset_id": "scholarlens-evidence-gold-v3-multi-query-dev",
+  "split": "development",
+  "annotation_status": "review_pending_derived_from_human_verified_v1_evidence",
+  "collection_id": "kb_1790061860190",
+  "purpose": "Develop and evaluate cross-paper multi-query retrieval without tuning on the consumed v2 held-out set.",
+  "corpus": {
+    "paper_count": 19,
+    "chunk_count": 2057,
+    "chunk_schema_version": "1.1"
+  },
+  "cases": [
+    {
+      "id": "MQ01",
+      "category": "cross_paper_comparison",
+      "question": "Compare how the Transformer and Mamba model long-range sequence dependencies without using a conventional recurrent neural network.",
+      "answerable": true,
+      "expected_answer": "The Transformer replaces recurrence and convolution with self-attention, while Mamba uses input-dependent selective state-space parameters together with a hardware-aware recurrent algorithm and retains linear sequence scaling.",
+      "required_concepts": [
+        "Transformer attention-only sequence modeling",
+        "Mamba selective input-dependent state space model",
+        "Mamba linear sequence scaling"
+      ],
+      "source_case_ids": ["EV01", "EV06"],
+      "retrieval_subqueries": [
+        {
+          "id": "transformer",
+          "target": "1706.03762_attention-is-all-you-need.pdf",
+          "query": "What architecture based solely on attention mechanisms dispenses with recurrence and convolutions?"
+        },
+        {
+          "id": "mamba",
+          "target": "2312.00752_mamba.pdf",
+          "query": "Why does Mamba have linear sequence complexity and what makes its state space model selective?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:abstract:block_000001:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          },
+          {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+            "filename": "2312.00752_mamba.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "MQ02",
+      "category": "cross_paper_comparison",
+      "question": "Compare the OCR-free document conversion architectures of Donut and Nougat, including their inputs and generated outputs.",
+      "answerable": true,
+      "expected_answer": "Donut uses a Swin Transformer image encoder and BART text decoder to generate structured document tokens without OCR. Nougat directly converts rasterized scientific-document pages into machine-readable markup with an end-to-end encoder-decoder model.",
+      "required_concepts": [
+        "Donut Swin encoder and BART decoder",
+        "Donut OCR-free structured generation",
+        "Nougat raster page to markup conversion"
+      ],
+      "source_case_ids": ["EV07", "EV08"],
+      "retrieval_subqueries": [
+        {
+          "id": "donut",
+          "target": "2111.15664_donut.pdf",
+          "query": "What OCR-free encoder-decoder architecture does Donut use?"
+        },
+        {
+          "id": "nougat",
+          "target": "2308.13418_nougat.pdf",
+          "query": "What does Nougat convert rasterized scientific document pages into?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+            "filename": "2111.15664_donut.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["2 Method", "2.2 Document Understanding Transformer"]
+          },
+          {
+            "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:abstract:block_000000:part_0001",
+            "filename": "2308.13418_nougat.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "MQ03",
+      "category": "cross_paper_comparison",
+      "question": "Compare how CLIP supports zero-shot image recognition with how LayoutLMv3 jointly learns text and image representations for Document AI.",
+      "answerable": true,
+      "expected_answer": "CLIP compares image embeddings with prompted class-text embeddings to form a zero-shot classifier. LayoutLMv3 jointly learns document text and image representations with masked language modeling, masked image modeling, and word-patch alignment.",
+      "required_concepts": [
+        "CLIP image and prompted text embeddings",
+        "CLIP zero-shot classifier",
+        "LayoutLMv3 MLM MIM and word-patch alignment"
+      ],
+      "source_case_ids": ["EV04", "EV09"],
+      "retrieval_subqueries": [
+        {
+          "id": "clip",
+          "target": "2103.00020_clip.pdf",
+          "query": "How does CLIP use image and prompted class text embeddings for zero-shot recognition?"
+        },
+        {
+          "id": "layoutlmv3",
+          "target": "2204.08387_layoutlmv3.pdf",
+          "query": "What text and image masking objectives does LayoutLMv3 use for Document AI?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+            "filename": "2103.00020_clip.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": ["3. Experiments", "3.1. Zero-Shot Transfer", "3.1.2. USING CLIP FOR ZERO-SHOT TRANSFER"]
+          },
+          {
+            "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+            "filename": "2204.08387_layoutlmv3.pdf",
+            "page_start": 3,
+            "content_type": "figure",
+            "section_path": ["2 LAYOUTLMV3", "2.1 Model Architecture"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "MQ04",
+      "category": "cross_paper_comparison",
+      "question": "Compare BERT's pre-training objectives with LoRA's method for adapting an already pretrained model.",
+      "answerable": true,
+      "expected_answer": "BERT pre-trains representations with masked language modeling and next sentence prediction. LoRA adapts a pretrained model by freezing the original weights and learning low-rank update matrices whose product represents the weight update.",
+      "required_concepts": [
+        "BERT masked language modeling",
+        "BERT next sentence prediction",
+        "LoRA frozen pretrained weights and low-rank update"
+      ],
+      "source_case_ids": ["EV02", "EV03"],
+      "retrieval_subqueries": [
+        {
+          "id": "bert",
+          "target": "1810.04805_bert.pdf",
+          "query": "What two unsupervised prediction tasks are used to pre-train BERT?"
+        },
+        {
+          "id": "lora",
+          "target": "2106.09685_lora.pdf",
+          "query": "How does LoRA adapt a pretrained model while keeping the original weights frozen?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+            "filename": "1810.04805_bert.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["3 BERT", "3.1 Pre-training BERT"]
+          },
+          {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+            "filename": "2106.09685_lora.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["1 INTRODUCTION"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "MQ05",
+      "category": "cross_paper_comparison",
+      "question": "Compare the role of self-attention in the Transformer with the systems optimization used by FlashAttention to compute exact attention.",
+      "answerable": true,
+      "expected_answer": "The Transformer uses self-attention as its core sequence operation instead of recurrence or convolution. FlashAttention preserves the exact attention computation but tiles data into on-chip SRAM and avoids materializing the full attention matrix in HBM, reducing memory IO.",
+      "required_concepts": [
+        "Transformer self-attention instead of recurrence",
+        "FlashAttention tiling in SRAM",
+        "exact attention with reduced HBM IO"
+      ],
+      "source_case_ids": ["EV01", "EV05"],
+      "retrieval_subqueries": [
+        {
+          "id": "transformer",
+          "target": "1706.03762_attention-is-all-you-need.pdf",
+          "query": "What architecture based solely on attention mechanisms dispenses with recurrence and convolutions?"
+        },
+        {
+          "id": "flashattention",
+          "target": "2205.14135_flashattention.pdf",
+          "query": "How does FlashAttention reduce HBM IO while computing exact attention?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:abstract:block_000001:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          },
+          {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+            "filename": "2205.14135_flashattention.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": ["1 Introduction"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "MQ06",
+      "category": "cross_paper_comparison",
+      "question": "Compare BERT bidirectional pretraining and downstream fine-tuning with GPT-3 in-context few-shot learning.",
+      "answerable": true,
+      "expected_answer": "BERT learns bidirectional representations with masked language modeling and next sentence prediction and is then fine-tuned for downstream tasks. GPT-3 is autoregressive and performs tasks from instructions or demonstrations in its context without task-specific weight updates.",
+      "required_concepts": [
+        "BERT bidirectional pretraining and fine-tuning",
+        "GPT-3 autoregressive modeling",
+        "GPT-3 in-context demonstrations without weight updates"
+      ],
+      "source_case_ids": ["EV10"],
+      "retrieval_subqueries": [
+        {
+          "id": "bert",
+          "target": "1810.04805_bert.pdf",
+          "query": "How does BERT use bidirectional pretraining and downstream fine-tuning?"
+        },
+        {
+          "id": "gpt3",
+          "target": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "query": "How does GPT-3 perform few-shot tasks with in-context demonstrations without weight updates?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000216:part_0001",
+            "filename": "1810.04805_bert.pdf",
+            "page_start": 14,
+            "content_type": "paragraph",
+            "section_path": ["A Additional Details for BERT", "A.4 Comparison of BERT, ELMo ,and OpenAI GPT"]
+          },
+          {
+            "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+            "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": ["1 Introduction"]
+          }
+        ]
+      ]
+    }
+  ]
+}
