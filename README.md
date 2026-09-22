@@ -13,11 +13,15 @@ ScholarLens 是一个面向学生与科研人员的论文阅读工作台。系�
 - 按标题与页面边界切分文档，保留跨页上下文。
 - 使用 Embedding 模型生成向量，并通过 Milvus 完成 Dense Top-K 检索。
 - 使用相似度阈值过滤低相关片段。
+- 后端可选启用跨论文 Query Planner、多路并行 Dense 召回、Query RRF
+  去重和覆盖感知 Top-K；默认关闭并保留单查询降级路径。
 - 基于召回片段进行流式或非流式问答。
 - 后端已提供可选 Reranker 接口；前端当前默认关闭。
 - 管理多个论文知识库，并查看文档、切片和原始 PDF。
 
-当前版本尚未实现 BM25、RRF 混合检索、正式检索评测集和多论文实验对比。它们被列入后续里程碑，不作为当前成果声明。
+当前版本尚未实现 BM25 + Dense 混合召回。跨论文多查询能力已完成开发集
+验证和后端原型接入，但自动规划器仍需新的独立 Held-out 验收，因此不作为
+生产准确率声明。
 
 ## 系统结构
 
@@ -110,15 +114,22 @@ npm run dev
 Query → Dense Embedding → Milvus Top-K → Score Threshold → LLM Answer
 ```
 
-默认参数：`top_k=10`、`score_threshold=0.3`、`use_reranker=false`。后续将通过同一评测集对比 Dense、Dense + Reranker、BM25 + Dense + RRF + Reranker。
+默认参数：`top_k=10`、`score_threshold=0.1`、`use_reranker=false`。后续将通过同一评测集对比 Dense、Dense + Reranker、BM25 + Dense + RRF + Reranker。
+
+跨论文问题可以在 `/chat` 请求中设置 `use_multi_query=true`。后端会调用同一
+生成模型产生结构化子查询，然后并行召回、去重并执行覆盖感知选择；任何规划
+或子查询失败都会退回原始单查询。配置和返回 Trace 见
+[`docs/technical/MULTI_QUERY_RETRIEVAL.md`](docs/technical/MULTI_QUERY_RETRIEVAL.md)。
 
 ## 路线图
 
 - [ ] 为每个 Chunk 增加论文标题、章节、页码、DOI/arXiv ID 等科研元数据。
 - [ ] 回答中生成可点击、可定位原文的引用。
 - [ ] 增加 BM25 + Dense + RRF 混合检索。
-- [ ] 建立 Recall@K、MRR、nDCG、引用准确率和延迟评测。
-- [ ] 实现方法、数据集、指标、实验结果和局限性的多论文对比。
+- [x] 建立 Chunk 级完整证据 Hit@K、MRR、nDCG 和延迟评测。
+- [x] 实现跨论文 Query Planner、多路召回及覆盖感知选择原型。
+- [ ] 用新的独立 Held-out 集验收自动 Query Planner 和回答引用质量。
+- [ ] 在前端加入多论文检索开关与执行 Trace。
 
 ## 安全与数据
 

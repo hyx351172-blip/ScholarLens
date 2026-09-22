@@ -22,6 +22,7 @@ held-out performance.
 - Annotation status: owner review pending for the new pairings and questions
 - Dense candidates: Top-10 for the original question and each subquery
 - Query merge: reciprocal-rank fusion, `k=60`
+- Query execution: original and target searches run concurrently
 - Final context: Top-10
 - Allocation: original-query Top-4, each target-query Top-2, then global fusion
   fill for remaining positions
@@ -32,9 +33,9 @@ held-out performance.
 
 | Arm | Complete-evidence Hit@10 | Mean evidence recall | Set MRR@10 | nDCG@10 | Mean latency |
 |---|---:|---:|---:|---:|---:|
-| Single-query Dense | 16.67% | 58.33% | 0.0333 | 0.3584 | 2.313 s |
-| Multi-query coverage | **100.00%** | **100.00%** | **0.1301** | **0.6584** | 6.911 s |
-| Delta | **+83.33 points** | **+41.67 points** | **+0.0968** | **+0.3000** | +4.598 s |
+| Single-query Dense | 16.67% | 58.33% | 0.0333 | 0.3584 | 2.258 s |
+| Multi-query coverage | **100.00%** | **100.00%** | **0.1301** | **0.6584** | 2.676 s |
+| Delta | **+83.33 points** | **+41.67 points** | **+0.0968** | **+0.3000** | +0.418 s |
 
 Multi-query coverage records five strict-evidence wins, one tie, and zero
 losses against the single-query baseline.
@@ -68,9 +69,9 @@ losses against the single-query baseline.
   comparison questions still require owner sign-off.
 - The current experiment receives explicit subqueries from the dataset. It does
   not yet detect comparison questions or generate subqueries automatically.
-- The three Dense calls run sequentially. The `+4.598 s` cost should fall after
-  independent subquery retrieval is parallelized, but that has not been
-  measured.
+- Parallel Dense retrieval adds `0.418 s` mean wall-clock latency over an
+  independently measured single-query baseline. Planner-model latency is not
+  included because this run uses dataset-provided subqueries.
 - Complete evidence is present, but some last-required chunks remain low in the
   final Top-10; answer generation and citation quality have not yet been tested.
 
@@ -81,7 +82,7 @@ Before production integration:
 1. owner-review the v3 development questions and evidence pairings;
 2. implement a structured query planner with validation and a single-query
    fallback;
-3. run target retrieval concurrently and expose provenance in the trace;
+3. live-test the automatic planner and record its validity and latency;
 4. add answer/citation tests over the selected multi-paper context;
 5. create a fresh, untouched v4 held-out set and run it exactly once after the
    implementation is frozen.

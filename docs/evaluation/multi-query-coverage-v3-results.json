@@ -10,6 +10,7 @@
     "original_query_reserve": 4,
     "per_target_reserve": 2,
     "planner": "dataset_explicit_subqueries",
+    "query_execution": "parallel",
     "selector": "original_reserve_then_per_target_reserve_then_global_fill"
   },
   "corpus_validation": {
@@ -28,16 +29,16 @@
       "mean_best_evidence_set_recall": 0.5833333333333334,
       "evidence_set_mrr": 0.03333333333333333,
       "mean_ndcg": 0.358391675879909,
-      "mean_latency_seconds": 2.313,
-      "median_latency_seconds": 2.2885
+      "mean_latency_seconds": 2.2583333333333333,
+      "median_latency_seconds": 2.254
     },
     "multi_query_coverage": {
       "strict_evidence_hit_rate": 1.0,
       "mean_best_evidence_set_recall": 1.0,
       "evidence_set_mrr": 0.1300925925925926,
       "mean_ndcg": 0.6583895953443111,
-      "mean_latency_seconds": 6.911,
-      "median_latency_seconds": 6.8345
+      "mean_latency_seconds": 2.6758333333333333,
+      "median_latency_seconds": 2.6715
     },
     "strict_evidence_outcomes": {
       "wins": 5,
@@ -48,7 +49,7 @@
       "strict_evidence_hit_rate": 0.8333333333333334,
       "evidence_set_mrr": 0.09675925925925927,
       "mean_ndcg": 0.2999979194644021,
-      "mean_latency_seconds": 4.597999999999999
+      "mean_latency_seconds": 0.4175
     }
   },
   "results": [
@@ -62,16 +63,16 @@
         "mamba"
       ],
       "query_latencies_seconds": {
-        "original": 2.295,
-        "transformer": 2.216,
-        "mamba": 2.241
+        "original": 2.5036,
+        "transformer": 2.2987,
+        "mamba": 2.7037
       },
       "baseline_dense": {
         "strict_evidence_hit": false,
         "best_evidence_set_recall": 0.5,
         "evidence_set_reciprocal_rank": 0.0,
         "ndcg": 0.6131471927654584,
-        "latency_seconds": 2.295,
+        "latency_seconds": 2.264,
         "hits": [
           {
             "rank": 1,
@@ -180,7 +181,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.16666666666666666,
         "ndcg": 0.6052602440527057,
-        "latency_seconds": 6.751,
+        "latency_seconds": 2.707,
         "hits": [
           {
             "rank": 1,
@@ -343,16 +344,16 @@
         "nougat"
       ],
       "query_latencies_seconds": {
-        "original": 2.269,
-        "donut": 2.255,
-        "nougat": 2.514
+        "original": 2.4797,
+        "donut": 2.646,
+        "nougat": 2.4761
       },
       "baseline_dense": {
         "strict_evidence_hit": false,
         "best_evidence_set_recall": 0.5,
         "evidence_set_reciprocal_rank": 0.0,
         "ndcg": 0.3065735963827292,
-        "latency_seconds": 2.269,
+        "latency_seconds": 2.226,
         "hits": [
           {
             "rank": 1,
@@ -461,7 +462,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.1111111111111111,
         "ndcg": 0.5714285040141098,
-        "latency_seconds": 7.038,
+        "latency_seconds": 2.646,
         "hits": [
           {
             "rank": 1,
@@ -632,16 +633,16 @@
         "layoutlmv3"
       ],
       "query_latencies_seconds": {
-        "original": 2.381,
-        "clip": 2.506,
-        "layoutlmv3": 2.384
+        "original": 2.2539,
+        "clip": 2.5214,
+        "layoutlmv3": 2.6956
       },
       "baseline_dense": {
         "strict_evidence_hit": false,
         "best_evidence_set_recall": 0.5,
         "evidence_set_reciprocal_rank": 0.0,
         "ndcg": 0.3065735963827292,
-        "latency_seconds": 2.381,
+        "latency_seconds": 2.275,
         "hits": [
           {
             "rank": 1,
@@ -750,7 +751,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.125,
         "ndcg": 0.5802792108518124,
-        "latency_seconds": 7.271,
+        "latency_seconds": 2.697,
         "hits": [
           {
             "rank": 1,
@@ -919,16 +920,16 @@
         "lora"
       ],
       "query_latencies_seconds": {
-        "original": 2.282,
-        "bert": 2.235,
-        "lora": 2.251
+        "original": 2.2341,
+        "bert": 2.42,
+        "lora": 2.6243
       },
       "baseline_dense": {
         "strict_evidence_hit": false,
         "best_evidence_set_recall": 0.5,
         "evidence_set_reciprocal_rank": 0.0,
         "ndcg": 0.21840743681816419,
-        "latency_seconds": 2.282,
+        "latency_seconds": 2.321,
         "hits": [
           {
             "rank": 1,
@@ -1037,7 +1038,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.1111111111111111,
         "ndcg": 0.7977228895450266,
-        "latency_seconds": 6.768,
+        "latency_seconds": 2.625,
         "hits": [
           {
             "rank": 1,
@@ -1202,16 +1203,16 @@
         "flashattention"
       ],
       "query_latencies_seconds": {
-        "original": 2.248,
-        "transformer": 2.22,
-        "flashattention": 2.269
+        "original": 2.1879,
+        "transformer": 2.3653,
+        "flashattention": 2.5387
       },
       "baseline_dense": {
         "strict_evidence_hit": false,
         "best_evidence_set_recall": 0.5,
         "evidence_set_reciprocal_rank": 0.0,
         "ndcg": 0.20438239758848611,
-        "latency_seconds": 2.248,
+        "latency_seconds": 2.22,
         "hits": [
           {
             "rank": 1,
@@ -1320,7 +1321,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.16666666666666666,
         "ndcg": 0.8315546295836225,
-        "latency_seconds": 6.737,
+        "latency_seconds": 2.54,
         "hits": [
           {
             "rank": 1,
@@ -1479,16 +1480,16 @@
         "gpt3"
       ],
       "query_latencies_seconds": {
-        "original": 2.403,
-        "bert": 2.249,
-        "gpt3": 2.249
+        "original": 2.8399,
+        "bert": 2.3519,
+        "gpt3": 2.5499
       },
       "baseline_dense": {
         "strict_evidence_hit": true,
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.2,
         "ndcg": 0.5012658353418871,
-        "latency_seconds": 2.403,
+        "latency_seconds": 2.244,
         "hits": [
           {
             "rank": 1,
@@ -1597,7 +1598,7 @@
         "best_evidence_set_recall": 1.0,
         "evidence_set_reciprocal_rank": 0.1,
         "ndcg": 0.5640920940185894,
-        "latency_seconds": 6.901,
+        "latency_seconds": 2.84,
         "hits": [
           {
             "rank": 1,

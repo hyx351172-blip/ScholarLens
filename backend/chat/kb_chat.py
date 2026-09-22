@@ -21,6 +21,23 @@ from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from pathlib import Path
 
+try:
+    from backend.chat.multi_query_retrieval import (
+        RetrievalExecution,
+        RetrievalPlan,
+        create_query_plan,
+        execute_retrieval_plan,
+        single_query_plan,
+    )
+except ModuleNotFoundError:  # Direct execution from backend/chat.
+    from multi_query_retrieval import (
+        RetrievalExecution,
+        RetrievalPlan,
+        create_query_plan,
+        execute_retrieval_plan,
+        single_query_plan,
+    )
+
 # 加载仓库根目录 .env 文件
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(dotenv_path=PROJECT_ROOT / '.env', override=True)
@@ -58,6 +75,15 @@ class RerankerConfig(BaseModel):
     model_name: str = Field(..., description="Reranker模型名称")
     top_n: int = Field(5, ge=1, description="重排序后保留的文档数量")
 
+class MultiQueryConfig(BaseModel):
+    """跨论文多查询召回配置。"""
+    planner_timeout_seconds: float = Field(12.0, ge=0.1, le=60.0)
+    max_subqueries: int = Field(3, ge=2, le=3)
+    candidate_k_per_query: int = Field(10, ge=1, le=50)
+    rrf_k: int = Field(60, ge=1)
+    original_reserve: int = Field(4, ge=0, le=50)
+    per_target_reserve: int = Field(2, ge=1, le=25)
+
 class SourceDocument(BaseModel):
     """来源文档"""
     chunk_text: str
@@ -65,6 +91,9 @@ class SourceDocument(BaseModel):
     score: float  # 主分数（如果有重排序则为重排序分数，否则为召回分数）
     retrieval_score: Optional[float] = None  # 原始召回分数
     rerank_score: Optional[float] = None  # 重排序分数
+    query_rrf_score: Optional[float] = None
+    matched_query_ids: Optional[List[str]] = None
+    query_ranks: Optional[Dict[str, int]] = None
     metadata: Dict[str, Any] = {}
 
 class ChatRequest(BaseModel):
@@ -76,6 +105,10 @@ class ChatRequest(BaseModel):
     # 召回配置
     top_k: int = Field(10, ge=1, le=50, description="召回文档数量")
     score_threshold: float = Field(0.1, ge=0.0, le=1.0, description="相似度阈值")
+
+    # 跨论文多查询召回（默认关闭，保持旧接口行为）
+    use_multi_query: bool = Field(False, description="是否启用自动问题拆分和多路召回")
+    multi_query_config: MultiQueryConfig = Field(default_factory=MultiQueryConfig)
 
     # 重排序配置
     use_reranker: bool = Field(False, description="是否使用重排序")
@@ -145,7 +178,12 @@ class ChatService:
             }
 
             print(f"正在从Milvus召回文档: {url}")
-            response = requests.post(url, json=payload, timeout=30)
+            response = await asyncio.to_thread(
+                requests.post,
+                url,
+                json=payload,
+                timeout=30,
+            )
 
             if response.status_code != 200:
                 raise HTTPException(
@@ -177,6 +215,103 @@ class ChatService:
                 status_code=500,
                 detail=f"调用Milvus API失败: {str(e)}"
             )
+
+    async def plan_retrieval(
+        self,
+        query: str,
+        llm_config: LLMConfig,
+        multi_query_config: MultiQueryConfig,
+    ) -> RetrievalPlan:
+        """Generate a validated comparison plan with deterministic settings."""
+
+        planner_llm_config = LLMConfig(
+            api_url=llm_config.api_url,
+            api_key=llm_config.api_key,
+            model_name=llm_config.model_name,
+            temperature=0.0,
+            max_tokens=min(llm_config.max_tokens, 600),
+        )
+
+        async def generate(messages: List[Dict[str, str]]) -> str:
+            return await self.call_llm_non_stream(messages, planner_llm_config)
+
+        return await create_query_plan(
+            query,
+            generate,
+            timeout_seconds=multi_query_config.planner_timeout_seconds,
+            max_subqueries=multi_query_config.max_subqueries,
+        )
+
+    async def retrieve_for_request(
+        self,
+        request: ChatRequest,
+    ) -> RetrievalExecution:
+        """Plan and execute retrieval while preserving single-query fallback."""
+
+        planner_started = time.perf_counter()
+        if request.use_multi_query:
+            plan = await self.plan_retrieval(
+                request.query,
+                request.llm_config,
+                request.multi_query_config,
+            )
+        else:
+            plan = single_query_plan(planner_source="disabled")
+        planner_latency = time.perf_counter() - planner_started
+
+        candidate_k = (
+            max(request.top_k, request.multi_query_config.candidate_k_per_query)
+            if plan.is_multi_query
+            else request.top_k
+        )
+
+        async def retrieve(query: str) -> List[Dict[str, Any]]:
+            return await self.retrieve_documents(
+                query=query,
+                collection_name=request.collection_name,
+                milvus_api_url=request.milvus_api_url,
+                top_k=candidate_k,
+                score_threshold=request.score_threshold,
+            )
+
+        execution = await execute_retrieval_plan(
+            original_query=request.query,
+            plan=plan,
+            retrieve=retrieve,
+            top_k=request.top_k,
+            rrf_k=request.multi_query_config.rrf_k,
+            original_reserve=request.multi_query_config.original_reserve,
+            per_target_reserve=request.multi_query_config.per_target_reserve,
+        )
+        execution.trace["planner_latency_seconds"] = round(planner_latency, 4)
+        return execution
+
+    async def rerank_for_request(
+        self,
+        request: ChatRequest,
+        documents: List[Dict[str, Any]],
+        retrieval_trace: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+        """Rerank without truncating a coverage-selected multi-query context."""
+
+        if not request.use_reranker or not request.reranker_config:
+            return documents
+        reranker_config = request.reranker_config
+        if (
+            retrieval_trace.get("mode") == "multi_query"
+            and reranker_config.top_n < len(documents)
+        ):
+            reranker_config = RerankerConfig(
+                api_url=reranker_config.api_url,
+                api_key=reranker_config.api_key,
+                model_name=reranker_config.model_name,
+                top_n=len(documents),
+            )
+        return await self.rerank_documents(
+            query=request.query,
+            documents=documents,
+            reranker_config=reranker_config,
+        )
 
     async def rerank_documents(
         self,
@@ -521,13 +656,9 @@ class ChatService:
             # 1. 召回文档
 
             retrieve_start = time.time()
-            documents = await self.retrieve_documents(
-                query=request.query,
-                collection_name=request.collection_name,
-                milvus_api_url=request.milvus_api_url,
-                top_k=request.top_k,
-                score_threshold=request.score_threshold
-            )
+            retrieval_execution = await self.retrieve_for_request(request)
+            documents = retrieval_execution.documents
+            retrieval_trace = retrieval_execution.trace
             retrieve_time = time.time() - retrieve_start
 
             if not documents:
@@ -561,7 +692,8 @@ class ChatService:
                     "data": {
                         "retrieve_time": retrieve_time,
                         "total_time": time.time() - start_time,
-                        "documents_count": 0
+                        "documents_count": 0,
+                        "retrieval_trace": retrieval_trace,
                     }
                 }, ensure_ascii=False) + "\n"
                 return
@@ -569,10 +701,10 @@ class ChatService:
             # 2. 重排序（可选）
             if request.use_reranker and request.reranker_config:
                 rerank_start = time.time()
-                documents = await self.rerank_documents(
-                    query=request.query,
-                    documents=documents,
-                    reranker_config=request.reranker_config
+                documents = await self.rerank_for_request(
+                    request,
+                    documents,
+                    retrieval_trace,
                 )
                 rerank_time = time.time() - rerank_start
                 print(f"✓ 重排序耗时: {rerank_time:.2f}秒")
@@ -624,6 +756,9 @@ class ChatService:
                         "score": doc["score"],
                         "retrieval_score": doc.get("retrieval_score"),
                         "rerank_score": doc.get("rerank_score"),
+                        "query_rrf_score": doc.get("query_rrf_score"),
+                        "matched_query_ids": doc.get("matched_query_ids"),
+                        "query_ranks": doc.get("query_ranks"),
                         "metadata": doc.get("metadata", {})
                     })
 
@@ -641,7 +776,8 @@ class ChatService:
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
                     "total_time": total_time,
-                    "documents_count": len(documents)
+                    "documents_count": len(documents),
+                    "retrieval_trace": retrieval_trace,
                 }
             }, ensure_ascii=False) + "\n"
 
@@ -682,13 +818,9 @@ class ChatService:
             print(f"{'='*60}\n")
 
             retrieve_start = time.time()
-            documents = await self.retrieve_documents(
-                query=request.query,
-                collection_name=request.collection_name,
-                milvus_api_url=request.milvus_api_url,
-                top_k=request.top_k,
-                score_threshold=request.score_threshold
-            )
+            retrieval_execution = await self.retrieve_for_request(request)
+            documents = retrieval_execution.documents
+            retrieval_trace = retrieval_execution.trace
             retrieve_time = time.time() - retrieve_start
 
             if not documents:
@@ -717,17 +849,18 @@ class ChatService:
                     metadata={
                         "retrieve_time": retrieve_time,
                         "total_time": time.time() - start_time,
-                        "documents_count": 0
+                        "documents_count": 0,
+                        "retrieval_trace": retrieval_trace,
                     }
                 )
 
             # 2. 重排序（可选）
             if request.use_reranker and request.reranker_config:
                 rerank_start = time.time()
-                documents = await self.rerank_documents(
-                    query=request.query,
-                    documents=documents,
-                    reranker_config=request.reranker_config
+                documents = await self.rerank_for_request(
+                    request,
+                    documents,
+                    retrieval_trace,
                 )
                 rerank_time = time.time() - rerank_start
             else:
@@ -771,6 +904,9 @@ class ChatService:
                         score=doc["score"],  # 主分数
                         retrieval_score=doc.get("retrieval_score"),  # 原始召回分数
                         rerank_score=doc.get("rerank_score"),  # 重排序分数
+                        query_rrf_score=doc.get("query_rrf_score"),
+                        matched_query_ids=doc.get("matched_query_ids"),
+                        query_ranks=doc.get("query_ranks"),
                         metadata=doc.get("metadata", {})
                     )
                     sources.append(source_doc)
@@ -797,7 +933,8 @@ class ChatService:
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
                     "total_time": total_time,
-                    "documents_count": len(documents)
+                    "documents_count": len(documents),
+                    "retrieval_trace": retrieval_trace,
                 }
             )
 
@@ -836,7 +973,13 @@ async def root():
         "status": "running",
         "service": "RAG Chat API",
         "version": "1.0.0",
-        "features": ["vector_retrieval", "reranking", "streaming", "non_streaming"]
+        "features": [
+            "vector_retrieval",
+            "multi_query_retrieval",
+            "reranking",
+            "streaming",
+            "non_streaming",
+        ]
     }
 
 @app.post("/chat")
@@ -897,7 +1040,14 @@ async def get_default_config():
             },
             "retrieval": {
                 "top_k": 10,
-                "score_threshold": 0.1
+                "score_threshold": 0.1,
+                "use_multi_query": False,
+                "multi_query": {
+                    "candidate_k_per_query": 10,
+                    "rrf_k": 60,
+                    "original_reserve": 4,
+                    "per_target_reserve": 2,
+                },
             },
             "available_models": [
                 {"name": "qwen-plus", "display": "通义千问 Plus", "provider": "阿里云"},
