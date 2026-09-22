@@ -61,6 +61,89 @@ FUSION_VARIANTS = (
     ("rrf_dense_2x", 2.0, 1.0),
     ("rrf_dense_3x", 3.0, 1.0),
 )
+FUSION_VARIANTS_BY_NAME = {variant[0]: variant for variant in FUSION_VARIANTS}
+
+
+def _select_variants(
+    requested: list[str] | None,
+) -> tuple[tuple[str, float, float], ...]:
+    if not requested:
+        return FUSION_VARIANTS
+    if len(requested) != len(set(requested)):
+        raise ValueError("Fusion variants must be unique")
+    unknown = sorted(set(requested) - set(FUSION_VARIANTS_BY_NAME))
+    if unknown:
+        raise ValueError(f"Unknown fusion variants: {unknown}")
+    return tuple(FUSION_VARIANTS_BY_NAME[name] for name in requested)
+
+
+def _validate_heldout_protocol(
+    dataset: dict[str, Any],
+    variants: tuple[tuple[str, float, float], ...],
+    *,
+    candidate_k: int,
+    top_k: int,
+    rrf_k: int,
+    reranker_model: str,
+) -> None:
+    if dataset.get("split") != "held_out":
+        raise ValueError("Held-out mode requires split=held_out")
+    if dataset.get("annotation_status") != "human_verified":
+        raise ValueError("Held-out mode requires annotation_status=human_verified")
+    if len(variants) != 1:
+        raise ValueError("Held-out mode requires exactly one frozen fusion variant")
+
+    _, dense_weight, reranker_weight = variants[0]
+    actual = {
+        "candidate_k": candidate_k,
+        "top_k": top_k,
+        "rrf_k": rrf_k,
+        "dense_weight": dense_weight,
+        "reranker_weight": reranker_weight,
+        "reranker_model": reranker_model,
+    }
+    frozen = dataset.get("frozen_configuration") or {}
+    mismatches = {
+        key: {"frozen": frozen.get(key), "actual": value}
+        for key, value in actual.items()
+        if frozen.get(key) != value
+    }
+    if mismatches:
+        raise ValueError(
+            "Frozen configuration mismatch: "
+            + json.dumps(mismatches, ensure_ascii=False, sort_keys=True)
+        )
+
+
+def _apply_cross_paper_gate(
+    decision: dict[str, Any],
+    results: list[dict[str, Any]],
+    arm: str,
+) -> dict[str, Any]:
+    cross_paper = [
+        item
+        for item in results
+        if item["answerable"] and item["category"] == "cross_paper_comparison"
+    ]
+    if not cross_paper:
+        raise ValueError("Held-out set must contain cross-paper comparison cases")
+    hit_rate = sum(
+        bool(item[arm]["strict_evidence_hit"]) for item in cross_paper
+    ) / len(cross_paper)
+    gates = {
+        **decision["gates"],
+        "cross_paper_hit_rate_100_percent": hit_rate == 1.0,
+    }
+    return {
+        **decision,
+        "decision": "go" if all(gates.values()) else "no-go",
+        "thresholds": {
+            **decision["thresholds"],
+            "cross_paper_strict_evidence_hit_rate": 1.0,
+        },
+        "gates": gates,
+        "cross_paper_strict_evidence_hit_rate": hit_rate,
+    }
 
 
 def _rank_by_chunk_id(
@@ -141,6 +224,17 @@ def main() -> int:
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--rrf-k", type=int, default=60)
     parser.add_argument(
+        "--variant",
+        action="append",
+        choices=tuple(FUSION_VARIANTS_BY_NAME),
+        help="Fusion variant to evaluate. Repeat to compare variants.",
+    )
+    parser.add_argument(
+        "--evaluation-role",
+        choices=("development", "heldout"),
+        default="development",
+    )
+    parser.add_argument(
         "--reranker-api-url",
         default=os.getenv("RERANKER_API_URL", DEFAULT_DASHSCOPE_RERANK_URL),
     )
@@ -166,9 +260,25 @@ def main() -> int:
         raise SystemExit("candidate-k must be greater than or equal to top-k")
     if args.rrf_k <= 0:
         raise SystemExit("rrf-k must be positive")
+    try:
+        selected_variants = _select_variants(args.variant)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
     _validate_dataset(dataset)
+    if args.evaluation_role == "heldout":
+        try:
+            _validate_heldout_protocol(
+                dataset,
+                selected_variants,
+                candidate_k=args.candidate_k,
+                top_k=args.top_k,
+                rrf_k=args.rrf_k,
+                reranker_model=args.reranker_model,
+            )
+        except ValueError as exc:
+            parser.error(str(exc))
     collection = args.collection or dataset.get("collection_id")
     if not collection:
         raise SystemExit("No collection id supplied")
@@ -179,7 +289,7 @@ def main() -> int:
 
     results: list[dict[str, Any]] = []
     fusion_latencies: dict[str, list[float]] = {
-        name: [] for name, _, _ in FUSION_VARIANTS
+        name: [] for name, _, _ in selected_variants
     }
     for case in dataset["cases"]:
         retrieve_started = time.perf_counter()
@@ -236,7 +346,7 @@ def main() -> int:
             "rerank_latency_seconds": round(rerank_latency, 3),
         }
 
-        for name, dense_weight, reranker_weight in FUSION_VARIANTS:
+        for name, dense_weight, reranker_weight in selected_variants:
             fusion_started = time.perf_counter()
             fused_candidates = _fuse_rrf(
                 candidates,
@@ -262,9 +372,10 @@ def main() -> int:
             f"rerank={rerank_latency:.3f}s"
         )
 
-    arm_names = ["dense", "reranked"] + [
-        name for name, _, _ in FUSION_VARIANTS
-    ]
+    arm_names = ["dense"]
+    if args.evaluation_role == "development":
+        arm_names.append("reranked")
+    arm_names.extend(name for name, _, _ in selected_variants)
     summaries = {arm: _summarize(results, arm) for arm in arm_names}
     dense_summary = summaries["dense"]
     acceptance: dict[str, dict[str, Any]] = {}
@@ -273,7 +384,7 @@ def main() -> int:
             summaries[arm]["mean_latency_seconds"]
             - dense_summary["mean_latency_seconds"]
         )
-        acceptance[arm] = _acceptance_decision(
+        decision = _acceptance_decision(
             dense_summary,
             summaries[arm],
             added_latency_seconds=added_latency,
@@ -281,6 +392,9 @@ def main() -> int:
             min_ndcg=args.min_ndcg,
             max_added_latency_seconds=args.max_added_latency,
         )
+        if args.evaluation_role == "heldout":
+            decision = _apply_cross_paper_gate(decision, results, arm)
+        acceptance[arm] = decision
 
     eligible = [
         name
@@ -299,10 +413,41 @@ def main() -> int:
         if eligible
         else None
     )
+    if args.evaluation_role == "heldout":
+        validated_variant = selected_variants[0][0]
+        selection = {
+            "decision": (
+                "go-for-production-integration"
+                if acceptance[validated_variant]["decision"] == "go"
+                else "no-go"
+            ),
+            "validated_variant": validated_variant,
+            "warning": (
+                "The held-out split has been consumed. Do not tune weights, "
+                "thresholds, questions, or evidence against these results."
+            ),
+        }
+    else:
+        selection = {
+            "decision": (
+                "go-for-held-out-validation" if recommended else "no-go"
+            ),
+            "recommended_variant": recommended,
+            "eligible_variants": eligible,
+            "warning": (
+                "Variant selection used the v1 Gold set; validate the chosen "
+                "configuration on new held-out questions before production."
+            ),
+        }
 
     report = {
         "schema_version": "1.0",
-        "experiment_id": "scholarlens-rank-fusion-v1",
+        "experiment_id": (
+            "scholarlens-rank-fusion-heldout-v2"
+            if args.evaluation_role == "heldout"
+            else "scholarlens-rank-fusion-v1"
+        ),
+        "evaluation_role": args.evaluation_role,
         "dataset_id": dataset["dataset_id"],
         "annotation_status": dataset["annotation_status"],
         "collection_id": collection,
@@ -320,7 +465,7 @@ def main() -> int:
                     "dense_weight": dense_weight,
                     "reranker_weight": reranker_weight,
                 }
-                for name, dense_weight, reranker_weight in FUSION_VARIANTS
+                for name, dense_weight, reranker_weight in selected_variants
             },
         },
         "summary": summaries,
@@ -344,17 +489,7 @@ def main() -> int:
             for name, values in fusion_latencies.items()
         },
         "acceptance": acceptance,
-        "selection": {
-            "decision": (
-                "go-for-held-out-validation" if recommended else "no-go"
-            ),
-            "recommended_variant": recommended,
-            "eligible_variants": eligible,
-            "warning": (
-                "Variant selection used the v1 Gold set; validate the chosen "
-                "configuration on new held-out questions before production."
-            ),
-        },
+        "selection": selection,
         "results": results,
     }
     serialized = json.dumps(report, ensure_ascii=False, indent=2)

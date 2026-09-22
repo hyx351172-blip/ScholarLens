@@ -4,6 +4,10 @@
 
 `Human verified on 2026-09-22`
 
+Held-out execution status: `Consumed on 2026-09-22 — no-go`. The frozen run
+is recorded in `rank-fusion-heldout-v2.md`. Do not use this split for further
+weight, threshold, question, or evidence tuning.
+
 This sheet accompanies `evidence-gold-v2-heldout.json`. The 24 questions were
 created after the v1 Rank Fusion configuration was frozen. Do not run the
 held-out experiment, change the frozen weights, or inspect retrieval rankings
@@ -70,5 +74,6 @@ withheld does not turn an unsupported exact value into an answerable value.
 - Cases revised: 0
 - Notes: All questions, expected answers, evidence locations, and unanswerable labels were manually reviewed and accepted.
 
-The dataset is now frozen as `human_verified`. Execute the held-out experiment
-once, without changing questions, evidence, thresholds, or fusion parameters.
+The dataset remains frozen as `human_verified` and has been evaluated once.
+Future retrieval changes require a new development set and another untouched
+held-out split.
