@@ -427,6 +427,49 @@ class StructureAwareChunkerTests(unittest.TestCase):
         self.assertTrue(all(item.token_count <= 32 for item in chunks))
         self.assertTrue(all(caption_block.text in item.text for item in chunks))
 
+    def test_pdf_layout_whitespace_is_normalized_before_embedding(self):
+        """Layout padding must not overflow embedding provider request limits."""
+        padded_caption = (
+            "Figure 8: Generated samples."
+            + (" " * 33000)
+            + "| Prompt | Completion |"
+        )
+        figure_block = block(
+            95,
+            "figure",
+            "",
+            page=13,
+            section=["Appendix"],
+        )
+        caption_block = block(
+            96,
+            "caption",
+            padded_caption,
+            page=13,
+            section=["Appendix"],
+        )
+        figure = LogicalFigure(
+            figure_id="logical_figure_8",
+            label="Figure 8",
+            number=8,
+            caption=padded_caption,
+            page=13,
+            section_path=["Appendix"],
+            source_block_ids=[figure_block.block_id],
+            caption_block_ids=[caption_block.block_id],
+            explanation_block_ids=[],
+            status="context_bound",
+        )
+
+        result = StructureAwareChunker().chunk(
+            document([figure_block, caption_block]), logical_figures=[figure]
+        )
+        chunk = next(item for item in result.chunks if item.content_type == "figure")
+
+        self.assertLess(len(chunk.text), 100)
+        self.assertNotIn("  ", chunk.text)
+        self.assertIn("| Prompt | Completion |", chunk.retrieval_text)
+
     def test_paragraphs_do_not_merge_across_structural_evidence(self):
         """AC-CHUNK-V2-004: Figure/Table/Formula blocks are paragraph barriers."""
         before = block(100, "paragraph", "Evidence before the figure.", section=["8 Results"])

@@ -1,0 +1,426 @@
+{
+  "schema_version": "1.0",
+  "target_tokens": 600,
+  "max_tokens": 900,
+  "papers": [
+    {
+      "filename": "1706.03762_attention-is-all-you-need.pdf",
+      "blocks": 167,
+      "logical_tables": 4,
+      "logical_figures": 6,
+      "logical_formulas": 5,
+      "chunks": 54,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 5,
+        "formula": 5,
+        "paragraph": 34,
+        "table": 9
+      },
+      "max_tokens": 662,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+      "blocks": 466,
+      "logical_tables": 3,
+      "logical_figures": 10,
+      "logical_formulas": 46,
+      "chunks": 121,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 10,
+        "formula": 42,
+        "paragraph": 64,
+        "table": 4
+      },
+      "max_tokens": 626,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "1810.04805_bert.pdf",
+      "blocks": 259,
+      "logical_tables": 8,
+      "logical_figures": 5,
+      "logical_formulas": 0,
+      "chunks": 54,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 5,
+        "paragraph": 40,
+        "table": 8
+      },
+      "max_tokens": 656,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+      "blocks": 743,
+      "logical_tables": 34,
+      "logical_figures": 50,
+      "logical_formulas": 1,
+      "chunks": 215,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 43,
+        "formula": 1,
+        "paragraph": 100,
+        "table": 70
+      },
+      "max_tokens": 900,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2103.00020_clip.pdf",
+      "blocks": 538,
+      "logical_tables": 20,
+      "logical_figures": 21,
+      "logical_formulas": 0,
+      "chunks": 202,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 21,
+        "paragraph": 72,
+        "table": 108
+      },
+      "max_tokens": 900,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2106.09685_lora.pdf",
+      "blocks": 284,
+      "logical_tables": 18,
+      "logical_figures": 8,
+      "logical_formulas": 6,
+      "chunks": 97,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 8,
+        "formula": 6,
+        "paragraph": 58,
+        "table": 24
+      },
+      "max_tokens": 657,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2106.10379_alphafold.pdf",
+      "blocks": 123,
+      "logical_tables": 1,
+      "logical_figures": 8,
+      "logical_formulas": 5,
+      "chunks": 38,
+      "content_type_counts": {
+        "figure": 8,
+        "formula": 5,
+        "paragraph": 24,
+        "table": 1
+      },
+      "max_tokens": 763,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2111.15664_donut.pdf",
+      "blocks": 243,
+      "logical_tables": 3,
+      "logical_figures": 14,
+      "logical_formulas": 0,
+      "chunks": 45,
+      "content_type_counts": {
+        "figure": 9,
+        "paragraph": 32,
+        "table": 4
+      },
+      "max_tokens": 695,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2204.08387_layoutlmv3.pdf",
+      "blocks": 183,
+      "logical_tables": 4,
+      "logical_figures": 5,
+      "logical_formulas": 3,
+      "chunks": 38,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 4,
+        "formula": 3,
+        "paragraph": 24,
+        "table": 6
+      },
+      "max_tokens": 731,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2205.14135_flashattention.pdf",
+      "blocks": 512,
+      "logical_tables": 21,
+      "logical_figures": 8,
+      "logical_formulas": 32,
+      "chunks": 156,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 8,
+        "formula": 32,
+        "paragraph": 84,
+        "table": 31
+      },
+      "max_tokens": 766,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2303.08774_gpt-4-technical-report.pdf",
+      "blocks": 1275,
+      "logical_tables": 12,
+      "logical_figures": 29,
+      "logical_formulas": 6,
+      "chunks": 293,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 20,
+        "formula": 6,
+        "paragraph": 238,
+        "table": 28
+      },
+      "max_tokens": 822,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2304.02643_segment-anything.pdf",
+      "blocks": 615,
+      "logical_tables": 8,
+      "logical_figures": 55,
+      "logical_formulas": 0,
+      "chunks": 114,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 20,
+        "paragraph": 76,
+        "table": 17
+      },
+      "max_tokens": 875,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2307.12037_multilingual-noisy-materials-paper.pdf",
+      "blocks": 139,
+      "logical_tables": 0,
+      "logical_figures": 8,
+      "logical_formulas": 2,
+      "chunks": 40,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 9,
+        "formula": 2,
+        "paragraph": 28
+      },
+      "max_tokens": 891,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2308.13418_nougat.pdf",
+      "blocks": 238,
+      "logical_tables": 9,
+      "logical_figures": 18,
+      "logical_formulas": 10,
+      "chunks": 58,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 6,
+        "formula": 7,
+        "paragraph": 39,
+        "table": 5
+      },
+      "max_tokens": 609,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": [
+        "block_000214",
+        "block_000215",
+        "block_000216",
+        "block_000217"
+      ]
+    },
+    {
+      "filename": "2312.00752_mamba.pdf",
+      "blocks": 545,
+      "logical_tables": 15,
+      "logical_figures": 11,
+      "logical_formulas": 8,
+      "chunks": 123,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 9,
+        "formula": 8,
+        "paragraph": 79,
+        "table": 26
+      },
+      "max_tokens": 875,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2407.21783_llama-3-herd-of-models.pdf",
+      "blocks": 1028,
+      "logical_tables": 34,
+      "logical_figures": 27,
+      "logical_formulas": 2,
+      "chunks": 191,
+      "content_type_counts": {
+        "formula": 2,
+        "paragraph": 150,
+        "table": 39
+      },
+      "max_tokens": 775,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2408.09869_docling-technical-report.pdf",
+      "blocks": 115,
+      "logical_tables": 2,
+      "logical_figures": 6,
+      "logical_formulas": 0,
+      "chunks": 28,
+      "content_type_counts": {
+        "abstract": 1,
+        "figure": 3,
+        "paragraph": 22,
+        "table": 2
+      },
+      "max_tokens": 762,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "2501.12948_deepseek-r1.pdf",
+      "blocks": 796,
+      "logical_tables": 16,
+      "logical_figures": 19,
+      "logical_formulas": 12,
+      "chunks": 165,
+      "content_type_counts": {
+        "abstract": 1,
+        "formula": 12,
+        "paragraph": 130,
+        "table": 22
+      },
+      "max_tokens": 898,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    },
+    {
+      "filename": "PMC2950080_structured-digital-tables.pdf",
+      "blocks": 200,
+      "logical_tables": 1,
+      "logical_figures": 9,
+      "logical_formulas": 0,
+      "chunks": 25,
+      "content_type_counts": {
+        "paragraph": 24,
+        "table": 1
+      },
+      "max_tokens": 784,
+      "oversized_chunks": 0,
+      "oversized_ids": [],
+      "dangling_block_ids": [],
+      "duplicate_chunk_ids": 0,
+      "missing_table_source_ids": [],
+      "empty_table_source_ids": []
+    }
+  ],
+  "summary": {
+    "paper_count": 19,
+    "total_chunks": 2057,
+    "oversized_chunks": 0,
+    "papers_with_dangling_ids": 0,
+    "duplicate_chunk_ids": 0,
+    "missing_table_source_ids": 0,
+    "empty_table_source_ids": 4,
+    "max_tokens_observed": 900
+  }
+}

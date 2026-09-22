@@ -1,0 +1,309 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-evidence-gold-v1",
+  "annotation_status": "human_verified",
+  "collection_id": "kb_1790061860190",
+  "corpus": {
+    "paper_count": 19,
+    "chunk_count": 2057,
+    "chunk_schema_version": "1.1"
+  },
+  "cases": [
+    {
+      "id": "EV01",
+      "category": "mechanism",
+      "question": "What mechanism lets the Transformer model sequence dependencies without recurrence or convolution?",
+      "answerable": true,
+      "expected_answer": "The Transformer relies on attention, especially self-attention and multi-head attention, instead of recurrence or convolution; positional encodings inject token-order information.",
+      "required_concepts": ["attention-only architecture", "self-attention", "positional encoding"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:abstract:block_000001:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["2 Background"]
+          },
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000062:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": ["3 Model Architecture", "3.5 Positional Encoding"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV02",
+      "category": "fact",
+      "question": "What two unsupervised prediction tasks are used to pre-train BERT?",
+      "answerable": true,
+      "expected_answer": "BERT uses masked language modeling (MLM) and next sentence prediction (NSP).",
+      "required_concepts": ["masked language modeling", "next sentence prediction"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+            "filename": "1810.04805_bert.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["3 BERT", "3.1 Pre-training BERT"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV03",
+      "category": "mechanism",
+      "question": "How does LoRA adapt a pretrained model while keeping the original model weights frozen?",
+      "answerable": true,
+      "expected_answer": "LoRA freezes the pretrained matrix W0 and learns low-rank matrices A and B whose product BA represents the update; inference uses W0x + BAx.",
+      "required_concepts": ["frozen pretrained weights", "low-rank update", "delta W equals BA"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+            "filename": "2106.09685_lora.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["1 INTRODUCTION"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:formula:formula_000054:part_0001",
+            "filename": "2106.09685_lora.pdf",
+            "page_start": 4,
+            "content_type": "formula",
+            "section_path": ["4 OUR METHOD", "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV04",
+      "category": "mechanism",
+      "question": "How does CLIP use natural language supervision for zero-shot visual recognition?",
+      "answerable": true,
+      "expected_answer": "CLIP embeds the image and prompted class texts, compares their normalized embeddings with temperature-scaled cosine similarity, and treats the text embeddings as a zero-shot classifier.",
+      "required_concepts": ["image and text embeddings", "cosine similarity", "class text prompts"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+            "filename": "2103.00020_clip.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": ["3. Experiments", "3.1. Zero-Shot Transfer", "3.1.2. USING CLIP FOR ZERO-SHOT TRANSFER"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV05",
+      "category": "figure_mechanism",
+      "question": "How does FlashAttention reduce HBM IO while still computing exact attention?",
+      "answerable": true,
+      "expected_answer": "FlashAttention tiles Q, K, and V into on-chip SRAM, incrementally performs the softmax reduction, avoids materializing the quadratic attention matrix in HBM, and recomputes attention during backward using saved normalization factors; this changes IO, not the mathematical attention result.",
+      "required_concepts": ["tiling", "SRAM versus HBM", "incremental softmax", "exact attention"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+            "filename": "2205.14135_flashattention.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": ["1 Introduction"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000047:part_0001",
+            "filename": "2205.14135_flashattention.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["3 FlashAttention : Algorithm, Analysis, and Extensions"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV06",
+      "category": "mechanism",
+      "question": "Why does Mamba have linear sequence complexity, and what is selective about its state space model?",
+      "answerable": true,
+      "expected_answer": "Mamba makes SSM parameters input-dependent so the model can selectively propagate or forget information for each token, then evaluates the recurrent form with a hardware-aware parallel algorithm; without quadratic attention, sequence scaling is linear.",
+      "required_concepts": ["input-dependent SSM parameters", "selective propagation or forgetting", "linear scaling"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+            "filename": "2312.00752_mamba.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV07",
+      "category": "architecture",
+      "question": "What OCR-free encoder-decoder architecture does Donut use?",
+      "answerable": true,
+      "expected_answer": "Donut uses a Swin Transformer visual encoder over document-image patches and a BART textual decoder that generates structured output tokens directly, without an OCR module.",
+      "required_concepts": ["Swin Transformer encoder", "BART decoder", "no OCR module"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+            "filename": "2111.15664_donut.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["2 Method", "2.2 Document Understanding Transformer"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV08",
+      "category": "fact",
+      "question": "What is Nougat designed to convert scientific PDF documents into?",
+      "answerable": true,
+      "expected_answer": "Nougat converts rasterized scientific document pages into machine-readable markup with an end-to-end encoder-decoder model rather than relying on embedded text or a separate OCR engine.",
+      "required_concepts": ["document pages", "markup", "end-to-end encoder-decoder"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:abstract:block_000000:part_0001",
+            "filename": "2308.13418_nougat.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+            "filename": "2308.13418_nougat.pdf",
+            "page_start": 9,
+            "content_type": "paragraph",
+            "section_path": ["6 Conclusion"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV09",
+      "category": "figure",
+      "question": "What unified text and image masking objectives are used by LayoutLMv3 for Document AI?",
+      "answerable": true,
+      "expected_answer": "LayoutLMv3 uses masked language modeling, masked image modeling, and word-patch alignment.",
+      "required_concepts": ["MLM", "MIM", "word-patch alignment"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+            "filename": "2204.08387_layoutlmv3.pdf",
+            "page_start": 3,
+            "content_type": "figure",
+            "section_path": ["2 LAYOUTLMV3", "2.1 Model Architecture"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV10",
+      "category": "cross_paper_comparison",
+      "question": "Compare BERT bidirectional pretraining with GPT-3 in-context few-shot learning.",
+      "answerable": true,
+      "expected_answer": "BERT learns bidirectional representations with MLM and NSP and is then fine-tuned for downstream tasks. GPT-3 is an autoregressive language model evaluated with task instructions and demonstrations in its context, without task-specific weight updates.",
+      "required_concepts": ["BERT bidirectional MLM and NSP", "BERT fine-tuning", "GPT-3 autoregressive", "GPT-3 in-context demonstrations"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000216:part_0001",
+            "filename": "1810.04805_bert.pdf",
+            "page_start": 14,
+            "content_type": "paragraph",
+            "section_path": ["A Additional Details for BERT", "A.4 Comparison of BERT, ELMo ,and OpenAI GPT"]
+          },
+          {
+            "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+            "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": ["1 Introduction"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV11",
+      "category": "table",
+      "question": "In Nougat Table 1, what BLEU and F1 scores does Nougat base report for the All modality?",
+      "answerable": true,
+      "expected_answer": "Nougat base reports BLEU 89.1 and F1 93.1 for the All modality.",
+      "required_concepts": ["BLEU 89.1", "F1 93.1", "Nougat base All"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:table:logical_table_0001:part_0001",
+            "filename": "2308.13418_nougat.pdf",
+            "page_start": 7,
+            "content_type": "table",
+            "section_path": ["5 Results & Evaluation", "5.1 Metrics"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV12",
+      "category": "formula",
+      "question": "In LoRA, how are A and B initialized, what is the low-rank update equation, and how is the update scaled?",
+      "answerable": true,
+      "expected_answer": "LoRA uses delta W = BA and h = W0x + BAx; A receives a random Gaussian initialization, B starts at zero, and delta Wx is scaled by alpha/r.",
+      "required_concepts": ["delta W equals BA", "A Gaussian", "B zero", "alpha over r"],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:formula:formula_000054:part_0001",
+            "filename": "2106.09685_lora.pdf",
+            "page_start": 4,
+            "content_type": "formula",
+            "section_path": ["4 OUR METHOD", "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "EV13",
+      "category": "unanswerable",
+      "question": "What exact electricity consumption in kWh was used to train BERT and GPT-3?",
+      "answerable": false,
+      "expected_answer": "The indexed papers do not provide enough evidence for exact training electricity consumption in kWh; the system should refuse to invent values.",
+      "required_concepts": [],
+      "gold_evidence_sets": []
+    },
+    {
+      "id": "EV14",
+      "category": "unanswerable",
+      "question": "Which of Mamba, FlashAttention, and CLIP has the lowest carbon footprint, measured in exact kg CO2e?",
+      "answerable": false,
+      "expected_answer": "The indexed papers do not provide a directly comparable exact kg CO2e value for all three systems, so no supported ranking can be produced.",
+      "required_concepts": [],
+      "gold_evidence_sets": []
+    }
+  ]
+}

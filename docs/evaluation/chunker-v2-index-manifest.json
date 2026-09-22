@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "collection_id": "kb_1790061860190",
+  "display_name": "ScholarLens Chunker v2 Retrieval Baseline 2026-09-22",
+  "target_tokens": 600,
+  "max_tokens": 900,
+  "paper_count": 19,
+  "total_chunks": 2057,
+  "papers": [
+    {
+      "filename": "1706.03762_attention-is-all-you-need.pdf",
+      "paper_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "file_id": "sha256_bdfaa68d8984f0dc",
+      "chunks": 54,
+      "status": "indexed"
+    },
+    {
+      "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+      "paper_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c",
+      "file_id": "sha256_435299cc42b75f9a",
+      "chunks": 121,
+      "status": "indexed"
+    },
+    {
+      "filename": "1810.04805_bert.pdf",
+      "paper_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "file_id": "sha256_5692a5514787a8c6",
+      "chunks": 54,
+      "status": "indexed"
+    },
+    {
+      "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+      "paper_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83",
+      "file_id": "sha256_97fd272f1fdfc186",
+      "chunks": 215,
+      "status": "indexed"
+    },
+    {
+      "filename": "2103.00020_clip.pdf",
+      "paper_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5",
+      "file_id": "sha256_6478b6e571a7d6fc",
+      "chunks": 202,
+      "status": "indexed"
+    },
+    {
+      "filename": "2106.09685_lora.pdf",
+      "paper_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a",
+      "file_id": "sha256_e9a0d3128767db61",
+      "chunks": 97,
+      "status": "indexed"
+    },
+    {
+      "filename": "2106.10379_alphafold.pdf",
+      "paper_id": "2ead4a1e0ad2e7fa90e8978d809df2c6532355551becb4c030860bcad5f2db13",
+      "file_id": "sha256_2ead4a1e0ad2e7fa",
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "filename": "2111.15664_donut.pdf",
+      "paper_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668",
+      "file_id": "sha256_ad9c20523c37f53f",
+      "chunks": 45,
+      "status": "indexed"
+    },
+    {
+      "filename": "2204.08387_layoutlmv3.pdf",
+      "paper_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe",
+      "file_id": "sha256_bd5395610755a49e",
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "filename": "2205.14135_flashattention.pdf",
+      "paper_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4",
+      "file_id": "sha256_ca7f9fda10b90fc0",
+      "chunks": 156,
+      "status": "indexed"
+    },
+    {
+      "filename": "2303.08774_gpt-4-technical-report.pdf",
+      "paper_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774",
+      "file_id": "sha256_c33a66dadca2388d",
+      "chunks": 293,
+      "status": "indexed"
+    },
+    {
+      "filename": "2304.02643_segment-anything.pdf",
+      "paper_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb",
+      "file_id": "sha256_c6ca524e47200c3e",
+      "chunks": 114,
+      "status": "indexed"
+    },
+    {
+      "filename": "2307.12037_multilingual-noisy-materials-paper.pdf",
+      "paper_id": "fc18156349d521f353783533789c754e974c61a64a606060690c6a73289caa0b",
+      "file_id": "sha256_fc18156349d521f3",
+      "chunks": 40,
+      "status": "indexed"
+    },
+    {
+      "filename": "2308.13418_nougat.pdf",
+      "paper_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b",
+      "file_id": "sha256_679be336ce8010d3",
+      "chunks": 58,
+      "status": "indexed"
+    },
+    {
+      "filename": "2312.00752_mamba.pdf",
+      "paper_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e",
+      "file_id": "sha256_adf70ed1803c85b1",
+      "chunks": 123,
+      "status": "indexed"
+    },
+    {
+      "filename": "2407.21783_llama-3-herd-of-models.pdf",
+      "paper_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083",
+      "file_id": "sha256_481f1599468f95a0",
+      "chunks": 191,
+      "status": "indexed"
+    },
+    {
+      "filename": "2408.09869_docling-technical-report.pdf",
+      "paper_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22",
+      "file_id": "sha256_82dd470712ce8389",
+      "chunks": 28,
+      "status": "indexed"
+    },
+    {
+      "filename": "2501.12948_deepseek-r1.pdf",
+      "paper_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4",
+      "file_id": "sha256_b191b0a365a64b4a",
+      "chunks": 165,
+      "status": "indexed"
+    },
+    {
+      "filename": "PMC2950080_structured-digital-tables.pdf",
+      "paper_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2",
+      "file_id": "sha256_536c1941249b4913",
+      "chunks": 25,
+      "status": "indexed"
+    }
+  ]
+}

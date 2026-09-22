@@ -1,0 +1,1334 @@
+{
+  "schema_version": "1.0",
+  "scope": "document-level dense retrieval smoke test; not strict evidence recall",
+  "collection_id": "kb_1790061860190",
+  "top_k": 10,
+  "summary": {
+    "case_count": 10,
+    "recall_at_10": 1.0,
+    "hit_at_1": 1.0,
+    "mrr": 1.0,
+    "mean_latency_seconds": 2.2755,
+    "median_latency_seconds": 2.255
+  },
+  "results": [
+    {
+      "id": "R01",
+      "question": "What mechanism lets the Transformer model sequence dependencies without recurrence or convolution?",
+      "expected_files": [
+        "1706.03762_attention-is-all-you-need.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "1706.03762_attention-is-all-you-need.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.272,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.776742,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000011:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.721241,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "2 Background"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.65548,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:abstract:block_000001:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.644034,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "3 Model Architecture",
+            "3.2 Attention",
+            "3.2.3 Applications of Attention in our Model"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.630005,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000062:part_0001",
+          "content_type": "paragraph",
+          "page_start": 6,
+          "section_path": [
+            "3 Model Architecture",
+            "3.5 Positional Encoding"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.627192,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:figure:figure_0001_000022:part_0001",
+          "content_type": "figure",
+          "page_start": 3,
+          "section_path": [
+            "3 Model Architecture"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.624255,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:formula:formula_000055:part_0001",
+          "content_type": "formula",
+          "page_start": 5,
+          "section_path": [
+            "3 Model Architecture",
+            "3.3 Position-wise Feed-Forward Networks"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.623615,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000112:part_0001",
+          "content_type": "paragraph",
+          "page_start": 10,
+          "section_path": [
+            "7 Conclusion"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.620423,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000024:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "3 Model Architecture"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "score": 0.615667,
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000026:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "3 Model Architecture",
+            "3.1 Encoder and Decoder Stacks"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "question": "What two unsupervised prediction tasks are used to pre-train BERT?",
+      "expected_files": [
+        "1810.04805_bert.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "1810.04805_bert.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.444,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.708256,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000200:part_0001",
+          "content_type": "paragraph",
+          "page_start": 13,
+          "section_path": [
+            "A Additional Details for BERT",
+            "A.1 Illustration of the Pre-training Tasks"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.687313,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "3 BERT",
+            "3.1 Pre-training BERT"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.671558,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0001_000024:part_0001",
+          "content_type": "figure",
+          "page_start": 3,
+          "section_path": [
+            "2 Related Work",
+            "2.2 Unsupervised Fine-tuning Approaches"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.6688,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000043:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "3 BERT",
+            "3.1 Pre-training BERT"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.665875,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.664743,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000053:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "3 BERT",
+            "3.1 Pre-training BERT"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.661912,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "content_type": "paragraph",
+          "page_start": 1,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.636703,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000022:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "2 Related Work",
+            "2.2 Unsupervised Fine-tuning Approaches"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.636076,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000029:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "3 BERT"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.631945,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000112:part_0001",
+          "content_type": "paragraph",
+          "page_start": 9,
+          "section_path": [
+            "5 Ablation Studies",
+            "5.3 Feature-based Approach with BERT"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "question": "How does LoRA adapt a pretrained model while keeping the original model weights frozen?",
+      "expected_files": [
+        "2106.09685_lora.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2106.09685_lora.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.192,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.7056,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 INTRODUCTION"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.703671,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:figure:figure_0001_000016:part_0001",
+          "content_type": "figure",
+          "page_start": 1,
+          "section_path": [
+            "1 INTRODUCTION"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.689848,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000055:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "4 OUR METHOD",
+            "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.687355,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000061:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "4 OUR METHOD",
+            "4.2 APPLYING LORA TO TRANSFORMER"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.681523,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.677269,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000021:part_0001",
+          "content_type": "paragraph",
+          "page_start": 1,
+          "section_path": [
+            "1 INTRODUCTION"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.656428,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000053:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "4 OUR METHOD",
+            "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.653285,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000133:part_0001",
+          "content_type": "paragraph",
+          "page_start": 12,
+          "section_path": [
+            "8 CONCLUSION AND FUTURE WORK"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.65078,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:formula:formula_000054:part_0001",
+          "content_type": "formula",
+          "page_start": 4,
+          "section_path": [
+            "4 OUR METHOD",
+            "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2106.09685_lora.pdf",
+          "score": 0.637604,
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000203:part_0001",
+          "content_type": "paragraph",
+          "page_start": 17,
+          "section_path": [
+            "B INFERENCE LATENCY INTRODUCED BY ADAPTER LAYERS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "question": "How does CLIP use natural language supervision for zero-shot visual recognition?",
+      "expected_files": [
+        "2103.00020_clip.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2103.00020_clip.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.232,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.768508,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+          "content_type": "paragraph",
+          "page_start": 6,
+          "section_path": [
+            "3. Experiments",
+            "3.1. Zero-Shot Transfer",
+            "3.1.2. USING CLIP FOR ZERO-SHOT TRANSFER"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.751804,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.731417,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:figure:figure_0006_000071:part_0001",
+          "content_type": "figure",
+          "page_start": 9,
+          "section_path": [
+            "3. Experiments",
+            "3.1. Zero-Shot Transfer",
+            "3.1.5. ANALYSIS OF ZERO-SHOT CLIP PERFORMANCE"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.724056,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000493:part_0001",
+          "content_type": "paragraph",
+          "page_start": 44,
+          "section_path": [
+            "B. Zero-Shot Prediction"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.71913,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:figure:figure_0005_000067:part_0001",
+          "content_type": "figure",
+          "page_start": 8,
+          "section_path": [
+            "3. Experiments",
+            "3.1. Zero-Shot Transfer",
+            "3.1.5. ANALYSIS OF ZERO-SHOT CLIP PERFORMANCE"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.718477,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000225:part_0001",
+          "content_type": "paragraph",
+          "page_start": 26,
+          "section_path": [
+            "8. Related Work"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.715457,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:figure:figure_0001_000010:part_0001",
+          "content_type": "figure",
+          "page_start": 2,
+          "section_path": [
+            "1. Introduction and Motivating Work"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.715121,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000012:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1. Introduction and Motivating Work"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.710899,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000069:part_0001",
+          "content_type": "paragraph",
+          "page_start": 8,
+          "section_path": [
+            "3. Experiments",
+            "3.1. Zero-Shot Transfer",
+            "3.1.5. ANALYSIS OF ZERO-SHOT CLIP PERFORMANCE"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2103.00020_clip.pdf",
+          "score": 0.708429,
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000108:part_0001",
+          "content_type": "paragraph",
+          "page_start": 14,
+          "section_path": [
+            "3. Experiments",
+            "3.3. Robustness to Natural Distribution Shift"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "question": "What IO bottleneck does FlashAttention address and why is its attention computation exact?",
+      "expected_files": [
+        "2205.14135_flashattention.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2205.14135_flashattention.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.222,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.808596,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000013:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.807807,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+          "content_type": "figure",
+          "page_start": 1,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.80626,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000080:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "3 FlashAttention : Algorithm, Analysis, and Extensions",
+            "3.2 Analysis: IO Complexity of FlashAttention"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.800292,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000047:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "3 FlashAttention : Algorithm, Analysis, and Extensions"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.782418,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000265:part_0001",
+          "content_type": "paragraph",
+          "page_start": 17,
+          "section_path": [
+            "B Algorithm Details"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.780814,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.77607,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:table:logical_table_unlabelled_0001:part_0001",
+          "content_type": "table",
+          "page_start": 6,
+          "section_path": [
+            "3 FlashAttention : Algorithm, Analysis, and Extensions",
+            "3.2 Analysis: IO Complexity of FlashAttention"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.775742,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000093:part_0001",
+          "content_type": "paragraph",
+          "page_start": 6,
+          "section_path": [
+            "3 FlashAttention : Algorithm, Analysis, and Extensions",
+            "3.3 Extension: Block-Sparse FlashAttention"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.774607,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000036:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "2 Background",
+            "2.2 Standard Attention Implementation"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2205.14135_flashattention.pdf",
+          "score": 0.763699,
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000416:part_0001",
+          "content_type": "paragraph",
+          "page_start": 25,
+          "section_path": [
+            "C Proofs",
+            "Algorithm 5 Block-Sparse FlashAttention Forward Pass"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "question": "Why does Mamba have linear sequence complexity and what is selective about its state space model?",
+      "expected_files": [
+        "2312.00752_mamba.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2312.00752_mamba.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.344,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.778815,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000023:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "2 State Space Models",
+            "Selective State Space Model"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.769218,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000221:part_0001",
+          "content_type": "paragraph",
+          "page_start": 17,
+          "section_path": [
+            "6 Conclusion"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.76088,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000414:part_0001",
+          "content_type": "paragraph",
+          "page_start": 28,
+          "section_path": [
+            "C Mechanics of Selective SSMs"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.752303,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.743014,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000026:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "2 State Space Models",
+            "Selective State Space Model"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.739203,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.738097,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000019:part_0002",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.720959,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000211:part_0001",
+          "content_type": "paragraph",
+          "page_start": 16,
+          "section_path": [
+            "5 Discussion"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.717407,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000049:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "3 Selective State Space Models"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2312.00752_mamba.pdf",
+          "score": 0.714931,
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:formula:formula_000028:part_0001",
+          "content_type": "formula",
+          "page_start": 3,
+          "section_path": [
+            "2 State Space Models",
+            "Selective State Space Model"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R07",
+      "question": "What tokenizer-free OCR architecture does Donut use?",
+      "expected_files": [
+        "2111.15664_donut.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2111.15664_donut.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.28,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.778335,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0002_000015:part_0001",
+          "content_type": "figure",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.77519,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000017:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.766248,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:table:logical_table_0001:part_0001",
+          "content_type": "table",
+          "page_start": 9,
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.2 Setups"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.761302,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "2 Method",
+            "2.2 Document Understanding Transformer"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.759261,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0003_000029:part_0001",
+          "content_type": "figure",
+          "page_start": 4,
+          "section_path": [
+            "2 Method",
+            "2.1 Preliminary: background"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.756115,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000066:part_0001",
+          "content_type": "paragraph",
+          "page_start": 8,
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.2 Setups"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.750534,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000085:part_0001",
+          "content_type": "paragraph",
+          "page_start": 11,
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.3 Experimental Results"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.736932,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000219:part_0001",
+          "content_type": "paragraph",
+          "page_start": 25,
+          "section_path": [
+            "A Appendix",
+            "A.5 Implementation and Training Hyperparameters"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.733521,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0006_000083:part_0001",
+          "content_type": "figure",
+          "page_start": 11,
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.3 Experimental Results"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2111.15664_donut.pdf",
+          "score": 0.730379,
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000076:part_0001",
+          "content_type": "paragraph",
+          "page_start": 10,
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.3 Experimental Results"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R08",
+      "question": "What is Nougat designed to convert scientific PDF documents into?",
+      "expected_files": [
+        "2308.13418_nougat.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2308.13418_nougat.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.211,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.777761,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.774482,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000007:part_0001",
+          "content_type": "paragraph",
+          "page_start": 1,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.730174,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+          "content_type": "paragraph",
+          "page_start": 9,
+          "section_path": [
+            "6 Conclusion"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.706299,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:table:logical_table_0001:part_0001",
+          "content_type": "table",
+          "page_start": 7,
+          "section_path": [
+            "5 Results & Evaluation",
+            "5.1 Metrics"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.675736,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000094:part_0001",
+          "content_type": "paragraph",
+          "page_start": 7,
+          "section_path": [
+            "5 Results & Evaluation",
+            "5.3 Comparison"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.664177,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000174:part_0001",
+          "content_type": "paragraph",
+          "page_start": 13,
+          "section_path": [
+            "B Examples"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.659377,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:figure:figure_0003_000042:part_0001",
+          "content_type": "figure",
+          "page_start": 4,
+          "section_path": [
+            "3 Model",
+            "3.2 Data Augmentation"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.656918,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000109:part_0001",
+          "content_type": "paragraph",
+          "page_start": 9,
+          "section_path": [
+            "5 Results & Evaluation",
+            "5.5 Limitations & Future work"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.633613,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000052:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "4 Datasets",
+            "4.1 Splitting the pages"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2308.13418_nougat.pdf",
+          "score": 0.617123,
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000090:part_0001",
+          "content_type": "paragraph",
+          "page_start": 7,
+          "section_path": [
+            "5 Results & Evaluation",
+            "5.2 Text modalities"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R09",
+      "question": "What unified text and image masking objectives are used by LayoutLMv3 for document AI?",
+      "expected_files": [
+        "2204.08387_layoutlmv3.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "2204.08387_layoutlmv3.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.32,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.857835,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+          "content_type": "figure",
+          "page_start": 3,
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.1 Model Architecture"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.856497,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000039:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "2 LAYOUTLMV3"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.846214,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000112:part_0001",
+          "content_type": "paragraph",
+          "page_start": 8,
+          "section_path": [
+            "5 CONCLUSION AND FUTURE WORK"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.842027,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:formula:formula_000050:part_0001",
+          "content_type": "formula",
+          "page_start": 3,
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.2 Pre-training Objectives"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.830389,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.821016,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000029:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "1 INTRODUCTION"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.81205,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000057:part_0001",
+          "content_type": "paragraph",
+          "page_start": 4,
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.2 Pre-training Objectives"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.808997,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0001_000006:part_0001",
+          "content_type": "figure",
+          "page_start": 1,
+          "section_path": []
+        },
+        {
+          "rank": 9,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.808417,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000048:part_0001",
+          "content_type": "paragraph",
+          "page_start": 3,
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.2 Pre-training Objectives"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "score": 0.807603,
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000041:part_0001",
+          "content_type": "paragraph",
+          "page_start": 2,
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.1 Model Architecture"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R10",
+      "question": "Compare BERT bidirectional pretraining with GPT-3 in-context few-shot learning.",
+      "expected_files": [
+        "1810.04805_bert.pdf",
+        "2005.14165_language-models-are-few-shot-learners.pdf"
+      ],
+      "all_expected_at_10": true,
+      "any_expected_at_1": true,
+      "first_ranks": {
+        "1810.04805_bert.pdf": 3,
+        "2005.14165_language-models-are-few-shot-learners.pdf": 1
+      },
+      "reciprocal_rank": 1.0,
+      "latency_seconds": 2.238,
+      "top_hits": [
+        {
+          "rank": 1,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.682039,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:figure:figure_0003_000139:part_0001",
+          "content_type": "figure",
+          "page_start": 19,
+          "section_path": [
+            "3 Results",
+            "3.7 SuperGLUE"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.677667,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+          "content_type": "paragraph",
+          "page_start": 5,
+          "section_path": [
+            "1 Introduction"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.661117,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000216:part_0001",
+          "content_type": "paragraph",
+          "page_start": 14,
+          "section_path": [
+            "A Additional Details for BERT",
+            "A.4 Comparison of BERT, ELMo ,and OpenAI GPT"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.657042,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000254:part_0001",
+          "content_type": "paragraph",
+          "page_start": 33,
+          "section_path": [
+            "5 Limitations"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.651513,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000035:part_0001",
+          "content_type": "paragraph",
+          "page_start": 6,
+          "section_path": [
+            "2 Approach"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.646512,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:abstract:block_000000:part_0001",
+          "content_type": "abstract",
+          "page_start": 1,
+          "section_path": [
+            "Abstract"
+          ]
+        },
+        {
+          "rank": 7,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.642866,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:figure:figure_0003_000143:part_0001",
+          "content_type": "figure",
+          "page_start": 20,
+          "section_path": [
+            "3 Results",
+            "3.7 SuperGLUE"
+          ]
+        },
+        {
+          "rank": 8,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.641731,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000135:part_0001",
+          "content_type": "paragraph",
+          "page_start": 18,
+          "section_path": [
+            "3 Results",
+            "3.6 Reading Comprehension"
+          ]
+        },
+        {
+          "rank": 9,
+          "filename": "1810.04805_bert.pdf",
+          "score": 0.640659,
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0003_000198:part_0001",
+          "content_type": "figure",
+          "page_start": 13,
+          "section_path": [
+            "A Additional Details for BERT",
+            "A.1 Illustration of the Pre-training Tasks"
+          ]
+        },
+        {
+          "rank": 10,
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "score": 0.639387,
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000125:part_0001",
+          "content_type": "paragraph",
+          "page_start": 17,
+          "section_path": [
+            "3 Results",
+            "3.4 Winograd-Style Tasks"
+          ]
+        }
+      ]
+    }
+  ]
+}

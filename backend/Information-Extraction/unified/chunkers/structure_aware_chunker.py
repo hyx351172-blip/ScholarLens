@@ -713,6 +713,12 @@ class StructureAwareChunker:
         warnings: Optional[List[str]] = None,
         anchor_order: int = 10**9,
     ) -> ScientificChunk:
+        # Docling may preserve PDF table/figure alignment as tens of thousands
+        # of horizontal spaces.  Those spaces add no retrieval meaning, but
+        # they still count against provider request-size limits and can make a
+        # token-bounded chunk fail at the embedding API.  Preserve line
+        # boundaries while normalizing horizontal layout whitespace.
+        text = _normalize_horizontal_whitespace(text)
         return ScientificChunk(
             schema_version=CHUNK_SCHEMA_VERSION,
             chunk_id="",
@@ -765,6 +771,14 @@ class StructureAwareChunker:
 def estimate_tokens(text: str) -> int:
     """Return a deterministic local estimate suitable for chunk budgeting."""
     return len(_TOKEN_RE.findall(text or ""))
+
+
+def _normalize_horizontal_whitespace(text: str) -> str:
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    return "\n".join(
+        re.sub(r"[\t\f\v ]+", " ", line).strip()
+        for line in lines
+    ).strip()
 
 
 def _split_by_words(
