@@ -1,0 +1,629 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-evidence-gold-v2-heldout",
+  "annotation_status": "human_verified",
+  "split": "held_out",
+  "created_at": "2026-09-22",
+  "collection_id": "kb_1790061860190",
+  "corpus": {
+    "paper_count": 19,
+    "chunk_count": 2057,
+    "chunk_schema_version": "1.1"
+  },
+  "frozen_configuration": {
+    "candidate_k": 20,
+    "top_k": 10,
+    "rrf_k": 60,
+    "dense_weight": 2.0,
+    "reranker_weight": 1.0,
+    "reranker_model": "qwen3-rerank"
+  },
+  "leakage_controls": {
+    "questions_overlap_v1": false,
+    "gold_chunk_overlap_v1": false,
+    "answerable_cases_use_v1_gold_source_papers": false,
+    "parameters_frozen_before_human_review": true,
+    "no_parameter_tuning_on_this_split": true
+  },
+  "cases": [
+    {
+      "id": "HV01",
+      "category": "mechanism",
+      "question": "How does a Neural ODE replace a discrete stack of hidden layers, and how is its output computed?",
+      "answerable": true,
+      "expected_answer": "A neural network parameterizes the time derivative of the hidden state, creating continuous-depth dynamics. Starting from the input state, a black-box differential equation solver integrates those dynamics to obtain the output state.",
+      "required_concepts": [
+        "hidden-state derivative parameterized by a neural network",
+        "continuous-depth dynamics",
+        "black-box ODE solver computes the output"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:abstract:block_000000:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": [
+              "Abstract"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV02",
+      "category": "mechanism",
+      "question": "How did the GPT-4 team predict the model's final loss before the training run completed?",
+      "answerable": true,
+      "expected_answer": "They fit a power-law scaling model with an irreducible loss term, L(C)=aC^b+c, using models trained with the same method but at most 10,000 times less compute. The prediction used an internal code dataset and no partial GPT-4 training results.",
+      "required_concepts": [
+        "power-law loss model with irreducible term",
+        "smaller models using at most 10,000 times less compute",
+        "prediction made without partial GPT-4 results"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000018:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Predictable Scaling",
+              "3.1 Loss Prediction"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV03",
+      "category": "mechanism",
+      "question": "What makes the Segment Anything Model promptable, and what is the scale of the SA-1B dataset?",
+      "answerable": true,
+      "expected_answer": "SAM is designed and trained to accept prompts so that it can transfer zero-shot to new image distributions and tasks. SA-1B contains more than one billion masks over 11 million licensed, privacy-respecting images.",
+      "required_concepts": [
+        "prompt-driven zero-shot transfer",
+        "more than one billion masks",
+        "11 million images"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:abstract:block_000000:part_0001",
+            "filename": "2304.02643_segment-anything.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": [
+              "Abstract"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV04",
+      "category": "mechanism",
+      "question": "What are the main stages of Docling's default PDF processing pipeline, and what forms can its final output take?",
+      "answerable": true,
+      "expected_answer": "A PDF backend extracts positioned text and renders page images; page-level AI models extract layout and table structure; page results are aggregated and post-processed for metadata, language, and reading order. The typed document can be serialized as JSON or Markdown.",
+      "required_concepts": [
+        "PDF backend extracts text coordinates and page images",
+        "page-level layout and table models",
+        "aggregation and post-processing",
+        "JSON or Markdown output"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000025:part_0001",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Processing pipeline"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV05",
+      "category": "mechanism",
+      "question": "What sequence of methods is used to align Llama 3 during post-training?",
+      "answerable": true,
+      "expected_answer": "Llama 3 applies several post-training rounds on a pretrained checkpoint. Each round uses supervised fine-tuning followed by Direct Preference Optimization on human-annotated or synthetically generated examples.",
+      "required_concepts": [
+        "several post-training rounds",
+        "supervised fine-tuning",
+        "Direct Preference Optimization",
+        "human or synthetic examples"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000157:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 15,
+            "content_type": "paragraph",
+            "section_path": [
+              "4 Post-Training"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV06",
+      "category": "mechanism",
+      "question": "How does the DeepSeek-R1 training pipeline address the readability and language-mixing problems of DeepSeek-R1-Zero?",
+      "answerable": true,
+      "expected_answer": "It begins with thousands of human-aligned cold-start examples, applies RL for performance and language consistency, then uses rejection sampling and another SFT stage over reasoning and non-reasoning data, followed by a second RL stage for helpfulness and harmlessness.",
+      "required_concepts": [
+        "cold-start data",
+        "RL with language consistency",
+        "rejection sampling and SFT",
+        "secondary alignment RL"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000045:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": [
+              "3. DeepSeek-R1"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV07",
+      "category": "table",
+      "question": "In Neural ODE Table 1, what test error, parameter count, memory complexity, and time complexity are reported for ODE-Net?",
+      "answerable": true,
+      "expected_answer": "ODE-Net reports 0.42% test error, 0.22M parameters, O(1) memory, and O(L-tilde) time.",
+      "required_concepts": [
+        "0.42% test error",
+        "0.22M parameters",
+        "constant memory",
+        "O(L-tilde) time"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:table:logical_table_0001:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 3,
+            "content_type": "table",
+            "section_path": [
+              "3 Replacing residual networks with ODEs for supervised learning"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV08",
+      "category": "table",
+      "question": "According to Docling Table 1, how do the native and pypdfium backends compare on an Apple M3 Max with 16 threads?",
+      "answerable": true,
+      "expected_answer": "At 16 threads, the native backend takes 167 seconds at 1.34 pages per second and uses 6.20 GB peak memory; pypdfium takes 92 seconds at 2.45 pages per second and uses 2.56 GB.",
+      "required_concepts": [
+        "native 167 seconds and 1.34 pages per second",
+        "native 6.20 GB",
+        "pypdfium 92 seconds and 2.45 pages per second",
+        "pypdfium 2.56 GB"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:table:logical_table_0001:part_0001",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "page_start": 5,
+            "content_type": "table",
+            "section_path": [
+              "4 Performance"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV09",
+      "category": "table",
+      "question": "Which Llama 3.1 model variants in Table 1 support all four of fine-tuning, multilinguality, long context, and tool use?",
+      "answerable": true,
+      "expected_answer": "The Llama 3.1 8B Instruct, 70B Instruct, and 405B Instruct variants support all four capabilities.",
+      "required_concepts": [
+        "Llama 3.1 8B Instruct",
+        "Llama 3.1 70B Instruct",
+        "Llama 3.1 405B Instruct"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:table:logical_table_unlabelled_0001:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 2,
+            "content_type": "table",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV10",
+      "category": "table",
+      "question": "In the structured digital tables paper's Table I, which yeast strains list F Winston as their source?",
+      "answerable": true,
+      "expected_answer": "FY10 and FY22 list F Winston as their source.",
+      "required_concepts": [
+        "FY10",
+        "FY22",
+        "F Winston"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2:table:logical_table_unlabelled_0001:part_0001",
+            "filename": "PMC2950080_structured-digital-tables.pdf",
+            "page_start": 5,
+            "content_type": "table",
+            "section_path": [
+              "Introduction",
+              "Properties table"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV11",
+      "category": "figure",
+      "question": "What contrast between residual networks and ODE networks is shown in Neural ODE Figure 1?",
+      "answerable": true,
+      "expected_answer": "A residual network applies a discrete sequence of finite transformations, whereas an ODE network defines a vector field that transforms the state continuously; the marked circles indicate evaluation locations.",
+      "required_concepts": [
+        "discrete residual transformations",
+        "continuous ODE vector field",
+        "circles are evaluation locations"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:figure:figure_0001_000007:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV12",
+      "category": "figure",
+      "question": "What three interconnected components of the Segment Anything project are presented in Figure 1?",
+      "answerable": true,
+      "expected_answer": "Figure 1 presents the promptable segmentation task, the Segment Anything Model used for annotation and zero-shot transfer, and the data engine used to collect SA-1B.",
+      "required_concepts": [
+        "promptable segmentation task",
+        "Segment Anything Model",
+        "SA-1B data engine"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0001_000001:part_0001",
+            "filename": "2304.02643_segment-anything.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV13",
+      "category": "figure",
+      "question": "What does GPT-4 Figure 2 plot, and what does the dotted-line fit demonstrate?",
+      "answerable": true,
+      "expected_answer": "It plots mean log pass rate on a subset of HumanEval against normalized training compute for GPT-4 and smaller models. A power-law fit made only from the smaller models accurately predicts GPT-4's performance.",
+      "required_concepts": [
+        "mean log HumanEval pass rate",
+        "normalized training compute",
+        "power-law fit excludes GPT-4",
+        "fit predicts GPT-4 performance"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:figure:figure_0002_000024:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 2,
+            "content_type": "figure",
+            "section_path": [
+              "3 Predictable Scaling",
+              "3.2 Scaling of Capabilities on HumanEval"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV14",
+      "category": "formula",
+      "question": "What differential equation governs the adjoint state in Neural ODE Equation 4, and how is it evaluated?",
+      "answerable": true,
+      "expected_answer": "The adjoint satisfies da(t)/dt = -a(t)^T partial f/partial z. It is evaluated by solving backward in time from the terminal loss gradient, while the state trajectory can be recomputed backward alongside it.",
+      "required_concepts": [
+        "negative adjoint-vector Jacobian product",
+        "backward-time ODE solve",
+        "state trajectory recomputed backward"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:formula:formula_000028:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 2,
+            "content_type": "formula",
+            "section_path": [
+              "2 Reverse-mode automatic differentiation of ODE solutions"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV15",
+      "category": "formula",
+      "question": "What is the instantaneous change-of-variables equation used by continuous normalizing flows, and what computation does it avoid?",
+      "answerable": true,
+      "expected_answer": "The log density evolves as partial log p(z(t))/partial t = -tr(df/dz(t)). It replaces the expensive log determinant required by finite normalizing flows with a trace computation.",
+      "required_concepts": [
+        "negative trace of the dynamics Jacobian",
+        "instantaneous log-density change",
+        "avoids a log-determinant computation"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:formula:formula_000056:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 4,
+            "content_type": "formula",
+            "section_path": [
+              "4 Continuous Normalizing Flows"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV16",
+      "category": "formula",
+      "question": "How is the per-output advantage A_i normalized in DeepSeek-R1's GRPO Equation 3?",
+      "answerable": true,
+      "expected_answer": "For each output, GRPO subtracts the mean reward of the sampled group from its reward and divides by the standard deviation of the group's rewards: A_i=(r_i-mean(r_1...r_G))/std(r_1...r_G).",
+      "required_concepts": [
+        "subtract group mean reward",
+        "divide by group reward standard deviation",
+        "normalization is within the sampled group"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:formula:formula_000019:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 3,
+            "content_type": "formula",
+            "section_path": [
+              "2. DeepSeek-R1-Zero",
+              "2.1. Group Relative Policy Optimization"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV17",
+      "category": "cross_paper_comparison",
+      "question": "How do GPT-4 and Llama 3 use small-model scaling experiments for different development decisions?",
+      "answerable": true,
+      "expected_answer": "GPT-4 fits a scaling law on smaller runs to predict the final loss of the full GPT-4 run. Llama 3 trains small models on alternative data mixtures, predicts large-model performance for each mixture, and uses the results to select a candidate data mix before a larger validation run.",
+      "required_concepts": [
+        "GPT-4 predicts final loss from smaller runs",
+        "Llama 3 compares candidate data mixtures",
+        "Llama 3 validates the selected mix with a larger model"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000018:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Predictable Scaling",
+              "3.1 Loss Prediction"
+            ]
+          },
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000063:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Pre-Training",
+              "3.1 Pre-Training Data",
+              "3.1.2 Determining the Data Mix"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV18",
+      "category": "cross_paper_comparison",
+      "question": "Compare the post-training sequences described for Llama 3 and DeepSeek-R1.",
+      "answerable": true,
+      "expected_answer": "Llama 3 repeatedly applies supervised fine-tuning followed by DPO using human or synthetic examples. DeepSeek-R1 starts from cold-start data, applies RL for reasoning and language consistency, performs rejection sampling plus another SFT stage, and finishes with a second RL alignment stage.",
+      "required_concepts": [
+        "Llama 3 uses SFT followed by DPO",
+        "DeepSeek-R1 begins with cold-start data and RL",
+        "DeepSeek-R1 uses rejection sampling and SFT",
+        "DeepSeek-R1 includes a second alignment RL stage"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000157:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 15,
+            "content_type": "paragraph",
+            "section_path": [
+              "4 Post-Training"
+            ]
+          },
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000045:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": [
+              "3. DeepSeek-R1"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV19",
+      "category": "cross_paper_comparison",
+      "question": "How do the Segment Anything and Docling pipelines divide work among their major components?",
+      "answerable": true,
+      "expected_answer": "Segment Anything connects a promptable segmentation task, SAM for annotation and zero-shot transfer, and a data engine that builds SA-1B. Docling parses positioned PDF text and page images, runs page-level layout and table models, then aggregates and post-processes the results into a typed document.",
+      "required_concepts": [
+        "SAM task-model-data engine loop",
+        "Docling PDF backend",
+        "Docling page-level AI models",
+        "Docling aggregation and post-processing"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0001_000001:part_0001",
+            "filename": "2304.02643_segment-anything.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": []
+          },
+          {
+            "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000025:part_0001",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Processing pipeline"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV20",
+      "category": "cross_paper_comparison",
+      "question": "How do Docling and table triplification make scholarly document content machine-processable?",
+      "answerable": true,
+      "expected_answer": "Docling assembles page predictions into a typed document, repairs metadata and reading order, binds captions, and serializes the result as JSON or Markdown. Table triplification maps a published table to a canonical machine-readable table and then converts its rows, columns, and cells into RDF-style triples, with table-specific semantic handling for complex tables.",
+      "required_concepts": [
+        "Docling typed document and post-processing",
+        "Docling JSON or Markdown serialization",
+        "canonical table mapping",
+        "RDF triple conversion"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000044:part_0001",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Processing pipeline",
+              "3.3 Assembly"
+            ]
+          },
+          {
+            "chunk_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2:paragraph:block_000055:part_0001",
+            "filename": "PMC2950080_structured-digital-tables.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "Introduction",
+              "Table triplification"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "HV21",
+      "category": "unanswerable",
+      "question": "What exact number of parameters does GPT-4 contain?",
+      "answerable": false,
+      "expected_answer": "The indexed GPT-4 technical report does not disclose the model's exact parameter count, so the knowledge base cannot provide a supported number.",
+      "required_concepts": [
+        "refuse to invent an exact parameter count",
+        "state that the report withholds architecture details"
+      ],
+      "gold_evidence_sets": []
+    },
+    {
+      "id": "HV22",
+      "category": "unanswerable",
+      "question": "Exactly how many kilowatt-hours of electricity were consumed to train the Segment Anything Model?",
+      "answerable": false,
+      "expected_answer": "The indexed Segment Anything paper does not provide an exact electricity-consumption figure in kilowatt-hours, so the knowledge base should not estimate one.",
+      "required_concepts": [
+        "refuse to invent an electricity value",
+        "distinguish absent evidence from a numerical answer"
+      ],
+      "gold_evidence_sets": []
+    },
+    {
+      "id": "HV23",
+      "category": "unanswerable",
+      "question": "What exact per-page GPU latency does Docling's TableFormer achieve on an NVIDIA A100?",
+      "answerable": false,
+      "expected_answer": "The indexed Docling report provides CPU-oriented pipeline measurements, not an exact TableFormer per-page latency on an NVIDIA A100, so the requested number is unsupported.",
+      "required_concepts": [
+        "refuse an unsupported A100 latency",
+        "do not substitute CPU pipeline measurements"
+      ],
+      "gold_evidence_sets": []
+    },
+    {
+      "id": "HV24",
+      "category": "unanswerable",
+      "question": "On identical hardware, which has lower end-to-end inference energy consumption: Llama 3 405B or DeepSeek-R1, and by exactly how many joules per request?",
+      "answerable": false,
+      "expected_answer": "The indexed papers do not report a controlled same-hardware comparison in joules per request, so neither a winner nor an exact difference can be supported.",
+      "required_concepts": [
+        "refuse an unsupported cross-paper energy comparison",
+        "require identical-hardware evidence",
+        "do not invent joules per request"
+      ],
+      "gold_evidence_sets": []
+    }
+  ]
+}
