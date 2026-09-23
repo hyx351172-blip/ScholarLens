@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-paper-target-resolution-dev-v1",
+  "split": "development",
+  "created_at": "2026-09-23",
+  "purpose": "Develop deterministic mapping from an LLM planner target name to one unique corpus filename before target-scoped vector retrieval.",
+  "corpus_filenames": [
+    "1706.03762_attention-is-all-you-need.pdf",
+    "1806.07366_neural-ordinary-differential-equations.pdf",
+    "1810.04805_bert.pdf",
+    "2005.14165_language-models-are-few-shot-learners.pdf",
+    "2103.00020_clip.pdf",
+    "2106.09685_lora.pdf",
+    "2111.15664_donut.pdf",
+    "2204.08387_layoutlmv3.pdf",
+    "2205.14135_flashattention.pdf",
+    "2303.08774_gpt-4-technical-report.pdf",
+    "2304.02643_segment-anything.pdf",
+    "2308.13418_nougat.pdf",
+    "2312.00752_mamba.pdf",
+    "2407.21783_llama-3-herd-of-models.pdf",
+    "2408.09869_docling-technical-report.pdf",
+    "2501.12948_deepseek-r1.pdf",
+    "PMC2950080_structured-digital-tables.pdf"
+  ],
+  "excluded_corpus_files": [
+    {
+      "filename": "2106.10379_alphafold.pdf",
+      "reason": "Filename/content mismatch: indexed content is a superconductivity paper."
+    },
+    {
+      "filename": "2307.12037_multilingual-noisy-materials-paper.pdf",
+      "reason": "Filename/content mismatch: indexed content is an LK-99 superconductivity paper."
+    }
+  ],
+  "cases": [
+    {"id": "TR01", "target": "structured-digital-tables", "expected_filename": "PMC2950080_structured-digital-tables.pdf"},
+    {"id": "TR02", "target": "Structured Digital Tables", "expected_filename": "PMC2950080_structured-digital-tables.pdf"},
+    {"id": "TR03", "target": "Docling", "expected_filename": "2408.09869_docling-technical-report.pdf"},
+    {"id": "TR04", "target": "GPT-4", "expected_filename": "2303.08774_gpt-4-technical-report.pdf"},
+    {"id": "TR05", "target": "Llama 3", "expected_filename": "2407.21783_llama-3-herd-of-models.pdf"},
+    {"id": "TR06", "target": "DeepSeek-R1 hosted service", "expected_filename": "2501.12948_deepseek-r1.pdf"},
+    {"id": "TR07", "target": "Neural ODE", "expected_filename": "1806.07366_neural-ordinary-differential-equations.pdf"},
+    {"id": "TR08", "target": "Segment Anything Model", "expected_filename": "2304.02643_segment-anything.pdf"},
+    {"id": "TR09", "target": "BERT", "expected_filename": "1810.04805_bert.pdf"},
+    {"id": "TR10", "target": "LayoutLMv3", "expected_filename": "2204.08387_layoutlmv3.pdf"},
+    {"id": "TR11", "target": "FlashAttention", "expected_filename": "2205.14135_flashattention.pdf"},
+    {"id": "TR12", "target": "Mamba", "expected_filename": "2312.00752_mamba.pdf"},
+    {"id": "TR13", "target": "Donut", "expected_filename": "2111.15664_donut.pdf"},
+    {"id": "TR14", "target": "Nougat", "expected_filename": "2308.13418_nougat.pdf"},
+    {"id": "TR15", "target": "CLIP", "expected_filename": "2103.00020_clip.pdf"},
+    {"id": "TR16", "target": "LoRA", "expected_filename": "2106.09685_lora.pdf"},
+    {"id": "TR17", "target": "Transformer", "expected_filename": null, "expected_status": "unresolved", "reason": "The method alias does not lexically identify the Attention Is All You Need filename; unsafe guesses must be rejected."},
+    {"id": "TR18", "target": "paper", "expected_filename": null, "expected_status": "unresolved", "reason": "Generic target words must never select an arbitrary corpus file."}
+  ],
+  "retrieval_cases": [
+    {
+      "id": "TGR01",
+      "question": "Compare how Docling reconstructs page layout with how structured digital tables encode table semantics and provenance.",
+      "subqueries": [
+        {
+          "id": "docling",
+          "target": "Docling",
+          "query": "How does Docling detect page elements and combine layout boxes with PDF text tokens?"
+        },
+        {
+          "id": "structured_tables",
+          "target": "structured-digital-tables",
+          "query": "How are table rows, headers, cells, and provenance represented as RDF in structured digital tables?"
+        }
+      ],
+      "expected_filenames": [
+        "2408.09869_docling-technical-report.pdf",
+        "PMC2950080_structured-digital-tables.pdf"
+      ]
+    },
+    {
+      "id": "TGR02",
+      "question": "Compare the OCR-free document conversion inputs and outputs of Donut and Nougat.",
+      "subqueries": [
+        {
+          "id": "donut",
+          "target": "Donut",
+          "query": "What image encoder, text decoder, and structured output does Donut use without OCR?"
+        },
+        {
+          "id": "nougat",
+          "target": "Nougat",
+          "query": "How does Nougat convert rasterized scientific pages into machine-readable markup?"
+        }
+      ],
+      "expected_filenames": [
+        "2111.15664_donut.pdf",
+        "2308.13418_nougat.pdf"
+      ]
+    },
+    {
+      "id": "TGR03",
+      "question": "Compare BERT pre-training with LoRA adaptation of a pretrained model.",
+      "subqueries": [
+        {
+          "id": "bert",
+          "target": "BERT",
+          "query": "What masked-token and sentence-level objectives are used to pre-train BERT?"
+        },
+        {
+          "id": "lora",
+          "target": "LoRA",
+          "query": "How does LoRA adapt a pretrained model with frozen weights and low-rank updates?"
+        }
+      ],
+      "expected_filenames": [
+        "1810.04805_bert.pdf",
+        "2106.09685_lora.pdf"
+      ]
+    }
+  ]
+}

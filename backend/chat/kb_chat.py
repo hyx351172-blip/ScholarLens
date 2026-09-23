@@ -27,6 +27,7 @@ try:
         RetrievalPlan,
         create_query_plan,
         execute_retrieval_plan,
+        resolve_target_filename,
         single_query_plan,
     )
 except ModuleNotFoundError:  # Direct execution from backend/chat.
@@ -35,6 +36,7 @@ except ModuleNotFoundError:  # Direct execution from backend/chat.
         RetrievalPlan,
         create_query_plan,
         execute_retrieval_plan,
+        resolve_target_filename,
         single_query_plan,
     )
 
@@ -161,7 +163,8 @@ class ChatService:
         collection_name: str,
         milvus_api_url: str,
         top_k: int = 10,
-        score_threshold: float = 0.1
+        score_threshold: float = 0.1,
+        filter_expr: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         从Milvus召回相关文档
@@ -183,7 +186,8 @@ class ChatService:
             payload = {
                 "collection_name": collection_name,
                 "query_text": query,
-                "top_k": top_k
+                "top_k": top_k,
+                "filter_expr": filter_expr,
             }
 
             print(f"正在从Milvus召回文档: {url}")
@@ -223,6 +227,50 @@ class ChatService:
             raise HTTPException(
                 status_code=500,
                 detail=f"调用Milvus API失败: {str(e)}"
+            )
+
+    async def list_collection_filenames(
+        self,
+        collection_name: str,
+        milvus_api_url: str,
+    ) -> List[str]:
+        """Read the current corpus catalog used for safe target resolution."""
+
+        try:
+            url = (
+                f"{milvus_api_url.rstrip('/')}/knowledge_base/"
+                f"{collection_name}/documents"
+            )
+            response = await asyncio.to_thread(
+                requests.get,
+                url,
+                timeout=30,
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"知识库文档目录读取失败: {response.text}",
+                )
+            result = response.json()
+            if result.get("status") != "success":
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"知识库文档目录读取失败: {result}",
+                )
+            documents = result.get("documents", [])
+            if not isinstance(documents, list):
+                raise HTTPException(status_code=500, detail="知识库文档目录格式错误")
+            return sorted(
+                {
+                    str(item.get("filename", "")).strip()
+                    for item in documents
+                    if isinstance(item, dict) and str(item.get("filename", "")).strip()
+                }
+            )
+        except requests.exceptions.RequestException as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"调用Milvus文档目录API失败: {str(e)}",
             )
 
     async def plan_retrieval(
@@ -274,6 +322,45 @@ class ChatService:
             else request.top_k
         )
 
+        target_filters: Dict[str, str] = {}
+        target_resolutions: Dict[str, Dict[str, Any]] = {}
+        target_resolution_status = "not_applicable"
+        if plan.is_multi_query:
+            try:
+                filenames = await self.list_collection_filenames(
+                    request.collection_name,
+                    request.milvus_api_url,
+                )
+                for subquery in plan.subqueries:
+                    resolution = resolve_target_filename(subquery.target, filenames)
+                    target_resolutions[subquery.query_id] = resolution.to_dict()
+                    if resolution.filename:
+                        target_filters[subquery.query] = (
+                            f"filename == {json.dumps(resolution.filename, ensure_ascii=False)}"
+                        )
+                resolved_count = sum(
+                    item["status"] == "resolved"
+                    for item in target_resolutions.values()
+                )
+                if resolved_count == len(plan.subqueries):
+                    target_resolution_status = "complete"
+                elif resolved_count:
+                    target_resolution_status = "partial"
+                else:
+                    target_resolution_status = "unresolved"
+            except Exception as exc:
+                target_resolution_status = "catalog_error"
+                target_resolutions = {
+                    item.query_id: {
+                        "target": item.target,
+                        "status": "catalog_error",
+                        "filename": None,
+                        "score": 0.0,
+                        "reason": type(exc).__name__,
+                    }
+                    for item in plan.subqueries
+                }
+
         async def retrieve(query: str) -> List[Dict[str, Any]]:
             return await self.retrieve_documents(
                 query=query,
@@ -281,6 +368,7 @@ class ChatService:
                 milvus_api_url=request.milvus_api_url,
                 top_k=candidate_k,
                 score_threshold=request.score_threshold,
+                filter_expr=target_filters.get(query),
             )
 
         execution = await execute_retrieval_plan(
@@ -293,6 +381,8 @@ class ChatService:
             per_target_reserve=request.multi_query_config.per_target_reserve,
         )
         execution.trace["planner_latency_seconds"] = round(planner_latency, 4)
+        execution.trace["target_resolution_status"] = target_resolution_status
+        execution.trace["target_resolutions"] = target_resolutions
         return execution
 
     async def rerank_for_request(

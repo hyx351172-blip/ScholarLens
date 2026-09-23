@@ -13,7 +13,8 @@ import json
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable
+from pathlib import PurePath
+from typing import Any, Awaitable, Callable, Sequence
 
 
 PlannerGenerator = Callable[[list[dict[str, str]]], Awaitable[str]]
@@ -85,6 +86,144 @@ class RetrievalPlan:
 class RetrievalExecution:
     documents: list[dict[str, Any]]
     trace: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class TargetFilenameResolution:
+    """Auditable result of mapping one planner target to a corpus file."""
+
+    target: str
+    status: str
+    filename: str | None = None
+    score: float = 0.0
+    reason: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "target": self.target,
+            "status": self.status,
+            "filename": self.filename,
+            "score": round(self.score, 4),
+            "reason": self.reason,
+        }
+
+
+_TARGET_STOPWORDS = {
+    "a",
+    "an",
+    "and",
+    "for",
+    "hosted",
+    "is",
+    "method",
+    "model",
+    "models",
+    "of",
+    "on",
+    "paper",
+    "report",
+    "service",
+    "system",
+    "technical",
+    "the",
+}
+
+
+def _identity_tokens(value: str) -> list[str]:
+    """Return identity-bearing tokens from a target name or PDF filename."""
+
+    stem = PurePath(str(value or "")).stem.casefold()
+    tokens = re.findall(r"[a-z]+\d*|\d+", stem)
+    return [
+        token
+        for token in tokens
+        if token not in _TARGET_STOPWORDS
+        and not re.fullmatch(r"pmc\d+", token)
+        and not (token.isdigit() and len(token) >= 4)
+    ]
+
+
+def _acronym_windows(tokens: Sequence[str]) -> set[str]:
+    windows: set[str] = set()
+    for start in range(len(tokens)):
+        for length in range(2, min(5, len(tokens) - start) + 1):
+            window = tokens[start : start + length]
+            if all(token and token[0].isalpha() for token in window):
+                windows.add("".join(token[0] for token in window))
+    return windows
+
+
+def _target_filename_score(target: str, filename: str) -> float:
+    target_tokens = _identity_tokens(target)
+    filename_tokens = _identity_tokens(filename)
+    if not target_tokens or not filename_tokens:
+        return 0.0
+
+    target_identity = "".join(target_tokens)
+    filename_identity = "".join(filename_tokens)
+    if target_identity == filename_identity:
+        return 1.0
+    if len(target_identity) >= 4 and target_identity in filename_identity:
+        return 0.98
+    if len(filename_identity) >= 4 and filename_identity in target_identity:
+        return 0.95
+
+    filename_token_set = set(filename_tokens)
+    acronyms = _acronym_windows(filename_tokens)
+    matched_targets = sum(
+        token in filename_token_set or token in acronyms for token in target_tokens
+    )
+    target_coverage = matched_targets / len(target_tokens)
+    exact_overlap = len(set(target_tokens) & filename_token_set) / len(target_tokens)
+    return 0.8 * target_coverage + 0.2 * exact_overlap
+
+
+def resolve_target_filename(
+    target: str,
+    filenames: Sequence[str],
+    *,
+    minimum_score: float = 0.72,
+    ambiguity_margin: float = 0.12,
+) -> TargetFilenameResolution:
+    """Resolve a free-form planner target only when one filename is unambiguous.
+
+    Returning ``unresolved`` is intentional: an unsafe filename guess would
+    silently remove valid evidence. Callers must retain the existing unfiltered
+    retrieval path in that case.
+    """
+
+    unique_filenames = sorted({str(item).strip() for item in filenames if str(item).strip()})
+    ranked = sorted(
+        (
+            (_target_filename_score(target, filename), filename)
+            for filename in unique_filenames
+        ),
+        key=lambda item: (-item[0], item[1]),
+    )
+    if not ranked or ranked[0][0] < minimum_score:
+        return TargetFilenameResolution(
+            target=target,
+            status="unresolved",
+            score=ranked[0][0] if ranked else 0.0,
+            reason="low_confidence",
+        )
+
+    best_score, best_filename = ranked[0]
+    second_score = ranked[1][0] if len(ranked) > 1 else 0.0
+    if second_score > 0 and best_score - second_score < ambiguity_margin:
+        return TargetFilenameResolution(
+            target=target,
+            status="unresolved",
+            score=best_score,
+            reason="ambiguous",
+        )
+    return TargetFilenameResolution(
+        target=target,
+        status="resolved",
+        filename=best_filename,
+        score=best_score,
+        reason="unique_lexical_match",
+    )
 
 
 def single_query_plan(

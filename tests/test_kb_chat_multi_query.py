@@ -98,6 +98,157 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(execution.trace["mode"], "multi_query")
         self.assertEqual(len(execution.documents), 3)
 
+    async def test_resolved_targets_are_pushed_down_as_filename_filters(self):
+        """AC-201.2/AC-201.4: filter resolved targets and expose the trace."""
+        service = ChatService()
+        plan = parse_query_plan(
+            '{"intent":"comparison","subqueries":['
+            '{"id":"docling","target":"Docling","query":"Question Docling"},'
+            '{"id":"tables","target":"structured-digital-tables",'
+            '"query":"Question structured tables"}]}' ,
+            "Compare Docling and structured digital tables",
+        )
+        captured_filters = {}
+
+        async def fake_plan(*_args, **_kwargs):
+            return plan
+
+        async def fake_catalog(*_args, **_kwargs):
+            return [
+                "2408.09869_docling-technical-report.pdf",
+                "PMC2950080_structured-digital-tables.pdf",
+            ]
+
+        async def fake_retrieve(query, **kwargs):
+            captured_filters[query] = kwargs.get("filter_expr")
+            if "Docling" in query:
+                filename = "2408.09869_docling-technical-report.pdf"
+            elif "structured" in query:
+                filename = "PMC2950080_structured-digital-tables.pdf"
+            else:
+                filename = "baseline.pdf"
+            return [
+                {
+                    "score": 0.8,
+                    "chunk_text": query,
+                    "filename": filename,
+                    "metadata": {"chunk_id": query.lower().replace(" ", "-")},
+                }
+            ]
+
+        service.plan_retrieval = fake_plan
+        service.list_collection_filenames = fake_catalog
+        service.retrieve_documents = fake_retrieve
+        request = _request(
+            query="Compare Docling and structured digital tables",
+            use_multi_query=True,
+            top_k=3,
+            multi_query_config={
+                "original_reserve": 1,
+                "per_target_reserve": 1,
+                "candidate_k_per_query": 3,
+            },
+        )
+
+        execution = await service.retrieve_for_request(request)
+
+        self.assertIsNone(
+            captured_filters["Compare Docling and structured digital tables"]
+        )
+        self.assertEqual(
+            captured_filters["Question Docling"],
+            'filename == "2408.09869_docling-technical-report.pdf"',
+        )
+        self.assertEqual(
+            captured_filters["Question structured tables"],
+            'filename == "PMC2950080_structured-digital-tables.pdf"',
+        )
+        resolutions = execution.trace["target_resolutions"]
+        self.assertEqual(resolutions["docling"]["status"], "resolved")
+        self.assertEqual(
+            resolutions["tables"]["filename"],
+            "PMC2950080_structured-digital-tables.pdf",
+        )
+
+    async def test_catalog_failure_preserves_unfiltered_retrieval(self):
+        """AC-201.3: catalog errors degrade to the prior unfiltered path."""
+        service = ChatService()
+        plan = parse_query_plan(
+            '{"intent":"comparison","subqueries":['
+            '{"id":"a","target":"Paper A","query":"Question A"},'
+            '{"id":"b","target":"Paper B","query":"Question B"}]}' ,
+            "Compare Paper A and Paper B",
+        )
+        captured_filters = []
+
+        async def fake_plan(*_args, **_kwargs):
+            return plan
+
+        async def broken_catalog(*_args, **_kwargs):
+            raise RuntimeError("catalog unavailable")
+
+        async def fake_retrieve(query, **kwargs):
+            captured_filters.append(kwargs.get("filter_expr"))
+            return [
+                {
+                    "score": 0.8,
+                    "chunk_text": query,
+                    "filename": "fallback.pdf",
+                    "metadata": {"chunk_id": query},
+                }
+            ]
+
+        service.plan_retrieval = fake_plan
+        service.list_collection_filenames = broken_catalog
+        service.retrieve_documents = fake_retrieve
+
+        execution = await service.retrieve_for_request(
+            _request(
+                use_multi_query=True,
+                top_k=3,
+                multi_query_config={
+                    "original_reserve": 1,
+                    "per_target_reserve": 1,
+                    "candidate_k_per_query": 3,
+                },
+            )
+        )
+
+        self.assertEqual(captured_filters, [None, None, None])
+        self.assertEqual(
+            execution.trace["target_resolution_status"], "catalog_error"
+        )
+
+    async def test_retrieve_documents_forwards_filter_expression(self):
+        """AC-201.2: the filename expression reaches the Milvus API."""
+        service = ChatService()
+        captured_payload = None
+
+        class FakeResponse:
+            status_code = 200
+            text = ""
+
+            @staticmethod
+            def json():
+                return {"status": "success", "results": []}
+
+        def fake_post(*_args, **kwargs):
+            nonlocal captured_payload
+            captured_payload = kwargs["json"]
+            return FakeResponse()
+
+        with patch("backend.chat.kb_chat.requests.post", side_effect=fake_post):
+            await service.retrieve_documents(
+                "question",
+                "kb",
+                "http://localhost:8000",
+                filter_expr='filename == "paper.pdf"',
+            )
+
+        self.assertEqual(
+            captured_payload["filter_expr"], 'filename == "paper.pdf"'
+        )
+
     async def test_http_retrieval_does_not_block_parallel_queries(self):
         service = ChatService()
         active = 0

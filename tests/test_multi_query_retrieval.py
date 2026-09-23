@@ -7,6 +7,7 @@ from backend.chat.multi_query_retrieval import (
     create_query_plan,
     execute_retrieval_plan,
     parse_query_plan,
+    resolve_target_filename,
 )
 
 
@@ -130,6 +131,54 @@ class QueryPlannerTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertFalse(plan.is_multi_query)
         self.assertEqual(plan.fallback_reason, "planner_timeout")
+
+
+class TargetFilenameResolutionTests(unittest.TestCase):
+    """AC-201.1: resolve only a unique, evidence-bearing filename identity."""
+
+    FILENAMES = [
+        "1806.07366_neural-ordinary-differential-equations.pdf",
+        "2303.08774_gpt-4-technical-report.pdf",
+        "2304.02643_segment-anything.pdf",
+        "2408.09869_docling-technical-report.pdf",
+        "PMC2950080_structured-digital-tables.pdf",
+    ]
+
+    def test_resolves_arxiv_and_pmc_filename_prefixes(self):
+        structured = resolve_target_filename(
+            "structured-digital-tables", self.FILENAMES
+        )
+        gpt4 = resolve_target_filename("GPT-4", self.FILENAMES)
+
+        self.assertEqual(structured.status, "resolved")
+        self.assertEqual(
+            structured.filename, "PMC2950080_structured-digital-tables.pdf"
+        )
+        self.assertEqual(gpt4.status, "resolved")
+        self.assertEqual(gpt4.filename, "2303.08774_gpt-4-technical-report.pdf")
+
+    def test_resolves_acronym_inside_long_filename(self):
+        resolution = resolve_target_filename("Neural ODE", self.FILENAMES)
+
+        self.assertEqual(resolution.status, "resolved")
+        self.assertEqual(
+            resolution.filename,
+            "1806.07366_neural-ordinary-differential-equations.pdf",
+        )
+
+    def test_ignores_generic_target_words(self):
+        resolution = resolve_target_filename(
+            "Segment Anything Model", self.FILENAMES
+        )
+
+        self.assertEqual(resolution.status, "resolved")
+        self.assertEqual(resolution.filename, "2304.02643_segment-anything.pdf")
+
+    def test_unresolved_target_never_guesses_a_filename(self):
+        resolution = resolve_target_filename("Transformer", self.FILENAMES)
+
+        self.assertEqual(resolution.status, "unresolved")
+        self.assertIsNone(resolution.filename)
 
 
 class ParallelRetrievalTests(unittest.IsolatedAsyncioTestCase):
