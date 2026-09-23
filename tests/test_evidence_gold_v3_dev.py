@@ -38,6 +38,27 @@ class EvidenceGoldV3DevelopmentTests(unittest.TestCase):
             }
             self.assertEqual(len(filenames), 2)
 
+    def test_confirmed_alternatives_are_appended_without_replacing_original_gold(self):
+        review = self.dataset["alternative_evidence_review"]
+        self.assertEqual(review["status"], "human_confirmed")
+        self.assertEqual(review["date"], "2026-09-23")
+
+        expected_set_counts = {"MQ01": 3, "MQ02": 2, "MQ05": 3}
+        for case in self.dataset["cases"]:
+            evidence_sets = case["gold_evidence_sets"]
+            self.assertEqual(
+                len(evidence_sets), expected_set_counts.get(case["id"], 1)
+            )
+            normalized_sets = {
+                tuple(sorted(item["chunk_id"] for item in evidence_set))
+                for evidence_set in evidence_sets
+            }
+            self.assertEqual(len(normalized_sets), len(evidence_sets))
+            for evidence_set in evidence_sets:
+                self.assertEqual(
+                    len({item["filename"] for item in evidence_set}), 2
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

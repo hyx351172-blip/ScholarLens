@@ -3,6 +3,7 @@ import json
 import unittest
 
 from backend.chat.multi_query_retrieval import (
+    PLANNER_SYSTEM_PROMPT,
     create_query_plan,
     execute_retrieval_plan,
     parse_query_plan,
@@ -61,8 +62,28 @@ class QueryPlanParsingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "distinct"):
             parse_query_plan(raw, "Compare A and B")
 
+    def test_duplicate_targets_are_rejected(self):
+        raw = json.dumps(
+            {
+                "intent": "comparison",
+                "subqueries": [
+                    {"id": "bert-a", "target": "BERT", "query": "How is BERT pretrained?"},
+                    {"id": "bert-b", "target": "bert", "query": "How is BERT fine-tuned?"},
+                    {"id": "gpt", "target": "GPT-3", "query": "How does GPT-3 learn in context?"},
+                ],
+            }
+        )
+
+        with self.assertRaisesRegex(ValueError, "targets must be unique"):
+            parse_query_plan(raw, "Compare BERT and GPT-3")
+
 
 class QueryPlannerTests(unittest.IsolatedAsyncioTestCase):
+    def test_prompt_requires_atomic_non_broadened_queries(self):
+        self.assertIn("atomic retrieval question", PLANNER_SYSTEM_PROMPT)
+        self.assertIn("Do not broaden", PLANNER_SYSTEM_PROMPT)
+        self.assertIn("user explicitly requested", PLANNER_SYSTEM_PROMPT)
+
     async def test_invalid_planner_output_falls_back_to_single_query(self):
         async def generate(_messages):
             return "not JSON"
@@ -71,6 +92,30 @@ class QueryPlannerTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertFalse(plan.is_multi_query)
         self.assertEqual(plan.fallback_reason, "invalid_planner_output")
+
+    async def test_invalid_plan_gets_one_bounded_repair_attempt(self):
+        calls = 0
+
+        async def generate(messages):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                return "not JSON"
+            self.assertIn("was invalid", messages[-1]["content"])
+            return json.dumps(
+                {
+                    "intent": "comparison",
+                    "subqueries": [
+                        {"id": "a", "target": "A", "query": "Question about A"},
+                        {"id": "b", "target": "B", "query": "Question about B"},
+                    ],
+                }
+            )
+
+        plan = await create_query_plan("Compare A and B", generate)
+
+        self.assertTrue(plan.is_multi_query)
+        self.assertEqual(calls, 2)
 
     async def test_planner_timeout_falls_back_to_single_query(self):
         async def generate(_messages):

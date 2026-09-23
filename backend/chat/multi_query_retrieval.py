@@ -35,7 +35,17 @@ Return JSON only with this schema:
 Rules:
 - For single intent, return an empty subqueries array.
 - For comparison intent, return exactly one standalone question per target.
-- Preserve the specific mechanism, metric, experiment, or claim being compared.
+- Make every subquery an atomic retrieval question of at most 30 words.
+- Preserve the exact mechanism, metric, experiment, or claim requested for that
+  target, including the user's important technical terms.
+- The target value must be only the target's short canonical name and must be
+  unique. Never split one target into multiple subqueries; keep all explicitly
+  requested facets for that target in its single concise query.
+- Ask only for that target's half of the comparison. Do not ask how it differs
+  from the other target.
+- Do not broaden the question with extra facets such as benchmarks, complexity,
+  architecture, objectives, decoding strategies, or implementation details
+  unless the user explicitly requested those facets.
 - Do not answer the question and do not invent paper titles.
 - Use two or three distinct subqueries; never repeat the original comparison verbatim.
 """
@@ -110,6 +120,10 @@ def _normalize_query_id(value: str, index: int) -> str:
     return normalized[:32] or f"target-{index}"
 
 
+def _normalize_target_identity(value: str) -> str:
+    return re.sub(r"[\W_]+", "", value.casefold(), flags=re.UNICODE)
+
+
 def parse_query_plan(
     raw: str,
     original_query: str,
@@ -137,6 +151,7 @@ def parse_query_plan(
 
     normalized_original = original_query.strip().casefold()
     query_ids: set[str] = set()
+    target_identities: set[str] = set()
     normalized_queries: set[str] = set()
     subqueries: list[RetrievalSubquery] = []
     for index, item in enumerate(raw_subqueries, 1):
@@ -146,6 +161,9 @@ def parse_query_plan(
         query = str(item.get("query", "")).strip()
         if not target or not query:
             raise ValueError("each subquery requires nonempty target and query")
+        target_identity = _normalize_target_identity(target)
+        if not target_identity or target_identity in target_identities:
+            raise ValueError("subquery targets must be unique")
         if len(query) > 500:
             raise ValueError("subquery exceeds 500 characters")
         normalized_query = query.casefold()
@@ -155,6 +173,7 @@ def parse_query_plan(
         if query_id == "original" or query_id in query_ids:
             raise ValueError("subquery ids must be unique and cannot be original")
         query_ids.add(query_id)
+        target_identities.add(target_identity)
         normalized_queries.add(normalized_query)
         subqueries.append(
             RetrievalSubquery(query_id=query_id, target=target, query=query)
@@ -176,6 +195,7 @@ async def create_query_plan(
         {"role": "system", "content": PLANNER_SYSTEM_PROMPT},
         {"role": "user", "content": original_query},
     ]
+    deadline = time.perf_counter() + timeout_seconds
     try:
         raw = await asyncio.wait_for(generate(messages), timeout=timeout_seconds)
     except asyncio.TimeoutError:
@@ -189,8 +209,35 @@ async def create_query_plan(
             original_query,
             max_subqueries=max_subqueries,
         )
-    except (TypeError, ValueError, json.JSONDecodeError):
-        return single_query_plan("invalid_planner_output")
+    except (TypeError, ValueError, json.JSONDecodeError) as exc:
+        remaining = deadline - time.perf_counter()
+        if remaining <= 0:
+            return single_query_plan("invalid_planner_output")
+        repair_messages = [
+            *messages,
+            {"role": "assistant", "content": str(raw)[:2000]},
+            {
+                "role": "user",
+                "content": (
+                    f"The JSON plan was invalid: {exc}. Return one corrected "
+                    "JSON object only. Keep one unique target and one query per "
+                    "comparison target."
+                ),
+            },
+        ]
+        try:
+            repaired_raw = await asyncio.wait_for(
+                generate(repair_messages), timeout=remaining
+            )
+            return parse_query_plan(
+                repaired_raw,
+                original_query,
+                max_subqueries=max_subqueries,
+            )
+        except asyncio.TimeoutError:
+            return single_query_plan("planner_timeout")
+        except Exception:
+            return single_query_plan("invalid_planner_output")
 
 
 def _chunk_id(hit: dict[str, Any]) -> str:

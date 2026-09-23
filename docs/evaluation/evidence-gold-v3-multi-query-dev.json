@@ -2,7 +2,14 @@
   "schema_version": "1.1",
   "dataset_id": "scholarlens-evidence-gold-v3-multi-query-dev",
   "split": "development",
-  "annotation_status": "review_pending_derived_from_human_verified_v1_evidence",
+  "annotation_status": "review_pending_full_v3_alternative_evidence_confirmed_2026-09-23",
+  "alternative_evidence_review": {
+    "status": "human_confirmed",
+    "reviewer": "project_owner",
+    "date": "2026-09-23",
+    "scope": ["MQ01", "MQ02", "MQ05"],
+    "policy": "append alternatives without replacing original gold evidence"
+  },
   "collection_id": "kb_1790061860190",
   "purpose": "Develop and evaluate cross-paper multi-query retrieval without tuning on the consumed v2 held-out set.",
   "corpus": {
@@ -43,6 +50,38 @@
             "page_start": 1,
             "content_type": "abstract",
             "section_path": ["Abstract"]
+          },
+          {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+            "filename": "2312.00752_mamba.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000011:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["1 Introduction"]
+          },
+          {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+            "filename": "2312.00752_mamba.pdf",
+            "page_start": 1,
+            "content_type": "abstract",
+            "section_path": ["Abstract"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["2 Background"]
           },
           {
             "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
@@ -93,6 +132,22 @@
             "page_start": 1,
             "content_type": "abstract",
             "section_path": ["Abstract"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+            "filename": "2111.15664_donut.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": ["2 Method", "2.2 Document Understanding Transformer"]
+          },
+          {
+            "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+            "filename": "2308.13418_nougat.pdf",
+            "page_start": 9,
+            "content_type": "paragraph",
+            "section_path": ["6 Conclusion"]
           }
         ]
       ]
@@ -215,6 +270,38 @@
             "page_start": 1,
             "content_type": "abstract",
             "section_path": ["Abstract"]
+          },
+          {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+            "filename": "2205.14135_flashattention.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": ["1 Introduction"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": ["3 Model Architecture", "3.2 Attention", "3.2.3 Applications of Attention in our Model"]
+          },
+          {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+            "filename": "2205.14135_flashattention.pdf",
+            "page_start": 1,
+            "content_type": "figure",
+            "section_path": ["1 Introduction"]
+          }
+        ],
+        [
+          {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000024:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 3,
+            "content_type": "paragraph",
+            "section_path": ["3 Model Architecture"]
           },
           {
             "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",

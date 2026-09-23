@@ -1,0 +1,402 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-live-query-planner-v1",
+  "dataset_id": "scholarlens-evidence-gold-v3-multi-query-dev",
+  "dataset_split": "development",
+  "annotation_status": "review_pending_derived_from_human_verified_v1_evidence",
+  "collection_id": "kb_1790061860190",
+  "corpus_validation": null,
+  "configuration": {
+    "model_name": "qwen3-vl-plus",
+    "model_host": "dashscope.aliyuncs.com",
+    "api_key_source": "API_KEY",
+    "runs_per_case": 1,
+    "planner_timeout_seconds": 12.0,
+    "candidate_k_per_query": 10,
+    "top_k": 10,
+    "rrf_k": 60,
+    "original_reserve": 4,
+    "per_target_reserve": 2
+  },
+  "summary": {
+    "run_count": 6,
+    "valid_plan_rate": 1.0,
+    "target_coverage_rate": 1.0,
+    "complete_target_rate": 1.0,
+    "strict_evidence_hit_rate": 0.5,
+    "mean_best_evidence_set_recall": 0.75,
+    "evidence_set_mrr": 0.053703703703703705,
+    "mean_ndcg": 0.526589645518107,
+    "mean_planner_latency_seconds": 4.4329,
+    "median_planner_latency_seconds": 4.1301,
+    "mean_retrieval_latency_seconds": 2.84535,
+    "mean_end_to_end_latency_seconds": 7.278333333333333,
+    "fallback_reasons": {}
+  },
+  "acceptance": {
+    "passed": false,
+    "checks": {
+      "valid_plan_rate": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "complete_target_rate": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "strict_evidence_hit_rate": {
+        "actual": 0.5,
+        "operator": ">=",
+        "threshold": 0.83,
+        "passed": false
+      },
+      "mean_planner_latency_seconds": {
+        "actual": 4.4329,
+        "operator": "<=",
+        "threshold": 12.0,
+        "passed": true
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "MQ01",
+      "run_number": 1,
+      "question": "Compare how the Transformer and Mamba model long-range sequence dependencies without using a conventional recurrent neural network.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "transformer",
+        "mamba"
+      ],
+      "target_matches": {
+        "transformer": "transformer-mechanism",
+        "mamba": "mamba-mechanism"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "transformer-mechanism",
+            "target": "Transformer",
+            "query": "How does the Transformer model capture long-range sequence dependencies without using a conventional recurrent neural network?"
+          },
+          {
+            "id": "mamba-mechanism",
+            "target": "Mamba",
+            "query": "How does the Mamba model capture long-range sequence dependencies without using a conventional recurrent neural network?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 3.7392,
+      "retrieval_latency_seconds": 2.5912,
+      "end_to_end_latency_seconds": 6.3304,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": false,
+        "best_evidence_set_recall": 0.5,
+        "evidence_set_reciprocal_rank": 0.0,
+        "ndcg": 0.6131471927654584,
+        "retrieved_chunk_ids": [
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000221:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000160:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000011:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000144:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:figure:figure_0001_000022:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:figure:figure_0005_000153:part_0001"
+        ]
+      }
+    },
+    {
+      "case_id": "MQ02",
+      "run_number": 1,
+      "question": "Compare the OCR-free document conversion architectures of Donut and Nougat, including their inputs and generated outputs.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "donut",
+        "nougat"
+      ],
+      "target_matches": {
+        "donut": "donut-ocrfree",
+        "nougat": "nougat-ocrfree"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "donut-ocrfree",
+            "target": "Donut",
+            "query": "What is the input format and output format used by Donut for OCR-free document conversion?"
+          },
+          {
+            "id": "nougat-ocrfree",
+            "target": "Nougat",
+            "query": "What is the input format and output format used by Nougat for OCR-free document conversion?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 5.5932,
+      "retrieval_latency_seconds": 2.8679,
+      "end_to_end_latency_seconds": 8.4611,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": false,
+        "best_evidence_set_recall": 0.5,
+        "evidence_set_reciprocal_rank": 0.0,
+        "ndcg": 0.38685280723454163,
+        "retrieved_chunk_ids": [
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0003_000029:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000017:part_0001",
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000007:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0002_000015:part_0001",
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:figure:figure_0001_000020:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:table:logical_table_0001:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000110:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000076:part_0001"
+        ]
+      }
+    },
+    {
+      "case_id": "MQ03",
+      "run_number": 1,
+      "question": "Compare how CLIP supports zero-shot image recognition with how LayoutLMv3 jointly learns text and image representations for Document AI.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "clip",
+        "layoutlmv3"
+      ],
+      "target_matches": {
+        "clip": "clip-zero-shot",
+        "layoutlmv3": "layoutlmv3-joint"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "clip-zero-shot",
+            "target": "CLIP",
+            "query": "How does CLIP enable zero-shot image recognition using contrastive pretraining on image-text pairs?"
+          },
+          {
+            "id": "layoutlmv3-joint",
+            "target": "LayoutLMv3",
+            "query": "How does LayoutLMv3 jointly learn text and image representations for Document AI tasks?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 4.2414,
+      "retrieval_latency_seconds": 3.2849,
+      "end_to_end_latency_seconds": 7.5264,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": true,
+        "best_evidence_set_recall": 1.0,
+        "evidence_set_reciprocal_rank": 0.1111111111111111,
+        "ndcg": 0.4911492931622974,
+        "retrieved_chunk_ids": [
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000112:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000029:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000041:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000039:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:abstract:block_000000:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000045:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000025:part_0001",
+          "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+          "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000027:part_0001"
+        ]
+      }
+    },
+    {
+      "case_id": "MQ04",
+      "run_number": 1,
+      "question": "Compare BERT's pre-training objectives with LoRA's method for adapting an already pretrained model.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "bert",
+        "lora"
+      ],
+      "target_matches": {
+        "bert": "bert-pretrain-objective",
+        "lora": "lora-adaptation-method"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "bert-pretrain-objective",
+            "target": "BERT",
+            "query": "What are the exact pre-training objectives used in BERT, including the specific masking strategy and loss functions employed?"
+          },
+          {
+            "id": "lora-adaptation-method",
+            "target": "LoRA",
+            "query": "What is LoRA's method for adapting a pretrained model, specifically how it parameterizes updates and which layers it modifies?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 3.6816,
+      "retrieval_latency_seconds": 2.625,
+      "end_to_end_latency_seconds": 6.3067,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": true,
+        "best_evidence_set_recall": 1.0,
+        "evidence_set_reciprocal_rank": 0.1111111111111111,
+        "ndcg": 0.7977228895450266,
+        "retrieved_chunk_ids": [
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:abstract:block_000000:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000055:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000094:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000133:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000021:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000250:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000217:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000203:part_0001"
+        ]
+      }
+    },
+    {
+      "case_id": "MQ05",
+      "run_number": 1,
+      "question": "Compare the role of self-attention in the Transformer with the systems optimization used by FlashAttention to compute exact attention.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "transformer",
+        "flashattention"
+      ],
+      "target_matches": {
+        "transformer": "transformer-self-attention",
+        "flashattention": "flashattention-exact-computation"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "transformer-self-attention",
+            "target": "Transformer",
+            "query": "What is the role of self-attention in the original Transformer architecture, specifically how it computes attention scores and aggregates values?"
+          },
+          {
+            "id": "flashattention-exact-computation",
+            "target": "FlashAttention",
+            "query": "How does FlashAttention compute exact attention without approximation, focusing on its systems-level optimizations for memory access and computation?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 4.0188,
+      "retrieval_latency_seconds": 2.8031,
+      "end_to_end_latency_seconds": 6.8221,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": false,
+        "best_evidence_set_recall": 0.5,
+        "evidence_set_reciprocal_rank": 0.0,
+        "ndcg": 0.38685280723454163,
+        "retrieved_chunk_ids": [
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000153:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000036:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:abstract:block_000000:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000265:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000036:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000017:part_0002",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000047:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000114:part_0001"
+        ]
+      }
+    },
+    {
+      "case_id": "MQ06",
+      "run_number": 1,
+      "question": "Compare BERT bidirectional pretraining and downstream fine-tuning with GPT-3 in-context few-shot learning.",
+      "valid_plan": true,
+      "expected_target_ids": [
+        "bert",
+        "gpt3"
+      ],
+      "target_matches": {
+        "bert": "bert-bidir-pretrain",
+        "gpt3": "gpt3-incontext"
+      },
+      "missing_target_ids": [],
+      "plan": {
+        "mode": "comparison",
+        "subqueries": [
+          {
+            "id": "bert-bidir-pretrain",
+            "target": "BERT",
+            "query": "What is the exact bidirectional pretraining objective used in BERT, including the masked language modeling task formulation?"
+          },
+          {
+            "id": "bert-finetune",
+            "target": "BERT",
+            "query": "How does BERT perform downstream fine-tuning: what head architecture and loss function are added for classification tasks?"
+          },
+          {
+            "id": "gpt3-incontext",
+            "target": "GPT-3",
+            "query": "What is the exact in-context few-shot learning protocol used by GPT-3, including prompt formatting and number of examples per task?"
+          }
+        ],
+        "fallback_reason": null,
+        "planner_source": "llm"
+      },
+      "planner_latency_seconds": 5.3232,
+      "retrieval_latency_seconds": 2.9,
+      "end_to_end_latency_seconds": 8.2233,
+      "retrieval_mode": "multi_query",
+      "retrieval_fallback_reason": null,
+      "retrieval": {
+        "strict_evidence_hit": true,
+        "best_evidence_set_recall": 1.0,
+        "evidence_set_reciprocal_rank": 0.1,
+        "ndcg": 0.48381288316677695,
+        "retrieved_chunk_ids": [
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:figure:figure_0003_000139:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000029:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000056:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000227:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0001_000024:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000035:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000216:part_0001"
+        ]
+      }
+    }
+  ]
+}

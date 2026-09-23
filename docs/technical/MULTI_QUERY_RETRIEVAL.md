@@ -6,9 +6,13 @@ The backend prototype is implemented behind an opt-in request flag. Existing
 clients continue to use single-query Dense retrieval because
 `use_multi_query=false` by default.
 
-The retrieval selector reached complete evidence Hit@10 on the tuned v3
-development set. The automatic LLM planner has unit and integration coverage,
-but has not yet passed a fresh independent held-out evaluation.
+The retrieval selector reached complete evidence Hit@10 with the explicit v3
+development queries. A live `qwen3-vl-plus` planner run preserved all target
+pairs but initially reached only 50% exact strict evidence Hit@10. Human review
+confirmed five same-paper alternative evidence chunks; replaying the persisted
+live results against the appended Gold sets reached 100%. A subsequent fresh
+live planner plus Milvus rerun also reached 100%, so the development retrieval
+gate now passes. Full-v3 review and a fresh held-out gate are still required.
 
 ## Runtime flow
 
@@ -60,14 +64,57 @@ A comparison plan is accepted only when it contains two or three subqueries
 with:
 
 - unique normalized IDs;
+- unique canonical targets (one query per target);
 - a nonempty target and standalone question;
 - no duplicate question or verbatim copy of the original comparison;
 - no subquery longer than 500 characters.
 
-The system falls back to the original Dense query when planning times out,
-returns invalid output, exceeds the available Top-K reserve budget, or any
-target retrieval fails or returns no candidates. Failure traces expose only an
-error type, not provider responses or credentials.
+Invalid planner JSON receives one repair attempt within the original timeout
+budget. The system falls back to the original Dense query when planning or its
+repair times out, the repaired plan remains invalid, the plan exceeds the
+available Top-K reserve budget, or any target retrieval fails or returns no
+candidates. Failure traces expose only an error type, not provider responses or
+credentials.
+
+## Live development result
+
+The latest live run is recorded in
+`docs/evaluation/query-planner-live-v3-results.json` and its Markdown summary.
+
+- valid plan rate: 100%;
+- complete target rate: 100%;
+- exact strict evidence Hit@10: 50%;
+- mean exact evidence recall: 75%;
+- required source-paper coverage: 100% (diagnostic only, not a release gate);
+- mean planner latency: 4.509 seconds;
+- mean end-to-end planner plus retrieval latency: 7.358 seconds.
+
+MQ01, MQ02, and MQ05 retrieved apparently relevant alternative chunks from the
+correct papers but missed the single annotated Gold chunk. These candidates
+were accepted by the project owner on 2026-09-23 and appended without replacing
+the original Gold sets. The persisted v3 live run was then re-scored in
+`docs/evaluation/query-planner-live-v4-replay-results.json`:
+
+- strict evidence Hit@10: 100%;
+- mean evidence recall: 100%;
+- valid-plan and complete-target rates: 100%;
+- acceptance checks: PASS.
+
+The replay report is deliberately labelled `persisted_retrieval_replay`; it is
+not evidence of a fresh successful provider/vector-store run.
+
+The required fresh rerun is recorded in
+`docs/evaluation/query-planner-live-v4-results.json`:
+
+- valid plan and complete target rates: 100%;
+- strict evidence Hit@10 and mean evidence recall: 100%;
+- evidence-set MRR: 0.1852;
+- mean nDCG: 0.5949;
+- mean planner latency: 3.854 seconds;
+- mean retrieval latency: 2.912 seconds;
+- mean end-to-end latency: 6.766 seconds;
+- fallback count: zero;
+- acceptance checks: PASS.
 
 ## Context allocation
 
@@ -103,9 +150,8 @@ target. Single-query requests continue to honor the configured `top_n`.
 
 ## Remaining release work
 
-1. Run the real planner against the reviewed v3 development questions and
-   record planner validity, target preservation, and end-to-end latency.
-2. Add answer-level citation completeness tests over the selected context.
-3. Freeze the implementation and validate once on a fresh v4 held-out set.
-4. Add the frontend toggle and a compact retrieval Trace only after the
+1. Complete the remaining full-v3 question/subquery review, then add
+   answer-level citation completeness tests over the selected context.
+2. Freeze the implementation and validate once on a fresh v4 held-out set.
+3. Add the frontend toggle and a compact retrieval Trace only after the
    held-out gate passes.
