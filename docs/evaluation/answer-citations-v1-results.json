@@ -1,0 +1,1772 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-answer-citations-v1",
+  "dataset_id": "scholarlens-evidence-gold-v3-multi-query-dev",
+  "dataset_split": "development",
+  "annotation_status": "review_pending_full_v3_alternative_evidence_confirmed_2026-09-23",
+  "collection_id": "kb_1790061860190",
+  "corpus_validation": null,
+  "configuration": {
+    "model_name": "qwen3-vl-plus",
+    "model_host": "dashscope.aliyuncs.com",
+    "api_key_source": "API_KEY",
+    "top_k": 10,
+    "score_threshold": 0.1,
+    "use_multi_query": true,
+    "judge": "same_model_structured_development_judge"
+  },
+  "summary": {
+    "case_count": 6,
+    "citation_syntax_valid_rate": 1.0,
+    "complete_required_source_rate": 1.0,
+    "gold_evidence_citation_hit_rate": 0.8333333333333334,
+    "mean_claim_citation_completeness": 0.6953703703703704,
+    "mean_citation_precision": 1.0,
+    "mean_concept_coverage": 1.0,
+    "unsupported_claim_case_rate": 0.16666666666666666,
+    "mean_answer_pipeline_latency_seconds": 29.493716666666668,
+    "mean_judge_latency_seconds": 2.5317499999999997
+  },
+  "acceptance": {
+    "passed": false,
+    "checks": {
+      "citation_syntax_valid_rate": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "complete_required_source_rate": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "gold_evidence_citation_hit_rate": {
+        "actual": 0.8333333333333334,
+        "operator": ">=",
+        "threshold": 0.8333333333333334,
+        "passed": true
+      },
+      "mean_claim_citation_completeness": {
+        "actual": 0.6953703703703704,
+        "operator": ">=",
+        "threshold": 0.9,
+        "passed": false
+      },
+      "mean_concept_coverage": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 0.9,
+        "passed": true
+      },
+      "unsupported_claim_case_rate": {
+        "actual": 0.16666666666666666,
+        "operator": "<=",
+        "threshold": 0.16666666666666666,
+        "passed": true
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "MQ01",
+      "question": "Compare how the Transformer and Mamba model long-range sequence dependencies without using a conventional recurrent neural network.",
+      "answer": "Transformer 和 Mamba 均不依赖传统循环神经网络（RNN）来建模长程序列依赖，但其机制有本质区别：\n\n**Transformer** 通过 **自注意力机制（self-attention）** 实现长程依赖建模：它允许序列中任意两个位置之间以常数时间复杂度建立直接连接，即每个位置可关注所有其他位置，从而显式捕获全局依赖关系。该机制完全摒弃了序列对齐的递归计算，仅依靠多头自注意力与前馈层堆叠构成编码器/解码器结构 [S5][S7][S8]。其计算虽可高度并行化，但时间与空间复杂度为序列长度的平方（O(n²)），限制了在超长序列上的应用 [S5][S7]。\n\n**Mamba** 则基于 **选择性状态空间模型（selective state space models, SSMs）**，通过引入**输入相关的参数选择机制**实现内容感知的长程建模：其核心是将传统线性时不变（LTI）SSM的参数（如状态转移矩阵 A、输入矩阵 B）设为当前输入的函数，使模型能根据输入内容动态决定“记住”或“忽略”哪些信息，从而实现类似注意力的上下文选择能力 [S1][S2][S4]。尽管该设计破坏了卷积加速的可能性，Mamba 采用硬件感知的并行扫描算法（recurrent scan）在 GPU 上高效实现线性时间推理（O(n)），且支持百万级序列长度下的性能提升 [S1][S4]。Mamba 是全递归模型，但其递归是隐式的、由选择性 SSM 驱动，而非传统 RNN 的显式隐藏状态更新 [S4]。\n\n关键区别在于：Transformer 使用显式的、对称的全局注意力权重进行依赖建模；而 Mamba 使用输入条件化的、非线性的状态空间动态，在保持线性复杂度的同时实现内容选择性，从而在长序列上既高效又有效 [S1][S2][S4]。证据显示，Mamba 在语言、基因组等任务上达到甚至超越同规模 Transformer 的性能，且在序列长度达 1M 时仍持续受益于更长上下文，而对比模型（如 HyenaDNA）则性能下降 [S3][S4]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "mamba"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000221:part_0001",
+          "page_start": 17,
+          "content_type": "paragraph",
+          "section_path": [
+            "6 Conclusion"
+          ],
+          "matched_query_ids": [
+            "original",
+            "mamba"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000160:part_0001",
+          "page_start": 13,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Empirical Evaluation",
+            "4.3 DNA Modeling",
+            "4.3.2 Scaling: Context Length"
+          ],
+          "matched_query_ids": [
+            "original",
+            "mamba"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "mamba"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000011:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "transformer"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000144:part_0001",
+          "page_start": 11,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Empirical Evaluation",
+            "4.2 Language Modeling",
+            "4.2.1 Scaling Laws"
+          ],
+          "matched_query_ids": [
+            "original",
+            "mamba"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 Background"
+          ],
+          "matched_query_ids": [
+            "transformer"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Model Architecture",
+            "3.2 Attention",
+            "3.2.3 Applications of Attention in our Model"
+          ],
+          "matched_query_ids": [
+            "transformer"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:figure:figure_0001_000022:part_0001",
+          "page_start": 3,
+          "content_type": "figure",
+          "section_path": [
+            "3 Model Architecture"
+          ],
+          "matched_query_ids": [
+            "transformer"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:figure:figure_0005_000153:part_0001",
+          "page_start": 12,
+          "content_type": "figure",
+          "section_path": [
+            "4 Empirical Evaluation",
+            "4.3 DNA Modeling"
+          ],
+          "matched_query_ids": [
+            "mamba"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          5,
+          7,
+          8,
+          5,
+          7,
+          1,
+          2,
+          4,
+          1,
+          4,
+          4,
+          1,
+          2,
+          4,
+          3,
+          4
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S7",
+          "S8"
+        ],
+        "cited_filenames": [
+          "1706.03762_attention-is-all-you-need.pdf",
+          "2312.00752_mamba.pdf"
+        ],
+        "cited_chunk_ids": [
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:abstract:block_000000:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000160:part_0001",
+          "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000221:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000011:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000016:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 4,
+        "cited_claim_count": 3,
+        "claim_citation_completeness": 0.75
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "transformer",
+              "target": "Transformer",
+              "query": "How does the Transformer model capture long-range sequence dependencies without using a conventional recurrent neural network?"
+            },
+            {
+              "id": "mamba",
+              "target": "Mamba",
+              "query": "How does the Mamba model capture long-range sequence dependencies without using a conventional recurrent neural network?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare how the Transformer and Mamba model long-range sequence dependencies without using a conventional recurrent neural network.",
+            "status": "success",
+            "latency_seconds": 2.3309,
+            "result_count": 10
+          },
+          {
+            "id": "transformer",
+            "target": "Transformer",
+            "query": "How does the Transformer model capture long-range sequence dependencies without using a conventional recurrent neural network?",
+            "status": "success",
+            "latency_seconds": 2.8206,
+            "result_count": 10
+          },
+          {
+            "id": "mamba",
+            "target": "Mamba",
+            "query": "How does the Mamba model capture long-range sequence dependencies without using a conventional recurrent neural network?",
+            "status": "success",
+            "latency_seconds": 2.5728,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 24,
+        "final_count": 10,
+        "planner_latency_seconds": 3.9849
+      },
+      "answer_pipeline_latency_seconds": 20.6171,
+      "judge_latency_seconds": 2.8089,
+      "evaluation_latency_seconds": 23.4288
+    },
+    {
+      "case_id": "MQ02",
+      "question": "Compare the OCR-free document conversion architectures of Donut and Nougat, including their inputs and generated outputs.",
+      "answer": "Donut 和 Nougat 均为端到端（end-to-end）、OCR-free 的文档理解模型，采用 Transformer 编码器-解码器架构，但二者在输入形式、输出目标及具体实现上存在关键差异。以下基于检索证据进行严格对比：\n\n---\n\n**1. 输入（Input）**\n\n- **Donut**：输入为原始文档图像（raw document image），即未经 OCR 处理的 RGB 图像 $x \\in \\mathbb{R}^{H \\times W \\times C}$；模型直接从图像中提取视觉特征，不依赖任何文本预处理或嵌入 [S2][S3][S5]。其编码器使用 Swin Transformer 将图像划分为非重叠图像块（patches），并通过多级窗口注意力与下采样生成嵌入序列 $\\{z_i\\}_{i=1}^n$ [S2]。\n\n- **Nougat**：输入同样为文档页面的光栅化图像（rasterized document page），即 PDF 页面渲染后的图像，不依赖 OCR 或嵌入文本表示 [S4][S6]；其架构明确说明“follows Donut”[S7]，编码器亦采用 Swin Transformer 将图像转换为潜在嵌入 [S7]。证据未提及是否支持扫描件以外的输入格式，但指出其适用于“scanned papers and textbooks”[S6]，暗示输入为通用图像。\n\n→ 二者输入均为原始文档图像，无 OCR 预处理；Nougat 明确继承 Donut 的编码器设计 [S7]。\n\n---\n\n**2. 输出（Output）**\n\n- **Donut**：输出为一串子词（subword）token 序列，经后处理可一对一映射为结构化 JSON 格式 [S1][S2]。具体通过添加特殊标记如 `[START name]` 和 `[END name]` 表示字段边界；若缺失结束标记，则视为该字段提取失败 [S2]。输出目标是任务相关的结构化信息（如表单字段、发票信息等），适用于多种下游任务（如文档分类、信息抽取、视觉问答）[S3][S10]。\n\n- **Nougat**：输出为轻量级标记语言（lightweight markup language），用于表示学术文档的结构化文本（含数学公式）[S4]；其目标是将页面内容转换为机器可读的格式（如类似 LaTeX 的标记），特别强调对数学表达式中相对位置关系（如上下标、分数）的建模能力 [S4]。证据未说明是否使用 JSON 或特殊起止标记，仅指出输出为“formatted markup text”[S4]，且模型以自回归方式生成 token 序列 [S7]。\n\n→ Donut 输出为结构化 JSON（字段级抽取），Nougat 输出为面向学术文档的标记语言（段落/公式级重建）；前者侧重信息抽取，后者侧重语义保真还原。\n\n---\n\n**3. 架构共性与差异**\n\n- **共性**：\n  - 均为端到端训练的 encoder-decoder Transformer 模型 [S2][S6]；\n  - 编码器均采用 Swin Transformer [S2][S7]；\n  - 均不依赖 OCR 模块，避免 OCR 错误传播 [S3][S6]；\n  - 均使用 teacher-forcing 训练策略（Donut 明确说明 [S2]；Nougat 作为自回归模型隐含此策略）。\n\n- **差异**：\n  - **解码器**：Donut 使用 BART 作为解码器，并初始化自多语言 BART 预训练权重 [S2]；Nougat 未明确解码器架构细节，仅称“encoder-decoder transformer”[S6]，但图1显示其遵循 Donut 架构 [S7]，推测可能类似。\n  - **预训练目标**：Donut 预训练目标为“reading texts”——联合图像与历史文本预测下一词 [S3]；Nougat 未在给定证据中说明其预训练目标，仅提及其数据集生成为“automatic and unsupervised”[S6]。\n  - **任务导向**：Donut 设计为通用 VDU 框架，支持分类、IE、VQA 等多任务 [S3][S10]；Nougat 专为学术文档（尤其是含数学公式的 PDF）到标记语言的转换而设计 [S4][S6]。\n\n---\n\n**总结**：  \nDonut 与 Nougat 均以原始文档图像为输入、端到端 OCR-free 方式工作，编码器均基于 Swin Transformer；核心区别在于输出形式与任务定位：Donut 输出结构化 JSON 字段（适用于表单/发票等 IE 任务）[S2]，Nougat 输出学术文档标记语言（侧重保留排版与数学语义）[S4]。Nougat 明确声明其架构受 Donut 启发 [S7]，但未提供足够证据说明其解码器细节或预训练目标，故相关部分无法进一步比较。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0003_000029:part_0001",
+          "page_start": 4,
+          "content_type": "figure",
+          "section_path": [
+            "2 Method",
+            "2.1 Preliminary: background"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 Method",
+            "2.2 Document Understanding Transformer"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000017:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2308.13418_nougat.pdf",
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000007:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "nougat"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0002_000015:part_0001",
+          "page_start": 2,
+          "content_type": "figure",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2308.13418_nougat.pdf",
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+          "page_start": 9,
+          "content_type": "paragraph",
+          "section_path": [
+            "6 Conclusion"
+          ],
+          "matched_query_ids": [
+            "original",
+            "nougat"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2308.13418_nougat.pdf",
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:figure:figure_0001_000020:part_0001",
+          "page_start": 2,
+          "content_type": "figure",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "nougat"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:table:logical_table_0001:part_0001",
+          "page_start": 9,
+          "content_type": "table",
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.2 Setups"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000110:part_0001",
+          "page_start": 14,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Conclusions"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000076:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Experiments and Analyses",
+            "3.3 Experimental Results"
+          ],
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          2,
+          3,
+          5,
+          2,
+          4,
+          6,
+          7,
+          7,
+          6,
+          7,
+          1,
+          2,
+          2,
+          3,
+          10,
+          4,
+          4,
+          4,
+          7,
+          2,
+          6,
+          2,
+          7,
+          3,
+          6,
+          2,
+          2,
+          6,
+          7,
+          3,
+          6,
+          3,
+          10,
+          4,
+          6,
+          2,
+          4,
+          7
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S10"
+        ],
+        "cited_filenames": [
+          "2111.15664_donut.pdf",
+          "2308.13418_nougat.pdf"
+        ],
+        "cited_chunk_ids": [
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:figure:figure_0001_000020:part_0001",
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000007:part_0001",
+          "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0002_000015:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0003_000029:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000017:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+          "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000076:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 18,
+        "cited_claim_count": 13,
+        "claim_citation_completeness": 0.7222222222222222
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [
+          "Nougat encoding architecture explicitly follows Donut and uses Swin Transformer encoder"
+        ],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "donut",
+              "target": "Donut",
+              "query": "What are the input format and output format used by Donut for OCR-free document conversion?"
+            },
+            {
+              "id": "nougat",
+              "target": "Nougat",
+              "query": "What are the input format and output format used by Nougat for OCR-free document conversion?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare the OCR-free document conversion architectures of Donut and Nougat, including their inputs and generated outputs.",
+            "status": "success",
+            "latency_seconds": 2.9331,
+            "result_count": 10
+          },
+          {
+            "id": "donut",
+            "target": "Donut",
+            "query": "What are the input format and output format used by Donut for OCR-free document conversion?",
+            "status": "success",
+            "latency_seconds": 2.7478,
+            "result_count": 10
+          },
+          {
+            "id": "nougat",
+            "target": "Nougat",
+            "query": "What are the input format and output format used by Nougat for OCR-free document conversion?",
+            "status": "success",
+            "latency_seconds": 2.5645,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 20,
+        "final_count": 10,
+        "planner_latency_seconds": 3.2075
+      },
+      "answer_pipeline_latency_seconds": 35.8817,
+      "judge_latency_seconds": 2.8836,
+      "evaluation_latency_seconds": 38.7648
+    },
+    {
+      "case_id": "MQ03",
+      "question": "Compare how CLIP supports zero-shot image recognition with how LayoutLMv3 jointly learns text and image representations for Document AI.",
+      "answer": "CLIP 和 LayoutLMv3 在零样本图像识别与文档AI多模态表征学习方面采用截然不同的设计目标、预训练范式与任务适配机制，具体对比如下：\n\n**1. 零样本图像识别机制（CLIP）**  \nCLIP 通过对比学习构建统一的图文嵌入空间，其零样本分类能力源于将类别名称作为文本提示（prompt），并利用文本编码器动态生成分类器权重。具体而言：  \n- CLIP 预训练目标是判断图像与文本是否配对（即二元匹配预测），而非生成或重建具体内容 [S9][S10]。  \n- 零样本推理时: 对给定图像，计算其图像嵌入与所有候选类别文本（如“a photo of a dog”）的文本嵌入之间的余弦相似度；经温度缩放与 softmax 后得到概率分布，选择最高分对应类别 [S9]。  \n- 文本编码器在此过程中充当“超网络”（hypernetwork），根据自然语言描述生成线性分类器的权重（L2归一化、无偏置）[S9]。  \n- 该方法依赖大规模（400M级）图文对数据集进行对比预训练，且明确以开放集视觉概念识别为优化目标 [S10]。\n\n**2. LayoutLMv3 的联合图文表征学习机制（Document AI）**  \nLayoutLMv3 面向结构化文档理解任务, 采用统一的掩码重建+对齐目标，在单个 Transformer 中联合建模文本、布局与图像 patch 序列：  \n- **输入表示**：文本由 OCR 提取的词序列 + RoBERTa 初始化的词嵌入 + 1D/2D位置嵌入构成；图像则直接切分为 patch 序列，经线性投影后输入，不依赖 CNN 或区域检测器 [S2][S6][S7]。  \n- **预训练目标**：三者统一为离散 token 重建与对齐任务：  \n  - 掩码语言建模（MLM）：重建被掩码的词 token；  \n  - 掩码图像建模（MIM）：重建被掩码的 image patch token（token 来自离散 VAE 编码器）[S2][S4]；  \n  - 词-块对齐（WPA）：预测某词对应的图像 patch 是否被掩码，以显式建模跨模态对应关系 [S2][S4]。  \n- **任务适配**：模型在 IIT-CDIP（1100万文档图像）上预训练，专为文档理解设计，评估涵盖文本中心任务（如表单理解 FUNSD、收据理解 CORD、DocVQA）和图像中心任务（如文档分类 RVL-CDIP、版面分析 PubLayNet），并在两者均达到 SOTA [S2][S3]。  \n- **无零样本设计**：LayoutLMv3 未提及或实现零样本推理能力；其未来工作仅提到将探索 few-shot/zero-shot 能力，但当前版本未支持 [S1]。\n\n**关键差异总结**：  \n- **目标导向**：CLIP 为通用视觉-语言对齐而设计，以零样本迁移为核心能力；LayoutLMv3 为文档结构理解而设计，强调参数效率与任务泛化性，当前版本聚焦监督微调场景 [S1][S2][S9]。  \n- **预训练范式**：CLIP 使用对比学习（contrastive learning）；LayoutLMv3 使用重建式自监督（reconstructive objectives: MLM/MIM/WPA）[S2][S10]。  \n- **模态对齐方式**：CLIP 通过全局嵌入相似度隐式对齐；LayoutLMv3 通过词-块级 WPA 目标显式建模细粒度对应关系 [S2][S4][S9] 。\n\n注：证据中未提供 LayoutLMv3 实现零样本推理的具体方法，亦未说明其能否像 CLIP 那样直接用自然语言提示进行开放集分类；其零样本能力仅被列为未来方向 [S1]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000112:part_0001",
+          "page_start": 8,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 CONCLUSION AND FUTURE WORK"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000029:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 INTRODUCTION"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+          "page_start": 3,
+          "content_type": "figure",
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.1 Model Architecture"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000025:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 INTRODUCTION"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000041:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.1 Model Architecture"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000045:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 LAYOUTLMV3",
+            "2.1 Model Architecture"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000063:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 EXPERIMENTS",
+            "3.2 Pre-training LayoutLMv3"
+          ],
+          "matched_query_ids": [
+            "original",
+            "layoutlmv3-joint"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2103.00020_clip.pdf",
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+          "page_start": 6,
+          "content_type": "paragraph",
+          "section_path": [
+            "3. Experiments",
+            "3.1. Zero-Shot Transfer",
+            "3.1.2. USING CLIP FOR ZERO-SHOT TRANSFER"
+          ],
+          "matched_query_ids": [
+            "clip-zero-shot"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2103.00020_clip.pdf",
+          "chunk_id": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000027:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "2. Approach",
+            "2.3. Selecting an Efficient Pre-Training Method"
+          ],
+          "matched_query_ids": [
+            "clip-zero-shot"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          9,
+          10,
+          9,
+          9,
+          10,
+          2,
+          6,
+          7,
+          2,
+          4,
+          2,
+          4,
+          2,
+          3,
+          1,
+          1,
+          2,
+          9,
+          2,
+          10,
+          2,
+          4,
+          9,
+          1
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          9,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S6",
+          "S7",
+          "S9",
+          "S10"
+        ],
+        "cited_filenames": [
+          "2103.00020_clip.pdf",
+          "2204.08387_layoutlmv3.pdf"
+        ],
+        "cited_chunk_ids": [
+          "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000027:part_0001",
+          "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5:paragraph:block_000049:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:abstract:block_000000:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:figure:figure_0003_000043:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000029:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000041:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000045:part_0001",
+          "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000112:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 21,
+        "cited_claim_count": 13,
+        "claim_citation_completeness": 0.6190476190476191
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "clip-zero-shot",
+              "target": "CLIP",
+              "query": "How does CLIP enable zero-shot image recognition using contrastive pretraining on image-text pairs?"
+            },
+            {
+              "id": "layoutlmv3-joint",
+              "target": "LayoutLMv3",
+              "query": "How does LayoutLMv3 jointly learn text and image representations for Document AI tasks via multimodal pretraining?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare how CLIP supports zero-shot image recognition with how LayoutLMv3 jointly learns text and image representations for Document AI.",
+            "status": "success",
+            "latency_seconds": 2.7673,
+            "result_count": 10
+          },
+          {
+            "id": "clip-zero-shot",
+            "target": "CLIP",
+            "query": "How does CLIP enable zero-shot image recognition using contrastive pretraining on image-text pairs?",
+            "status": "success",
+            "latency_seconds": 2.259,
+            "result_count": 10
+          },
+          {
+            "id": "layoutlmv3-joint",
+            "target": "LayoutLMv3",
+            "query": "How does LayoutLMv3 jointly learn text and image representations for Document AI tasks via multimodal pretraining?",
+            "status": "success",
+            "latency_seconds": 2.5223,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 21,
+        "final_count": 10,
+        "planner_latency_seconds": 3.6634
+      },
+      "answer_pipeline_latency_seconds": 34.3347,
+      "judge_latency_seconds": 2.1083,
+      "evaluation_latency_seconds": 36.4437
+    },
+    {
+      "case_id": "MQ04",
+      "question": "Compare BERT's pre-training objectives with LoRA's method for adapting an already pretrained model.",
+      "answer": "BERT的预训练目标与LoRA的模型适应方法在目标、阶段和机制上存在根本差异，具体对比如下：\n\n1. **BERT的预训练目标**  \n   BERT采用两种无监督预训练任务：  \n   - **掩码语言建模（Masked Language Modeling, MLM）**：随机遮蔽输入中15%的词元（WordPiece tokens），并预测被遮蔽的词元；为缓解预训练-微调不匹配问题，遮蔽位置以80%概率替换为[MASK]、10%为随机词、10%保持原词 [S5][S7]。  \n   - **下一句预测（Next Sentence Prediction, NSP）**：给定两个句子A和B，50%情况下B是A的后续句（标签IsNext），50%为随机句（标签NotNext），用于建模句子间关系 [S5][S7]。  \n   这些目标旨在学习**双向上下文表示**，克服单向语言模型（如GPT）的局限性 [S7]。\n\n2. **LoRA的适应方法**  \n   LoRA并非预训练方法，而是一种**参数高效微调（parameter-efficient adaptation）技术**，用于在已有预训练模型（如BERT、GPT-2/3）基础上进行下游任务适配：  \n   - 冻结原始预训练权重 $W_0$，仅引入低秩分解矩阵 $A \\in \\mathbb{R}^{r \\times d}$ 和 $B \\in \\mathbb{R}^{k \\times r}$（其中 $r \\ll \\min(d,k)$），使权重更新 $\\Delta W = BA$ 为低秩形式 [S1][S2][S3][S8]。  \n   - 训练时仅优化 $A$ 和 $B$，推理时可将 $W = W_0 + BA$ 合并为单一权重矩阵，**不引入额外推理延迟** [S1][S3]。  \n   - 其核心假设是：模型适应过程中权重变化 $\\Delta W$ 具有低“内在秩”（low intrinsic rank） [S1][S8]。  \n   - 相比全量微调，LoRA可将可训练参数减少至1/10,000，GPU内存需求降低3倍，且在RoBERTa、DeBERTa、GPT-2/3上性能持平或优于全量微调 [S2]。\n\n3. **关键区别总结**  \n   - **阶段不同**：BERT的MLM/NSP是**预训练阶段**的目标函数，用于从零学习通用语言表征；LoRA是**下游适应阶段**的参数化策略，作用于已冻结的预训练模型 [S2][S7]。  \n   - **目的不同**：BERT旨在获得强泛化能力的初始表示；LoRA旨在以极低计算/存储开销实现任务特定适配 [S1][S2]。  \n   - **是否修改主干权重**：BERT预训练直接更新全部模型参数；LoRA不更新原始权重 $W_0$，仅学习增量 $\\Delta W$ 的低秩近似 [S1][S3]。  \n   - **推理影响**：BERT本身无此问题；LoRA设计保证合并后推理延迟与全量微调模型一致 [S1][S3]。\n\n注：检索证据中未提及LoRA应用于BERT的具体实验细节（如是否在BERT上验证），但明确指出LoRA适用于RoBERTa、DeBERTa、GPT-2、GPT-3等Transformer语言模型 [S2]，且其原理适用于任何含稠密层的神经网络 [S10]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 INTRODUCTION"
+          ],
+          "matched_query_ids": [
+            "original",
+            "lora-adaptation-method"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "lora-adaptation-method"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000055:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 OUR METHOD",
+            "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+          ],
+          "matched_query_ids": [
+            "original",
+            "lora-adaptation-method"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000021:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 INTRODUCTION"
+          ],
+          "matched_query_ids": [
+            "original",
+            "lora-adaptation-method"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 BERT",
+            "3.1 Pre-training BERT"
+          ],
+          "matched_query_ids": [
+            "bert-pretraining-objectives"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000217:part_0001",
+          "page_start": 18,
+          "content_type": "paragraph",
+          "section_path": [
+            "D HYPERPARAMETERS USED IN EXPERIMENTS",
+            "D.1 ROBERTA"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "bert-pretraining-objectives"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:figure:figure_0001_000016:part_0001",
+          "page_start": 1,
+          "content_type": "figure",
+          "section_path": [
+            "1 INTRODUCTION"
+          ],
+          "matched_query_ids": [
+            "lora-adaptation-method"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000094:part_0001",
+          "page_start": 8,
+          "content_type": "paragraph",
+          "section_path": [
+            "6 RELATED WORKS"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000133:part_0001",
+          "page_start": 12,
+          "content_type": "paragraph",
+          "section_path": [
+            "8 CONCLUSION AND FUTURE WORK"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          5,
+          7,
+          5,
+          7,
+          7,
+          1,
+          2,
+          3,
+          8,
+          1,
+          3,
+          1,
+          8,
+          2,
+          2,
+          7,
+          1,
+          2,
+          1,
+          3,
+          1,
+          3,
+          2,
+          10
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S5",
+          "S7",
+          "S8",
+          "S10"
+        ],
+        "cited_filenames": [
+          "1810.04805_bert.pdf",
+          "2106.09685_lora.pdf"
+        ],
+        "cited_chunk_ids": [
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:abstract:block_000000:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:figure:figure_0001_000016:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000055:part_0001",
+          "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000133:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 18,
+        "cited_claim_count": 12,
+        "claim_citation_completeness": 0.6666666666666666
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "bert-pretraining-objectives",
+              "target": "BERT",
+              "query": "What are the exact pre-training objectives used in BERT, including the masked language modeling and next sentence prediction tasks?"
+            },
+            {
+              "id": "lora-adaptation-method",
+              "target": "LoRA",
+              "query": "What is LoRA's method for adapting a pretrained model, specifically how it freezes the base weights and injects trainable low-rank matrices?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare BERT's pre-training objectives with LoRA's method for adapting an already pretrained model.",
+            "status": "success",
+            "latency_seconds": 3.3034,
+            "result_count": 10
+          },
+          {
+            "id": "bert-pretraining-objectives",
+            "target": "BERT",
+            "query": "What are the exact pre-training objectives used in BERT, including the masked language modeling and next sentence prediction tasks?",
+            "status": "success",
+            "latency_seconds": 2.2763,
+            "result_count": 10
+          },
+          {
+            "id": "lora-adaptation-method",
+            "target": "LoRA",
+            "query": "What is LoRA's method for adapting a pretrained model, specifically how it freezes the base weights and injects trainable low-rank matrices?",
+            "status": "success",
+            "latency_seconds": 3.4951,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 26,
+        "final_count": 10,
+        "planner_latency_seconds": 3.9466
+      },
+      "answer_pipeline_latency_seconds": 28.2791,
+      "judge_latency_seconds": 3.1837,
+      "evaluation_latency_seconds": 31.4632
+    },
+    {
+      "case_id": "MQ05",
+      "question": "Compare the role of self-attention in the Transformer with the systems optimization used by FlashAttention to compute exact attention.",
+      "answer": "Self-attention in the Transformer and FlashAttention’s systems optimization serve fundamentally different purposes: the former is a *modeling mechanism* defining how information is aggregated across sequence positions, while the latter is an *algorithmic implementation technique* optimizing the computation of that mechanism on hardware.\n\n**Role of self-attention in the Transformer**:  \nSelf-attention enables each position in a sequence to attend to all other positions (in encoder layers) or to all preceding positions including itself (in decoder layers), thereby capturing long-range dependencies without recurrence or convolution [S4]. In encoder self-attention, keys, values, and queries all derive from the same input layer; in decoder self-attention, masking is applied to enforce autoregressive behavior by setting illegal connections to −∞ before softmax [S4]. The computation follows the scaled dot-product attention formula: for query matrix Q, key matrix K, and value matrix V, it computes $\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$ [S6]. This standard implementation materializes the $N \\times N$ attention matrix $S = QK^T$ and the probability matrix $P = \\text{softmax}(S)$ in high-bandwidth memory (HBM), requiring $O(N^2)$ memory and quadratic HBM accesses in sequence length $N$, making it memory-bound and slow for long sequences [S1][S2].\n\n**Systems optimization in FlashAttention**:  \nFlashAttention does not alter the mathematical definition of self-attention—it computes *exact* attention—but restructures its execution to be IO-aware, minimizing data movement between slow HBM and fast on-chip SRAM [S2][S5]. It achieves this via two core techniques:  \n(i) **Tiling**: the input matrices are split into blocks; the algorithm iterates over blocks of K and V, loading them into SRAM, then processes blocks of Q within that tile, computing partial attention outputs incrementally—avoiding materialization of the full $N \\times N$ attention matrix [S2][S7].  \n(ii) **Recomputation for backward pass**: instead of storing the intermediate attention matrix $P$ (which costs $O(N^2)$ memory), it stores only the softmax normalization factors (log-sum-exp terms) from the forward pass, enabling on-chip recomputation of $P$ during backpropagation [S2][S7].  \nThis reduces HBM accesses from $\\Omega(N d \\cdot N^2)$ in standard attention to $O(N^2 d^2 / M)$ (where $M$ is SRAM size), yielding up to 7.6× speedup on GPT-2 and linear ($O(N)$) memory footprint versus quadratic [S2][S7][S3]. FlashAttention is implemented as a fused CUDA kernel to maximize control over memory access patterns [S2][S7].\n\nIn summary: self-attention defines *what* the model computes (global context aggregation), while FlashAttention optimizes *how* that computation is executed on GPU hardware, specifically by reducing IO overhead without approximating the attention function [S2][S4][S5][S7].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000036:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 Background",
+            "2.2 Standard Attention Implementation"
+          ],
+          "matched_query_ids": [
+            "original",
+            "flashattention-exact"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+          "page_start": 1,
+          "content_type": "figure",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "flashattention-exact"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000153:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Experiments",
+            "4.3 Benchmarking Attention"
+          ],
+          "matched_query_ids": [
+            "original",
+            "flashattention-exact"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Model Architecture",
+            "3.2 Attention",
+            "3.2.3 Applications of Attention in our Model"
+          ],
+          "matched_query_ids": [
+            "transformer-self-attention"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000036:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Model Architecture",
+            "3.2 Attention",
+            "3.2.1 Scaled Dot-Product Attention"
+          ],
+          "matched_query_ids": [
+            "transformer-self-attention"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000013:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "flashattention-exact"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000017:part_0002",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000024:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Model Architecture"
+          ],
+          "matched_query_ids": [
+            "transformer-self-attention"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000114:part_0001",
+          "page_start": 8,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Experiments",
+            "4.1 Faster Models with FlashAttention"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          4,
+          4,
+          6,
+          1,
+          2,
+          2,
+          5,
+          2,
+          7,
+          2,
+          7,
+          2,
+          7,
+          3,
+          2,
+          7,
+          2,
+          4,
+          5,
+          7
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7"
+        ],
+        "cited_filenames": [
+          "1706.03762_attention-is-all-you-need.pdf",
+          "2205.14135_flashattention.pdf"
+        ],
+        "cited_chunk_ids": [
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000036:part_0001",
+          "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000049:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:abstract:block_000000:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:figure:figure_0001_000011:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000013:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000036:part_0001",
+          "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000153:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 14,
+        "cited_claim_count": 10,
+        "claim_citation_completeness": 0.7142857142857143
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "transformer-self-attention",
+              "target": "Transformer self-attention",
+              "query": "What is the role of self-attention in the original Transformer architecture, specifically how it computes attention scores and aggregates values?"
+            },
+            {
+              "id": "flashattention-exact",
+              "target": "FlashAttention exact",
+              "query": "How does FlashAttention perform systems-level optimization to compute exact attention without approximation, focusing on memory access patterns and kernel fusion?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare the role of self-attention in the Transformer with the systems optimization used by FlashAttention to compute exact attention.",
+            "status": "success",
+            "latency_seconds": 2.4561,
+            "result_count": 10
+          },
+          {
+            "id": "transformer-self-attention",
+            "target": "Transformer self-attention",
+            "query": "What is the role of self-attention in the original Transformer architecture, specifically how it computes attention scores and aggregates values?",
+            "status": "success",
+            "latency_seconds": 2.6603,
+            "result_count": 10
+          },
+          {
+            "id": "flashattention-exact",
+            "target": "FlashAttention exact",
+            "query": "How does FlashAttention perform systems-level optimization to compute exact attention without approximation, focusing on memory access patterns and kernel fusion?",
+            "status": "success",
+            "latency_seconds": 2.2884,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 27,
+        "final_count": 10,
+        "planner_latency_seconds": 3.8733
+      },
+      "answer_pipeline_latency_seconds": 22.9292,
+      "judge_latency_seconds": 2.0193,
+      "evaluation_latency_seconds": 24.948
+    },
+    {
+      "case_id": "MQ06",
+      "question": "Compare BERT bidirectional pretraining and downstream fine-tuning with GPT-3 in-context few-shot learning.",
+      "answer": "BERT 的双向预训练与下游微调（fine-tuning）和 GPT-3 的上下文内少样本学习（in-context few-shot learning）在方法论、训练范式、数据依赖与性能表现上存在系统性差异，具体对比如下：\n\n1. **预训练目标与架构**  \n   - BERT 采用**双向掩码语言模型**（MLM）和**下一句预测**（NSP）任务进行预训练，其 Transformer 编码器在所有层中联合建模左右上下文，从而获得深度双向表示 [S2][S8][S6]。  \n   - GPT-3 是一个**自回归、单向**（left-to-right）语言模型，仅基于标准语言建模目标（预测下一个 token），未引入 MLM 或 NSP 等任务 [S3][S4][S8]。其架构为单向 Transformer，每个 token 仅能关注其左侧上下文 [S2][S8]。\n\n2. **下游任务适配方式**  \n   - BERT 采用**参数更新式微调**：在下游任务上，使用标注数据对整个预训练模型的所有参数进行端到端微调；输入格式统一（如 [CLS] + A + [SEP] + B + [SEP]），输出根据任务类型（分类/序列标注/QA）分别设计 [S5][S7][S8]。微调通常需数千至数十万标注样本 [S4]。  \n   - GPT-3 **不进行微调**（本文明确声明“we leave this to future work”），而是通过**上下文内少样本学习**（in-context few-shot learning）完成任务：在推理时将任务描述与 K 个示例（K ≤ 100，受限于 2048 token 上下文窗口）拼接为 prompt，模型直接生成答案，**无任何梯度更新** [S3][S4]。该方法仅需少量（甚至零）标注样本用于推理时提示构造 [S4]。\n\n3. **模型规模与性能对比**  \n   - BERT-Large 参数量为 340M；GPT-3 最大版本为 175B，规模大两个数量级 [S8][S3]。  \n   - 在 SuperGLUE 上，GPT-3（175B）在少样本设置下（K ≤ 32）可超越微调的 BERT-Large；且仅需 **<8 个示例/任务** 即可实现此超越 [S1]。  \n   - 在 CoQA 阅读理解任务上：GPT-3 少样本 F1 为 85.0，接近人类与微调 SOTA；零样本为 81.5，一样本为 84.0 [S3]。  \n   - 在 PIQA 常识推理任务上：GPT-3 少样本准确率为 82.8%，高于微调 SOTA 的 79.4% [S9]。  \n   - 但在 ANLI、RACE、QuAC 等任务上，GPT-3 少样本性能仍显著弱于微调模型 [S3]。\n\n4. **数据与泛化特性**  \n   - BERT 微调依赖任务特定标注数据集，存在过拟合窄分布、利用虚假特征等风险 [S4]；但微调成本低（单 TPU ≤1 小时）[S5]。  \n   - GPT-3 少样本学习几乎无需任务特定标注数据，仅需自然语言指令与少量示例，更接近“任务无关”（task-agnostic）性能评估 [S3][S4]；但其性能高度依赖模型规模与上下文示例数量，且对某些推理密集型任务效果有限 [S3]。\n\n5. **方法定位差异**  \n   - BERT 代表**微调范式**（fine-tuning paradigm），强调通过任务适配释放预训练表示能力 [S2][S6]。  \n   - GPT-3 代表**提示工程+上下文学习范式**（prompting + in-context learning），强调模型通过大规模预训练内化任务模式，无需参数更新 [S3][S4]。\n\n综上，二者核心区别在于：BERT 通过**双向预训练 + 全参数微调**适配下游任务；GPT-3 通过**单向大规模预训练 + 无参数更新的上下文少样本提示**完成任务。前者依赖标注数据与任务定制，后者依赖模型规模与提示设计，且在部分任务上 GPT-3 少样本性能可媲美甚至超越微调模型 [S1][S3][S9]，但在复杂推理任务上仍有差距 [S3]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:figure:figure_0003_000139:part_0001",
+          "page_start": 19,
+          "content_type": "figure",
+          "section_path": [
+            "3 Results",
+            "3.7 SuperGLUE"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt3"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "bert"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt3"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000035:part_0001",
+          "page_start": 6,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 Approach"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt3"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000056:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 BERT",
+            "3.2 Fine-tuning BERT"
+          ],
+          "matched_query_ids": [
+            "original",
+            "bert"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0003_000198:part_0001",
+          "page_start": 13,
+          "content_type": "figure",
+          "section_path": [
+            "A Additional Details for BERT",
+            "A.1 Illustration of the Pre-training Tasks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "bert"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0001_000024:part_0001",
+          "page_start": 3,
+          "content_type": "figure",
+          "section_path": [
+            "2 Related Work",
+            "2.2 Unsupervised Fine-tuning Approaches"
+          ],
+          "matched_query_ids": [
+            "bert"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000029:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 BERT"
+          ],
+          "matched_query_ids": [
+            "bert"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2005.14165_language-models-are-few-shot-learners.pdf",
+          "chunk_id": "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:table:logical_table_3_6:part_0001",
+          "page_start": 17,
+          "content_type": "table",
+          "section_path": [
+            "3 Results",
+            "3.4 Winograd-Style Tasks"
+          ],
+          "matched_query_ids": [
+            "gpt3"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000216:part_0001",
+          "page_start": 14,
+          "content_type": "paragraph",
+          "section_path": [
+            "A Additional Details for BERT",
+            "A.4 Comparison of BERT, ELMo ,and OpenAI GPT"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          2,
+          8,
+          6,
+          3,
+          4,
+          8,
+          2,
+          8,
+          5,
+          7,
+          8,
+          4,
+          3,
+          4,
+          4,
+          8,
+          3,
+          1,
+          3,
+          9,
+          3,
+          4,
+          5,
+          3,
+          4,
+          3,
+          2,
+          6,
+          3,
+          4,
+          1,
+          3,
+          9,
+          3
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "cited_filenames": [
+          "1810.04805_bert.pdf",
+          "2005.14165_language-models-are-few-shot-learners.pdf"
+        ],
+        "cited_chunk_ids": [
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0001_000024:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:figure:figure_0003_000198:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000008:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000029:part_0001",
+          "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000056:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:figure:figure_0003_000139:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000024:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:paragraph:block_000035:part_0001",
+          "97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83:table:logical_table_3_6:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": false,
+        "claim_count": 20,
+        "cited_claim_count": 14,
+        "claim_citation_completeness": 0.7
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "bert",
+              "target": "BERT",
+              "query": "What is the bidirectional pretraining objective and downstream fine-tuning procedure used in BERT?"
+            },
+            {
+              "id": "gpt3",
+              "target": "GPT-3",
+              "query": "What is the in-context few-shot learning protocol employed by GPT-3 during evaluation?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare BERT bidirectional pretraining and downstream fine-tuning with GPT-3 in-context few-shot learning.",
+            "status": "success",
+            "latency_seconds": 2.6279,
+            "result_count": 10
+          },
+          {
+            "id": "bert",
+            "target": "BERT",
+            "query": "What is the bidirectional pretraining objective and downstream fine-tuning procedure used in BERT?",
+            "status": "success",
+            "latency_seconds": 2.2754,
+            "result_count": 10
+          },
+          {
+            "id": "gpt3",
+            "target": "GPT-3",
+            "query": "What is the in-context few-shot learning protocol employed by GPT-3 during evaluation?",
+            "status": "success",
+            "latency_seconds": 2.4513,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 24,
+        "final_count": 10,
+        "planner_latency_seconds": 3.3
+      },
+      "answer_pipeline_latency_seconds": 34.9205,
+      "judge_latency_seconds": 2.1867,
+      "evaluation_latency_seconds": 37.1065
+    }
+  ]
+}

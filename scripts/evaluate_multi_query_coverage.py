@@ -10,11 +10,26 @@ for cross-paper questions?
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import statistics
+import sys
 import time
 from pathlib import Path
 from typing import Any
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from backend.chat.multi_query_retrieval import (  # noqa: E402
+    RetrievalPlan,
+    RetrievalSubquery,
+    _chunk_id,
+    _coverage_select,
+    _query_rrf,
+    execute_retrieval_plan,
+)
 
 try:
     from scripts.evaluate_evidence_retrieval import (
@@ -34,11 +49,6 @@ except ModuleNotFoundError:  # Direct execution from the scripts directory.
         _validate_dataset,
         _validate_gold_against_corpus,
     )
-
-
-def _chunk_id(hit: dict[str, Any]) -> str:
-    return str((hit.get("metadata") or {}).get("chunk_id", ""))
-
 
 def _validate_query_plans(dataset: dict[str, Any]) -> None:
     """Validate explicit development-time retrieval plans."""
@@ -62,131 +72,6 @@ def _validate_query_plans(dataset: dict[str, Any]) -> None:
             raise ValueError(f"{case.get('id')}: subquery ids must be unique")
         if any(not query for query in queries):
             raise ValueError(f"{case.get('id')}: subquery text must be nonempty")
-
-
-def _query_rrf(
-    ranked_hits_by_query: dict[str, list[dict[str, Any]]],
-    *,
-    rrf_k: int = 60,
-) -> list[dict[str, Any]]:
-    """Merge query result lists with reciprocal-rank fusion and provenance."""
-
-    if rrf_k <= 0:
-        raise ValueError("rrf_k must be positive")
-    if not ranked_hits_by_query:
-        return []
-
-    fused_by_id: dict[str, dict[str, Any]] = {}
-    for query_id, hits in ranked_hits_by_query.items():
-        seen_in_query: set[str] = set()
-        for rank, hit in enumerate(hits, 1):
-            chunk_id = _chunk_id(hit)
-            if not chunk_id:
-                raise ValueError(f"{query_id} candidate at rank {rank} has no chunk id")
-            if chunk_id in seen_in_query:
-                raise ValueError(f"{query_id} contains duplicate chunk id: {chunk_id}")
-            seen_in_query.add(chunk_id)
-
-            if chunk_id not in fused_by_id:
-                item = dict(hit)
-                item["retrieval_score"] = float(hit.get("score", 0.0))
-                item["matched_query_ids"] = []
-                item["query_ranks"] = {}
-                item["query_rrf_score"] = 0.0
-                fused_by_id[chunk_id] = item
-            item = fused_by_id[chunk_id]
-            item["retrieval_score"] = max(
-                float(item["retrieval_score"]), float(hit.get("score", 0.0))
-            )
-            item["matched_query_ids"].append(query_id)
-            item["query_ranks"][query_id] = rank
-            item["query_rrf_score"] += 1.0 / (rrf_k + rank)
-
-    fused = list(fused_by_id.values())
-    for item in fused:
-        item["score"] = float(item["query_rrf_score"])
-    return sorted(
-        fused,
-        key=lambda item: (
-            -float(item["query_rrf_score"]),
-            min(int(rank) for rank in item["query_ranks"].values()),
-            _chunk_id(item),
-        ),
-    )
-
-
-def _coverage_select(
-    fused_hits: list[dict[str, Any]],
-    required_query_ids: list[str],
-    *,
-    top_k: int,
-    original_reserve: int = 0,
-    per_target_reserve: int = 1,
-) -> list[dict[str, Any]]:
-    """Select Top-K with baseline safety and comparison-target coverage."""
-
-    if top_k <= 0:
-        raise ValueError("top_k must be positive")
-    if len(required_query_ids) != len(set(required_query_ids)):
-        raise ValueError("required query ids must be unique")
-    if original_reserve < 0:
-        raise ValueError("original_reserve cannot be negative")
-    if per_target_reserve <= 0:
-        raise ValueError("per_target_reserve must be positive")
-    if original_reserve + per_target_reserve * len(required_query_ids) > top_k:
-        raise ValueError(
-            "top_k cannot be smaller than the configured reserve budget"
-        )
-
-    selected_ids: set[str] = set()
-    selected: list[dict[str, Any]] = []
-
-    original_candidates = sorted(
-        (
-            item
-            for item in fused_hits
-            if "original" in (item.get("query_ranks") or {})
-        ),
-        key=lambda item: (
-            int(item["query_ranks"]["original"]),
-            _chunk_id(item),
-        ),
-    )
-    for candidate in original_candidates[:original_reserve]:
-        selected.append(candidate)
-        selected_ids.add(_chunk_id(candidate))
-
-    for query_id in required_query_ids:
-        target_candidates = sorted(
-            (
-                item
-                for item in fused_hits
-                if query_id in (item.get("query_ranks") or {})
-            ),
-            key=lambda item: (
-                int(item["query_ranks"][query_id]),
-                _chunk_id(item),
-            ),
-        )
-        for candidate in target_candidates[:per_target_reserve]:
-            chunk_id = _chunk_id(candidate)
-            if chunk_id in selected_ids:
-                continue
-            selected.append(candidate)
-            selected_ids.add(chunk_id)
-
-    for item in fused_hits:
-        if len(selected) >= top_k:
-            break
-        chunk_id = _chunk_id(item)
-        if chunk_id in selected_ids:
-            continue
-        selected.append(item)
-        selected_ids.add(chunk_id)
-
-    fused_order = {_chunk_id(item): rank for rank, item in enumerate(fused_hits)}
-    return sorted(selected, key=lambda item: fused_order[_chunk_id(item)])
-
 
 def _arm_result(
     hits: list[dict[str, Any]],
@@ -244,6 +129,81 @@ def _summarize(results: list[dict[str, Any]], arm: str) -> dict[str, Any]:
     }
 
 
+async def _run_case_retrieval(
+    case: dict[str, Any],
+    *,
+    api_url: str,
+    collection: str,
+    candidate_k: int,
+    top_k: int,
+    rrf_k: int,
+    original_reserve: int,
+    per_target_reserve: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], float, float, dict[str, float]]:
+    """Run the same parallel orchestration used by the chat service."""
+
+    subqueries = tuple(
+        RetrievalSubquery(
+            query_id=str(item["id"]),
+            target=str(item.get("target", item["id"])),
+            query=str(item["query"]),
+        )
+        for item in case.get("retrieval_subqueries", [])
+    )
+    plan = RetrievalPlan(
+        mode="comparison",
+        subqueries=subqueries,
+        planner_source="dataset_explicit_subqueries",
+    )
+    baseline_started = time.perf_counter()
+    baseline_response = await asyncio.to_thread(
+        _post_json,
+        f"{api_url}/search",
+        {
+            "collection_name": collection,
+            "query_text": case["question"],
+            "top_k": candidate_k,
+        },
+    )
+    baseline_latency = time.perf_counter() - baseline_started
+    baseline_hits = baseline_response.get("results", [])
+
+    async def retrieve(query: str) -> list[dict[str, Any]]:
+        response = await asyncio.to_thread(
+            _post_json,
+            f"{api_url}/search",
+            {
+                "collection_name": collection,
+                "query_text": query,
+                "top_k": candidate_k,
+            },
+        )
+        return response.get("results", [])
+
+    started = time.perf_counter()
+    execution = await execute_retrieval_plan(
+        original_query=case["question"],
+        plan=plan,
+        retrieve=retrieve,
+        top_k=top_k,
+        rrf_k=rrf_k,
+        original_reserve=original_reserve,
+        per_target_reserve=per_target_reserve,
+    )
+    parallel_latency = time.perf_counter() - started
+    query_latencies = {
+        str(item["id"]): float(item["latency_seconds"])
+        for item in execution.trace["queries"]
+    }
+    return (
+        baseline_hits,
+        execution.documents,
+        baseline_latency,
+        parallel_latency,
+        query_latencies,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset", type=Path)
@@ -289,49 +249,27 @@ def main() -> int:
 
     results: list[dict[str, Any]] = []
     for case in dataset["cases"]:
-        original_started = time.perf_counter()
-        original_response = _post_json(
-            f"{args.api_url}/search",
-            {
-                "collection_name": collection,
-                "query_text": case["question"],
-                "top_k": args.candidate_k,
-            },
-        )
-        original_latency = time.perf_counter() - original_started
-        original_hits = original_response.get("results", [])
-
-        ranked_by_query = {"original": original_hits}
-        query_latencies = {"original": round(original_latency, 3)}
-        multi_started = time.perf_counter()
-        for subquery in case.get("retrieval_subqueries", []):
-            started = time.perf_counter()
-            response = _post_json(
-                f"{args.api_url}/search",
-                {
-                    "collection_name": collection,
-                    "query_text": subquery["query"],
-                    "top_k": args.candidate_k,
-                },
+        (
+            original_hits,
+            multi_hits,
+            original_latency,
+            multi_latency,
+            query_latencies,
+        ) = asyncio.run(
+            _run_case_retrieval(
+                case,
+                api_url=args.api_url,
+                collection=collection,
+                candidate_k=args.candidate_k,
+                top_k=args.top_k,
+                rrf_k=args.rrf_k,
+                original_reserve=args.original_reserve,
+                per_target_reserve=args.per_target_reserve,
             )
-            query_id = str(subquery["id"])
-            ranked_by_query[query_id] = response.get("results", [])
-            query_latencies[query_id] = round(time.perf_counter() - started, 3)
-        # The original query request is shared by both arms, so include it in
-        # multi-query end-to-end latency even though its response was reused.
-        multi_latency = original_latency + (time.perf_counter() - multi_started)
-
-        fused = _query_rrf(ranked_by_query, rrf_k=args.rrf_k)
+        )
         required_query_ids = [
             str(item["id"]) for item in case.get("retrieval_subqueries", [])
         ]
-        multi_hits = _coverage_select(
-            fused,
-            required_query_ids,
-            top_k=args.top_k,
-            original_reserve=args.original_reserve,
-            per_target_reserve=args.per_target_reserve,
-        )
         evidence_sets = _gold_ids(case)
         results.append(
             {
@@ -382,6 +320,7 @@ def main() -> int:
             "original_query_reserve": args.original_reserve,
             "per_target_reserve": args.per_target_reserve,
             "planner": "dataset_explicit_subqueries",
+            "query_execution": "parallel",
             "selector": "original_reserve_then_per_target_reserve_then_global_fill",
         },
         "corpus_validation": corpus_validation,
