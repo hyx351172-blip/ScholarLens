@@ -120,17 +120,18 @@ unsupported-claim recall, and supported-claim recall.
 
 ## Held-out v5 draft
 
-`claim-citation-entailment-heldout-v5-draft.json` is a frozen claim-level
-held-out candidate built from exact indexed ScholarLens chunks. It contains 11
+`claim-citation-entailment-heldout-v5.json` is a frozen claim-level held-out
+dataset built from exact indexed ScholarLens chunks. It contains 11
 scenarios and 13 claim decisions, with five supported and eight unsupported
 labels. Its source chunk IDs do not overlap Gold evidence from v1 through v4,
 and every embedded source text carries a SHA-256 integrity hash.
 
-The draft is intentionally marked `pending_human_review`, `consumed=false`,
-and `do_not_execute_before_human_review=true`. The evaluator rejects it until
-the project owner verifies every item in
-`claim-citation-entailment-heldout-v5-review.md` and explicitly confirms the
-split. Building and validating the draft does not consume it.
+The draft initially blocked execution until the project owner verified it and
+explicitly authorized one evaluation plus transmission of the evidence excerpts
+to DashScope. The completed run passed all gates: 11/11 cases, 13/13 claim
+decisions, 100% supported-claim recall, and 100% unsupported-claim recall. The
+dataset is now `human_verified` and `consumed=true`; the evaluator rejects any
+rerun, and v5 must not be used for tuning.
 
 ## Development result
 

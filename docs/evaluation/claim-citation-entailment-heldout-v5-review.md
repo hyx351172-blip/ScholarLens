@@ -10,15 +10,17 @@
 - Unsupported labels: 8
 - Prior Gold chunk overlap: 0
 - Exact prior-question overlap: 0
-- Current status: `pending_human_review` / `consumed=false`
+- Current status: `human_verified` / `consumed=true` / result **GO**
+- Owner confirmation and DashScope transfer authorization recorded: 2026-09-23
+- Frozen policy: do not tune against or rerun this split
 
 For each case, verify the question, candidate answer, claim boundary, citation binding, support label, rationale, and evidence excerpt.
 
 ## CCHV5-01 — correct_single_real_evidence
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How does LoRA parameterize a weight update during adaptation?
 
@@ -43,9 +45,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-02 — wrong_citation_correct_real_evidence_elsewhere
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** What makes Mamba selective and how is it computed efficiently?
 
@@ -77,9 +79,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-03 — grouped_citations_one_real_source_supports
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** Which pre-training objectives does LayoutLMv3 combine?
 
@@ -111,9 +113,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-04 — uncited_claim_real_evidence_available
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How does the neural ODE adjoint method compute gradients?
 
@@ -138,9 +140,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-05 — invalid_source_id_real_evidence_available
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How are queries, keys, and values transformed in multi-head attention?
 
@@ -165,9 +167,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-06 — real_evidence_contradicts_claim
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** Does FlashAttention approximate attention and materialize the attention matrix in HBM?
 
@@ -192,9 +194,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-07 — same_real_source_mixed_claims
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** What does multi-head attention do with its learned projections?
 
@@ -220,9 +222,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-08 — same_real_source_supported_and_fabricated_detail
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How is SynthDoG used for Donut pre-training?
 
@@ -248,9 +250,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-09 — wrong_method_attribution
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** Does the neural ODE gradient method use LoRA-style low-rank weight updates?
 
@@ -282,9 +284,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-10 — partially_supported_composite_claim
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How does Mamba combine input-dependent selection with efficient computation?
 
@@ -309,9 +311,9 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## CCHV5-11 — correct_downstream_output_contract
 
-- [ ] Question and reference answer are correct.
-- [ ] Claim boundaries and citation bindings are correct.
-- [ ] Support labels and rationales agree with the cited evidence only.
+- [x] Question and reference answer are correct.
+- [x] Claim boundaries and citation bindings are correct.
+- [x] Support labels and rationales agree with the cited evidence only.
 
 **Question:** How does Donut formulate downstream document tasks?
 
@@ -336,6 +338,6 @@ For each case, verify the question, candidate answer, claim boundary, citation b
 
 ## Final owner confirmation
 
-- [ ] I reviewed all 11 cases and 13 claim labels.
-- [ ] I confirm that labels use only each claim's bound cited evidence.
-- [ ] I authorize changing the dataset to `human_verified` and executing it once.
+- [x] I reviewed all 11 cases and 13 claim labels.
+- [x] I confirm that labels use only each claim's bound cited evidence.
+- [x] I authorize changing the dataset to `human_verified` and executing it once.

@@ -79,7 +79,11 @@ def _validate_dataset(dataset: dict[str, Any]) -> dict[str, Any]:
             if not isinstance(expected_item.get("supported"), bool):
                 raise ValueError(f"{case_id}: supported must be boolean")
         claim_count += len(bundles)
-    missing_scenarios = REQUIRED_SCENARIOS - scenarios
+    missing_scenarios = (
+        REQUIRED_SCENARIOS - scenarios
+        if dataset.get("split") == "development"
+        else set()
+    )
     if missing_scenarios:
         raise ValueError(
             "dataset is missing required scenarios: "

@@ -1,4 +1,5 @@
 import json
+import copy
 import unittest
 from pathlib import Path
 
@@ -50,15 +51,28 @@ class ClaimCitationHeldoutV5Tests(unittest.TestCase):
         self.assertEqual(validation["supported_claims"], 5)
         self.assertEqual(validation["unsupported_claims"], 8)
 
-    def test_pending_review_dataset_cannot_be_executed(self):
+    def test_consumed_dataset_is_frozen_and_lifecycle_guards_work(self):
         # @covers AC-203.4
-        self.assertEqual(self.dataset["annotation_status"], "pending_human_review")
-        self.assertFalse(self.dataset["consumed"])
-        self.assertTrue(self.dataset["do_not_execute_before_human_review"])
-        with self.assertRaisesRegex(ValueError, "human review"):
+        self.assertEqual(self.dataset["annotation_status"], "human_verified")
+        self.assertTrue(self.dataset["consumed"])
+        self.assertFalse(self.dataset["do_not_execute_before_human_review"])
+        with self.assertRaisesRegex(ValueError, "already been consumed"):
             _assert_executable(self.dataset)
-        with self.assertRaisesRegex(ValueError, "human review"):
+        with self.assertRaisesRegex(ValueError, "already been consumed"):
             _validate_run_dataset(self.dataset)
+
+        before_consumption = copy.deepcopy(self.dataset)
+        before_consumption["consumed"] = False
+        before_consumption["consumption"] = None
+        _assert_executable(before_consumption)
+        self.assertEqual(_validate_run_dataset(before_consumption)["case_count"], 11)
+
+        pending_review = copy.deepcopy(before_consumption)
+        pending_review["annotation_status"] = "pending_human_review"
+        pending_review["human_review"]["status"] = "pending"
+        pending_review["do_not_execute_before_human_review"] = True
+        with self.assertRaisesRegex(ValueError, "human review"):
+            _assert_executable(pending_review)
 
     def test_owner_review_document_lists_every_case(self):
         # @covers AC-203.5
@@ -66,7 +80,9 @@ class ClaimCitationHeldoutV5Tests(unittest.TestCase):
 
         self.assertIn("Do not run this held-out split", review)
         self.assertEqual(review.count("## CCHV5-"), 11)
-        self.assertGreaterEqual(review.count("- [ ]"), 11)
+        self.assertGreaterEqual(review.count("- [x]"), 11)
+        self.assertIn("consumed=true", review)
+        self.assertIn("result **GO**", review)
 
 
 if __name__ == "__main__":

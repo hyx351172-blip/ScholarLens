@@ -18,9 +18,9 @@ project owner confirms every case and label.
   rescue, grouped citations, uncited claims, invalid source IDs,
   contradictions, partial support, attribution errors, and mixed claims, with
   both supported and unsupported labels represented.
-- **AC-203.4** — The draft is frozen as `pending_human_review`, `consumed=false`,
-  and `do_not_execute_before_human_review=true`; tooling must reject accidental
-  execution in that state.
+- **AC-203.4** — The lifecycle starts as `pending_human_review` and blocks
+  execution; after explicit owner confirmation it allows exactly one run, then
+  freezes as `human_verified`, `consumed=true` and rejects any rerun.
 - **AC-203.5** — A review document exposes every question, candidate answer,
   claim label/rationale, and evidence excerpt with explicit owner checkboxes.
 - **AC-203.6** — Dataset validation, regression tests, traceability, contract
@@ -33,7 +33,5 @@ change production chat, retrieval, parsing, or frontend contracts.
 
 ## Out of scope
 
-- Human confirmation of the draft labels.
-- Executing or consuming Held-out v5.
 - Tuning the evaluator from v5 outcomes.
 - Re-running the consumed Held-out v4 split.

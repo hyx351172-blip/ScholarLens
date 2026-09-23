@@ -21,7 +21,7 @@ from scripts.evaluate_answer_citations import _build_claim_evidence_bundles  # n
 
 DATASET_PATH = (
     PROJECT_ROOT
-    / "docs/evaluation/claim-citation-entailment-heldout-v5-draft.json"
+    / "docs/evaluation/claim-citation-entailment-heldout-v5.json"
 )
 REVIEW_PATH = (
     PROJECT_ROOT
@@ -604,6 +604,10 @@ def main() -> int:
     if args.validate_only:
         dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
     else:
+        if args.dataset.exists():
+            existing = json.loads(args.dataset.read_text(encoding="utf-8"))
+            if existing.get("annotation_status") == "human_verified" or existing.get("consumed"):
+                raise ValueError("refusing to overwrite a reviewed or consumed held-out dataset")
         catalog = _fetch_source_catalog(args.api_base_url, args.collection)
         dataset = _build_dataset(catalog)
     validation = _validate_heldout_dataset(dataset, prior_gold=prior_gold)
