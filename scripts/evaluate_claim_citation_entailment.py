@@ -36,8 +36,8 @@ REQUIRED_SCENARIOS = {
 
 
 def _validate_dataset(dataset: dict[str, Any]) -> dict[str, Any]:
-    if dataset.get("split") != "development":
-        raise ValueError("claim entailment dataset must use the development split")
+    if dataset.get("split") not in {"development", "held_out"}:
+        raise ValueError("claim entailment dataset must use development or held_out split")
     cases = dataset.get("cases")
     if not isinstance(cases, list) or not cases:
         raise ValueError("dataset requires a non-empty cases array")
@@ -91,6 +91,14 @@ def _validate_dataset(dataset: dict[str, Any]) -> dict[str, Any]:
         "claim_count": claim_count,
         "scenario_count": len(scenarios),
     }
+
+
+def _validate_run_dataset(dataset: dict[str, Any]) -> dict[str, Any]:
+    if dataset.get("split") == "held_out":
+        from scripts.build_claim_citation_heldout_v5 import _assert_executable
+
+        _assert_executable(dataset)
+    return _validate_dataset(dataset)
 
 
 def _score_case(case: dict[str, Any], judgement: dict[str, Any]) -> dict[str, Any]:
@@ -281,7 +289,7 @@ def main() -> int:
     args = parser.parse_args()
 
     dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
-    validation = _validate_dataset(dataset)
+    validation = _validate_run_dataset(dataset)
     if args.validate_only:
         print(json.dumps(validation, ensure_ascii=False, indent=2))
         return 0
