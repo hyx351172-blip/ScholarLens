@@ -1,0 +1,2323 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-answer-citations-v1",
+  "dataset_id": "scholarlens-evidence-gold-v4-answer-citations-heldout",
+  "dataset_split": "held_out",
+  "annotation_status": "human_verified",
+  "collection_id": "kb_1790061860190",
+  "corpus_validation": null,
+  "configuration": {
+    "model_name": "qwen3-vl-plus",
+    "model_host": "dashscope.aliyuncs.com",
+    "api_key_source": "API_KEY",
+    "top_k": 10,
+    "score_threshold": 0.1,
+    "use_multi_query": true,
+    "judge": "same_model_structured_development_judge"
+  },
+  "summary": {
+    "case_count": 8,
+    "citation_syntax_valid_rate": 1.0,
+    "complete_required_source_rate": 0.875,
+    "gold_evidence_citation_hit_rate": 0.5,
+    "mean_claim_citation_completeness": 0.9460227272727273,
+    "mean_citation_precision": 1.0,
+    "mean_concept_coverage": 0.9375,
+    "unsupported_claim_case_rate": 0.125,
+    "mean_answer_pipeline_latency_seconds": 21.771875,
+    "mean_judge_latency_seconds": 3.4141624999999998
+  },
+  "acceptance": {
+    "passed": false,
+    "checks": {
+      "citation_syntax_valid_rate": {
+        "actual": 1.0,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "complete_required_source_rate": {
+        "actual": 0.875,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": false
+      },
+      "gold_evidence_citation_hit_rate": {
+        "actual": 0.5,
+        "operator": ">=",
+        "threshold": 0.8333333333333334,
+        "passed": false
+      },
+      "mean_claim_citation_completeness": {
+        "actual": 0.9460227272727273,
+        "operator": ">=",
+        "threshold": 0.9,
+        "passed": true
+      },
+      "mean_concept_coverage": {
+        "actual": 0.9375,
+        "operator": ">=",
+        "threshold": 0.9,
+        "passed": true
+      },
+      "unsupported_claim_case_rate": {
+        "actual": 0.125,
+        "operator": "<=",
+        "threshold": 0.16666666666666666,
+        "passed": true
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "ACV4-01",
+      "question": "Compare how the GPT-4 report and the DeepSeek-R1 report construct quantitative safety evaluations.",
+      "answer": "DeepSeek-R1报告构建定量安全评估时，采用六项公开基准（SST、BBQ、ART、XSTest、DNA、HarmBench）进行系统测试，并补充自建的多语言安全测试集（9,330题，覆盖50种语言）与分类学内部测试集；其中DNA与HarmBench结果由作者复现，其余来自HELM平台独立评估 [S6][S8]。GPT-4技术报告则构建了内部定量评估体系，针对仇恨言论、自残建议、非法活动建议等高风险内容类别，通过分类器与人工分析对模型生成文本进行自动判别，旨在加速训练中检查点评估与跨模型比较 [S9]。\n\nDeepSeek-R1在标准基准上使用“安全得分百分比”作为量化指标：安全响应得5分、不安全响应得0分、拒绝回答得4分；多语言评估中以总安全得分占最大可能得分的比例表示整体安全水平 [S1]。GPT-4报告未明确说明具体评分机制，仅指出其评估测量“模型在被诱导生成违规内容时产生该类内容的概率”，依赖分类器与人工分析联合判定是否含违规内容 [S9]。\n\nDeepSeek-R1的多语言安全评估采用LLM-as-a-judge方法，结合人类校准确保翻译质量，并将拒绝视为次优但安全的选择（4分），强调“提供安全内容优于单纯拒绝” [S1]。GPT-4报告未提及多语言安全评估或拒绝策略的量化处理方式 [S9]。\n\nDeepSeek-R1在HarmBench上表现显著弱于其他基准，主因是未能拒绝版权相关请求（如生成受版权保护歌词），导致被标为不安全；该问题在复现评估时使用GPT-4o(2024-11-20)作为裁判模型以提升可靠性 [S5][S8]。GPT-4报告未披露其在HarmBench或其他第三方基准上的具体分数或薄弱环节 [S9]。\n\nDeepSeek-R1报告明确区分“纯模型”（无风险控制系统）与“带风险控制系统”的安全得分，并在多个维度（如 unsafe rate、rejection rate、语言特异性风险）进行分层对比 [S1][S4][S7]。GPT-4报告未提供类似结构化对比，亦未说明其服务端是否部署独立风险控制系统及其对安全得分的影响 [S9]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001",
+          "page_start": 53,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.4. Multilingual Safety Performance"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000296:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "Warning: This section contains potentially risky and offensive content!"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000304:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "<Workflow>"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "5. Ethics and Safety Statement"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000337:part_0002",
+          "page_start": 47,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.2. R1 Safety Evaluation on Standard Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:table:logical_table_unlabelled_0007:part_0001",
+          "page_start": 48,
+          "content_type": "table",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.2. R1 Safety Evaluation on Standard Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+          "page_start": 51,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.3. Safety Taxonomic Study of R1 on In-House Benchmark"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000328:part_0001",
+          "page_start": 46,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.2. R1 Safety Evaluation on Standard Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000621:part_0001",
+          "page_start": 46,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 GPT-4 Observed Safety Challenges",
+            "2.1 Evaluation Approach",
+            "2.1.2 Quantitative Evaluations"
+          ],
+          "matched_query_ids": [
+            "gpt4-safety-eval"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000034:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Capabilities"
+          ],
+          "matched_query_ids": [
+            "gpt4-safety-eval"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          6,
+          8,
+          9,
+          1,
+          9,
+          1,
+          9,
+          5,
+          8,
+          9,
+          1,
+          4,
+          7,
+          9
+        ],
+        "valid_citation_numbers": [
+          1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "cited_filenames": [
+          "2303.08774_gpt-4-technical-report.pdf",
+          "2501.12948_deepseek-r1.pdf"
+        ],
+        "cited_chunk_ids": [
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000328:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000337:part_0002",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:table:logical_table_unlabelled_0007:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000621:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 5,
+        "cited_claim_count": 5,
+        "claim_citation_completeness": 1.0
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "gpt4-safety-eval",
+              "target": "GPT-4 report",
+              "query": "What quantitative safety evaluation methodology does the GPT-4 report use, including metrics, test suites, and scoring procedures?"
+            },
+            {
+              "id": "deepseek-r1-safety-eval",
+              "target": "DeepSeek-R1 report",
+              "query": "What quantitative safety evaluation methodology does the DeepSeek-R1 report use, including metrics, test suites, and scoring procedures?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare how the GPT-4 report and the DeepSeek-R1 report construct quantitative safety evaluations.",
+            "status": "success",
+            "latency_seconds": 3.4209,
+            "result_count": 10
+          },
+          {
+            "id": "gpt4-safety-eval",
+            "target": "GPT-4 report",
+            "query": "What quantitative safety evaluation methodology does the GPT-4 report use, including metrics, test suites, and scoring procedures?",
+            "status": "success",
+            "latency_seconds": 2.5139,
+            "result_count": 10
+          },
+          {
+            "id": "deepseek-r1-safety-eval",
+            "target": "DeepSeek-R1 report",
+            "query": "What quantitative safety evaluation methodology does the DeepSeek-R1 report use, including metrics, test suites, and scoring procedures?",
+            "status": "success",
+            "latency_seconds": 2.3436,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 22,
+        "final_count": 10,
+        "planner_latency_seconds": 4.369
+      },
+      "answer_pipeline_latency_seconds": 22.5944,
+      "judge_latency_seconds": 3.2693,
+      "evaluation_latency_seconds": 25.8668
+    },
+    {
+      "case_id": "ACV4-02",
+      "question": "How do GPT-4 and Llama 3 approach multilingual capability evaluation or improvement?",
+      "answer": "GPT-4 evaluates multilingual capability primarily by translating the English MMLU benchmark into multiple languages using Azure Translate, then measuring 3-shot accuracy across those languages—including low-resource ones like Latvian, Welsh, and Swahili—and reports that it outperforms prior models’ English performance in 24 of 26 tested languages [S4][S6][S9]. GPT-4’s multilingual evaluation does not involve dedicated non-English instruction tuning or expert models; instead, it relies on translation of existing benchmarks and general pre-training on multilingual web data (implied by broad language coverage) [S4][S6][S9].\n\nLlama 3 explicitly improves multilingual capability through three targeted post-training strategies: (1) training a specialized multilingual expert model by continuing pre-training on a data mix with 90% multilingual tokens to collect higher-quality human annotations in non-English languages [S2]; (2) sourcing and generating high-quality multilingual instruction-tuning data for German, French, Italian, Portuguese, Hindi, Spanish, and Thai—comprising human annotations (2.4%), NLP-task-derived data (44.2%), rejection-sampled data (18.8%), and translated reasoning data (34.6%)—with strict language-matching checks during selection [S2]; and (3) avoiding most machine-translated data to prevent translationese and cultural bias, except for synthetic quantitative reasoning data, which is translated to boost non-English math performance [S2]. For evaluation, Llama 3 uses an internal multilingual MMLU benchmark (translated via Google Translate, 5-shot, instructions in English) and MGSM (0-shot CoT), reporting averaged results across German, French, Italian, Portuguese, Hindi, Spanish, and Thai [S1][S7][S8]. Human evaluations further assess multilingual prompts (specifically Hindi, Spanish, Portuguese), where Llama 3 405B underperforms GPT-4 but matches Claude 3.5 Sonnet [S3].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000386:part_0001",
+          "page_start": 37,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.2 Post-trained Language Model",
+            "5.2.4 Multilingual Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000229:part_0001",
+          "page_start": 22,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Post-Training",
+            "4.3 Capabilities",
+            "4.3.2 Multilinguality"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000419:part_0001",
+          "page_start": 40,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.3 HumanEvaluations"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:figure:figure_0005_000056:part_0001",
+          "page_start": 8,
+          "content_type": "figure",
+          "section_path": [
+            "4 Capabilities",
+            "GPT-4 3-shot accuracy on MMLU across languages"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000204:part_0001",
+          "page_start": 19,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Post-Training",
+            "4.3 Capabilities"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000050:part_0001",
+          "page_start": 7,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Capabilities"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:table:logical_table_unlabelled_0019:part_0001",
+          "page_start": 38,
+          "content_type": "table",
+          "section_path": [
+            "5 Results",
+            "5.2 Post-trained Language Model",
+            "5.2.5 Math and Reasoning Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:table:logical_table_unlabelled_0015:part_0001",
+          "page_start": 35,
+          "content_type": "table",
+          "section_path": [
+            "5 Results",
+            "5.2 Post-trained Language Model"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000005:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "gpt4-multilingual-eval"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000002:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "Llama Team, AI @ Meta 1"
+          ],
+          "matched_query_ids": [
+            "llama3-multilingual-eval"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          4,
+          6,
+          9,
+          4,
+          6,
+          9,
+          2,
+          2,
+          2,
+          1,
+          7,
+          8,
+          3
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "cited_filenames": [
+          "2303.08774_gpt-4-technical-report.pdf",
+          "2407.21783_llama-3-herd-of-models.pdf"
+        ],
+        "cited_chunk_ids": [
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000229:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000386:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000419:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:table:logical_table_unlabelled_0015:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:table:logical_table_unlabelled_0019:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:figure:figure_0005_000056:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000005:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000050:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 5,
+        "cited_claim_count": 5,
+        "claim_citation_completeness": 1.0
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "gpt4-multilingual-eval",
+              "target": "GPT-4",
+              "query": "What specific multilingual capability evaluation metrics or improvement techniques does GPT-4 use, as described in its official documentation or technical report?"
+            },
+            {
+              "id": "llama3-multilingual-eval",
+              "target": "Llama 3",
+              "query": "What specific multilingual capability evaluation metrics or improvement techniques does Llama 3 employ, according to its official release notes or technical documentation?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "How do GPT-4 and Llama 3 approach multilingual capability evaluation or improvement?",
+            "status": "success",
+            "latency_seconds": 2.6383,
+            "result_count": 10
+          },
+          {
+            "id": "gpt4-multilingual-eval",
+            "target": "GPT-4",
+            "query": "What specific multilingual capability evaluation metrics or improvement techniques does GPT-4 use, as described in its official documentation or technical report?",
+            "status": "success",
+            "latency_seconds": 2.8642,
+            "result_count": 10
+          },
+          {
+            "id": "llama3-multilingual-eval",
+            "target": "Llama 3",
+            "query": "What specific multilingual capability evaluation metrics or improvement techniques does Llama 3 employ, according to its official release notes or technical documentation?",
+            "status": "success",
+            "latency_seconds": 3.0195,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 22,
+        "final_count": 10,
+        "planner_latency_seconds": 3.6803
+      },
+      "answer_pipeline_latency_seconds": 17.9355,
+      "judge_latency_seconds": 3.1565,
+      "evaluation_latency_seconds": 21.0917
+    },
+    {
+      "case_id": "ACV4-03",
+      "question": "Compare the visual prompting interfaces and outputs described for GPT-4 and the Segment Anything Model.",
+      "answer": "GPT-4和Segment Anything Model（SAM）均支持视觉提示（visual prompting），但其接口设计、提示类型与输出形式存在显著差异，具体如下：\n\n**1. 提示输入接口**  \n- GPT-4接受“任意交错的文本与图像”作为输入，用户可混合提供图像与文字提示，模型据此生成纯文本输出；标准语言模型的测试时技术（如少样本提示、思维链）同样适用于图文混合输入 [S1]。  \n- SAM的提示是“任何指示需分割内容的信息”，包括前景/背景点、粗略边界框、掩码或自由文本；其设计目标是实现零样本迁移，通过提示工程适配下游任务 [S5][S8]。  \n- SAM的提示编码器对稀疏提示（点、框）使用位置编码加可学习嵌入，对文本提示则采用CLIP文本编码器；密集提示（掩码）经下采样与卷积处理后与图像嵌入相加 [S6]。\n\n**2. 输出形式**  \n- GPT-4的输出始终为文本，例如对图像逐面板描述幽默之处 [S7]，或总结论文内容 [S3]；即使输入含图像，输出亦无视觉模态。  \n- SAM的输出为一个或多个二值分割掩码（binary segmentation masks）；面对模糊提示（如单一点可能对应多物体），默认输出3个掩码并附带置信度/IoU估计 [S2][S10]；图3展示了同一模糊点提示生成3个有效掩码的实例 [S8]。\n\n**3. 模型架构与推理机制**  \n- GPT-4未公开其多模态架构细节，仅说明其视觉输入能力为“parallel to the text-only setting”，即在图文混合输入下仍生成文本 [S1]；其视觉能力尚属初步评估，更多细节计划后续发布 [S1]。  \n- SAM采用三模块架构：MAE预训练ViT图像编码器（单次计算）、提示编码器（按提示类型定制）、轻量级Transformer掩码解码器（两层，含自注意与交叉注意）；解码器输出经上采样与点乘操作生成掩码 [S6][S10]。\n\n**4. 任务目标与泛化方式**  \n- GPT-4的视觉能力旨在支持通用语言任务（如问答、摘要），其视觉理解服务于文本生成目标，未强调分割等像素级任务 [S1][S3]。  \n- SAM明确以“可提示分割任务”（promptable segmentation task）为预训练目标，要求模型对任意提示（含模糊提示）均输出“合理掩码”，从而支持零样本迁移到多种下游分割任务（如结合检测器实现实例分割） [S5]。\n\n综上，GPT-4的视觉接口面向文本生成，输入为图文混合、输出为纯文本；SAM的视觉接口面向像素级分割，输入为几何/文本提示、输出为掩码集合，且显式建模提示歧义性 [S1][S2][S5][S6][S8][S10]。证据中未提及GPT-4输出掩码或SAM输出文本，二者模态输出存在根本差异。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000060:part_0001",
+          "page_start": 8,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Capabilities",
+            "4.1 Visual Inputs"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0004_000032:part_0001",
+          "page_start": 5,
+          "content_type": "figure",
+          "section_path": [
+            "2. Segment Anything Task"
+          ],
+          "matched_query_ids": [
+            "original",
+            "sam-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000542:part_0001",
+          "page_start": 37,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "G Examples of GPT-4 Visual Input",
+            "GPT-4 visual input example, Pixel to Paper Summaries :"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "sam-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000024:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "2. Segment Anything Task"
+          ],
+          "matched_query_ids": [
+            "original",
+            "sam-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000252:part_0001",
+          "page_start": 16,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "A. Segment Anything Model and Task Details"
+          ],
+          "matched_query_ids": [
+            "original",
+            "sam-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000063:part_0001",
+          "page_start": 9,
+          "content_type": "paragraph",
+          "section_path": [
+            "4 Capabilities",
+            "4.1 Visual Inputs",
+            "Example of GPT-4 visual input :"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0003_000029:part_0001",
+          "page_start": 4,
+          "content_type": "figure",
+          "section_path": [
+            "2. Segment Anything Task"
+          ],
+          "matched_query_ids": [
+            "original",
+            "sam-visual-prompting"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000031:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "2. Segment Anything Task"
+          ],
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000258:part_0001",
+          "page_start": 16,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "A. Segment Anything Model and Task Details"
+          ],
+          "matched_query_ids": [
+            "sam-visual-prompting"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          5,
+          8,
+          6,
+          7,
+          3,
+          2,
+          10,
+          8,
+          1,
+          1,
+          6,
+          10,
+          1,
+          3,
+          5,
+          1,
+          2,
+          5,
+          6,
+          8,
+          10
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S10"
+        ],
+        "cited_filenames": [
+          "2303.08774_gpt-4-technical-report.pdf",
+          "2304.02643_segment-anything.pdf"
+        ],
+        "cited_chunk_ids": [
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000060:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000063:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000542:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0003_000029:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:figure:figure_0004_000032:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000024:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000252:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000258:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": false,
+        "claim_count": 11,
+        "cited_claim_count": 10,
+        "claim_citation_completeness": 0.9090909090909091
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "gpt4-visual-prompting",
+              "target": "GPT-4",
+              "query": "What visual prompting interface and output format does GPT-4 use for image-based tasks, as described in the paper?"
+            },
+            {
+              "id": "sam-visual-prompting",
+              "target": "Segment Anything Model",
+              "query": "What visual prompting interface and output format does the Segment Anything Model use for segmentation, as described in the paper?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare the visual prompting interfaces and outputs described for GPT-4 and the Segment Anything Model.",
+            "status": "success",
+            "latency_seconds": 2.7131,
+            "result_count": 10
+          },
+          {
+            "id": "gpt4-visual-prompting",
+            "target": "GPT-4",
+            "query": "What visual prompting interface and output format does GPT-4 use for image-based tasks, as described in the paper?",
+            "status": "success",
+            "latency_seconds": 2.2336,
+            "result_count": 10
+          },
+          {
+            "id": "sam-visual-prompting",
+            "target": "Segment Anything Model",
+            "query": "What visual prompting interface and output format does the Segment Anything Model use for segmentation, as described in the paper?",
+            "status": "success",
+            "latency_seconds": 2.873,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 22,
+        "final_count": 10,
+        "planner_latency_seconds": 6.7831
+      },
+      "answer_pipeline_latency_seconds": 27.379,
+      "judge_latency_seconds": 3.5752,
+      "evaluation_latency_seconds": 30.9541
+    },
+    {
+      "case_id": "ACV4-04",
+      "question": "How do Docling's layout analysis and the structured-digital-tables method recover machine-usable structure from document content?",
+      "answer": "Docling通过一个线性处理流程，依次执行PDF解析、AI模型推理与后处理，以从文档内容中恢复机器可用的结构 [S1]。  \n\n- **布局分析**：采用基于RT-DETR架构、在DocLayNet数据集上重新训练的对象检测模型，预测页面图像中各元素（如段落、标题、表格、图等）的边界框与类别；该模型以72 dpi分辨率输入页面图像，在单CPU上实现亚秒级延迟；预测结果经后处理去除重叠提案，并与PDF中的文本token相交，聚合成语义完整的单元（如段落、列表项、图注等）[S7]。  \n- **结构化数字表格恢复**：使用TableFormer模型（一种视觉Transformer），接收布局分析阶段检测出的表格区域裁剪图像及其内含文本单元作为输入，预测表格的逻辑行列结构、单元格归属（列头/行头/正文），并支持无边框、空单元格、跨行跨列、层级表头等复杂情形；其结构预测结果在后处理阶段与原始PDF文本单元匹配，避免对表格图像重复OCR；典型表格处理耗时2–6秒（标准CPU）[S2]。  \n- **最终结构组装**：各页预测结果被聚合为统一文档对象，经后处理模块补充元数据（如语言检测、标题/作者/参考文献识别）、修正阅读顺序、关联图与图注，最终可序列化为JSON或Markdown格式 [S1][S9]。  \n\nDocling未提及名为“structured-digital-tables method”的独立方法；其表格结构恢复完全依赖TableFormer模型 [S2][S3][S4]；证据中无其他表格结构提取方法的描述。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000025:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout",
+            "structured-digital-tables"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000038:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline",
+            "3.2 AI models",
+            "Table Structure Recognition"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout",
+            "structured-digital-tables"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:abstract:block_000001:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout",
+            "structured-digital-tables"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000033:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline",
+            "3.2 AI models"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout",
+            "structured-digital-tables"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000008:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000055:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Applications"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000035:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline",
+            "3.2 AI models",
+            "Layout Analysis Model"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:figure:figure_0003_000087:part_0001",
+          "page_start": 8,
+          "content_type": "figure",
+          "section_path": [
+            "Appendix"
+          ],
+          "matched_query_ids": [
+            "original",
+            "structured-digital-tables"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000044:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline",
+            "3.3 Assembly"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000041:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Processing pipeline",
+            "3.2 AI models",
+            "OCR"
+          ],
+          "matched_query_ids": [
+            "original",
+            "docling-layout"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          7,
+          2,
+          1,
+          9,
+          2,
+          3,
+          4
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          7,
+          9
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S7",
+          "S9"
+        ],
+        "cited_filenames": [
+          "2408.09869_docling-technical-report.pdf"
+        ],
+        "cited_chunk_ids": [
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:abstract:block_000001:part_0001",
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000025:part_0001",
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000033:part_0001",
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000035:part_0001",
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000038:part_0001",
+          "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000044:part_0001"
+        ],
+        "required_source_coverage": 0.5,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": false,
+        "claim_count": 5,
+        "cited_claim_count": 5,
+        "claim_citation_completeness": 1.0
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [
+          "C3",
+          "C4"
+        ],
+        "unsupported_claims": [
+          "the structured-digital-tables method maps each table row to an RDF subject, each column header to a property, and each cell to a property value",
+          "RDF graph retains provenance metadata"
+        ],
+        "concept_coverage": 0.5
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "docling-layout",
+              "target": "Docling",
+              "query": "What specific layout analysis technique does Docling use to recover machine-usable structure from document content?"
+            },
+            {
+              "id": "structured-digital-tables",
+              "target": "structured-digital-tables",
+              "query": "What method does structured-digital-tables employ to recover machine-usable structure from document content?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "How do Docling's layout analysis and the structured-digital-tables method recover machine-usable structure from document content?",
+            "status": "success",
+            "latency_seconds": 2.6672,
+            "result_count": 10
+          },
+          {
+            "id": "docling-layout",
+            "target": "Docling",
+            "query": "What specific layout analysis technique does Docling use to recover machine-usable structure from document content?",
+            "status": "success",
+            "latency_seconds": 2.2629,
+            "result_count": 10
+          },
+          {
+            "id": "structured-digital-tables",
+            "target": "structured-digital-tables",
+            "query": "What method does structured-digital-tables employ to recover machine-usable structure from document content?",
+            "status": "success",
+            "latency_seconds": 2.4708,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 16,
+        "final_count": 10,
+        "planner_latency_seconds": 3.2742
+      },
+      "answer_pipeline_latency_seconds": 16.3885,
+      "judge_latency_seconds": 4.7149,
+      "evaluation_latency_seconds": 21.104
+    },
+    {
+      "case_id": "ACV4-05",
+      "question": "Compare the system-level safety filters described for Llama 3 and the hosted DeepSeek-R1 service.",
+      "answer": "DeepSeek-R1的托管服务采用两阶段风险控制系统：首先通过关键词匹配对潜在高风险对话进行初筛，再将 flagged 对话连同预设的风险审查提示（Listing 8）发送至 DeepSeek-V3 模型进行二次判断，最终决定是否撤回响应 [S1]；该系统显著提升整体安全性，尤其在抵御 jailbreak 攻击方面效果突出 [S1][S7]。  \nLlama 3 的系统级安全方案包含三类组件：(1) Prompt Guard，一个基于 mDeBERTa-v3-base（86M 参数）微调的多标签分类器，用于检测直接 jailbreak 和间接 prompt 注入攻击，并在英文及多语种数据集上展现良好泛化性 [S10]；(2) Code Shield，一种推理时过滤机制，利用 Insecure Code Detector (ICD) 静态分析库在 7 种编程语言中识别不安全代码 [S10]；(3) Llama Guard 3，作为系统级守卫模型，平均降低违规率 65%，但会增加对良性提示的拒绝率，且支持按危害类别定制开关以权衡违规与误拒率 [S10]。  \nDeepSeek-R1 的风险控制系统明确依赖外部模型（DeepSeek-V3）执行审查 [S1]，而 Llama 3 的 Prompt Guard 和 Llama Guard 3 均为独立部署的轻量级专用模型（如 Prompt Guard 仅 86M 参数），并提供 int8 量化版本以减小部署开销（体积减少 >40%）[S10]；此外，Llama 3 明确开源了 Prompt Guard 与 Code Shield 供社区复用或适配 [S10]，而 DeepSeek-R1 未提及开源其风险控制模块 [S1]。  \n两者均承认系统级防护会带来拒绝率上升的权衡：DeepSeek-R1 在启用风险控制系统后拒绝率升至约 25% [S8]，Llama Guard 3 同样导致“对良性提示的拒绝率增加” [S10]。  \n证据未说明 DeepSeek-R1 是否提供类似 Prompt Guard 的输入端 prompt 攻击检测模块，也未提及其是否支持按危害类别灵活配置防护策略 [S1][S2][S8]；同样，Llama 3 的安全方案未提及是否采用关键词初筛+大模型复核的两级流程 [S10]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000323:part_0001",
+          "page_start": 46,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "<Workflow>"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000304:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "<Workflow>"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000298:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001",
+          "page_start": 53,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.4. Multilingual Safety Performance"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000296:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "Warning: This section contains potentially risky and offensive content!"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000300:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "Listing 8 | The Risk Review Prompt for DeepSeek-R1."
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "5. Ethics and Safety Statement"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+          "page_start": 51,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.3. Safety Taxonomic Study of R1 on In-House Benchmark"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1-hosted-safety"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000423:part_0001",
+          "page_start": 40,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety"
+          ],
+          "matched_query_ids": [
+            "llama3-safety-filters"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000515:part_0001",
+          "page_start": 50,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.7 System Level Safety"
+          ],
+          "matched_query_ids": [
+            "llama3-safety-filters"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          1,
+          7,
+          10,
+          10,
+          10,
+          1,
+          10,
+          10,
+          1,
+          8,
+          10,
+          1,
+          2,
+          8,
+          10
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          7,
+          8,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S7",
+          "S8",
+          "S10"
+        ],
+        "cited_filenames": [
+          "2407.21783_llama-3-herd-of-models.pdf",
+          "2501.12948_deepseek-r1.pdf"
+        ],
+        "cited_chunk_ids": [
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000515:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000304:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000323:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": false,
+        "claim_count": 5,
+        "cited_claim_count": 5,
+        "claim_citation_completeness": 1.0
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "llama3-safety-filters",
+              "target": "Llama 3",
+              "query": "What system-level safety filters are explicitly described for Llama 3, including their design, deployment context, and enforcement mechanism?"
+            },
+            {
+              "id": "deepseek-r1-hosted-safety",
+              "target": "DeepSeek-R1 hosted service",
+              "query": "What system-level safety filters are explicitly described for the hosted DeepSeek-R1 service, including their design, deployment context, and enforcement mechanism?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare the system-level safety filters described for Llama 3 and the hosted DeepSeek-R1 service.",
+            "status": "success",
+            "latency_seconds": 3.2986,
+            "result_count": 10
+          },
+          {
+            "id": "llama3-safety-filters",
+            "target": "Llama 3",
+            "query": "What system-level safety filters are explicitly described for Llama 3, including their design, deployment context, and enforcement mechanism?",
+            "status": "success",
+            "latency_seconds": 2.3953,
+            "result_count": 10
+          },
+          {
+            "id": "deepseek-r1-hosted-safety",
+            "target": "DeepSeek-R1 hosted service",
+            "query": "What system-level safety filters are explicitly described for the hosted DeepSeek-R1 service, including their design, deployment context, and enforcement mechanism?",
+            "status": "success",
+            "latency_seconds": 3.0965,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 21,
+        "final_count": 10,
+        "planner_latency_seconds": 3.9412
+      },
+      "answer_pipeline_latency_seconds": 23.2129,
+      "judge_latency_seconds": 3.4701,
+      "evaluation_latency_seconds": 26.6833
+    },
+    {
+      "case_id": "ACV4-06",
+      "question": "What multilingual safety problems and evaluation responses are described for Llama 3 and DeepSeek-R1?",
+      "answer": "DeepSeek-R1构建了包含9,330个问题的50语种安全测试集，采用LLM翻译+人工校准方式生成，使用LLM-as-a-judge方法评分（安全响应5分、不安全0分、拒绝4分），并据此计算各语言安全得分比例 [S1]；其无风险控制系统版本在50语种上的总安全得分为74.2%，与GPT-4o(2024-05-13)的75.2%相当 [S1]；有风险控制系统时达85.9%，接近Claude-3.7-Sonnet的88.3% [S1]；在无风险控制系统下，DeepSeek-R1无任何安全得分低于60分的高风险语言，表明无明显语言特异性脆弱性 [S1]。  \nLlama 3发现英语安全知识难以直接迁移到其他语言，尤其受安全政策细微差异和语言特有语境影响，因此强调需为每种语言收集高质量安全数据 [S3]；其多语种安全评估基于母语者撰写的提示及英文基准翻译补充构建内部基准，Llama 405B（含Llama Guard）在非英语语言上至少与竞品系统同等安全甚至更优，且保持有竞争力的误拒率 [S3]；Llama 405B（不含Llama Guard）的违规率显著低于竞品开源模型，但误拒率更高 [S3]。  \nDeepSeek-R1在非法犯罪行为与道德伦理类问题上表现优异，但在歧视偏见与有害行为类问题上仅属中等水平，提示需加强这两类风险的防护 [S8]；其在HarmBench基准上因未能拒绝生成受版权保护歌词（如《What a Wonderful World》）而表现较差，但在歧视偏见、暴力极端主义、隐私侵犯等其他类别中安全措施强劲 [S4]。  \nLlama 3承认其模型仍可能因训练数据或对抗性提示工程而在非英语语言中生成有害内容，且无法保证穷尽所有风险，恶意用户可能通过新型越狱手段滥用模型 [S10]；DeepSeek-R1则指出其固有安全水平属中等（与GPT-4o相当），启用风险控制系统后提升至优越水平 [S6]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001",
+          "page_start": 53,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.4. Multilingual Safety Performance"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000296:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "Warning: This section contains potentially risky and offensive content!"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000464:part_0001",
+          "page_start": 45,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.4 Safety Results"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000337:part_0002",
+          "page_start": 47,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.2. R1 Safety Evaluation on Standard Benchmarks"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000423:part_0001",
+          "page_start": 40,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "5. Ethics and Safety Statement"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000304:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "<Workflow>"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+          "page_start": 51,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.3. Safety Taxonomic Study of R1 on In-House Benchmark"
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2501.12948_deepseek-r1.pdf",
+          "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000300:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "D. Evaluation of DeepSeek-R1",
+            "D.3. DeepSeek-R1 Safety Report",
+            "D.3.1. Risk Control System for DeepSeek-R1",
+            "Listing 8 | The Risk Review Prompt for DeepSeek-R1."
+          ],
+          "matched_query_ids": [
+            "original",
+            "deepseek-r1"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000526:part_0001",
+          "page_start": 51,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.8 Limitations"
+          ],
+          "matched_query_ids": [
+            "llama3"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          1,
+          1,
+          1,
+          3,
+          3,
+          3,
+          8,
+          4,
+          10,
+          6
+        ],
+        "valid_citation_numbers": [
+          1,
+          3,
+          4,
+          6,
+          8,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S3",
+          "S4",
+          "S6",
+          "S8",
+          "S10"
+        ],
+        "cited_filenames": [
+          "2407.21783_llama-3-herd-of-models.pdf",
+          "2501.12948_deepseek-r1.pdf"
+        ],
+        "cited_chunk_ids": [
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000464:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000526:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000074:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000337:part_0002",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+          "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 4,
+        "cited_claim_count": 4,
+        "claim_citation_completeness": 1.0
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "llama3",
+              "target": "Llama 3",
+              "query": "What multilingual safety problems and corresponding evaluation responses are described for Llama 3 in its technical report?"
+            },
+            {
+              "id": "deepseek-r1",
+              "target": "DeepSeek-R1",
+              "query": "What multilingual safety problems and corresponding evaluation responses are described for DeepSeek-R1 in its technical report?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "What multilingual safety problems and evaluation responses are described for Llama 3 and DeepSeek-R1?",
+            "status": "success",
+            "latency_seconds": 2.2582,
+            "result_count": 10
+          },
+          {
+            "id": "llama3",
+            "target": "Llama 3",
+            "query": "What multilingual safety problems and corresponding evaluation responses are described for Llama 3 in its technical report?",
+            "status": "success",
+            "latency_seconds": 2.562,
+            "result_count": 10
+          },
+          {
+            "id": "deepseek-r1",
+            "target": "DeepSeek-R1",
+            "query": "What multilingual safety problems and corresponding evaluation responses are described for DeepSeek-R1 in its technical report?",
+            "status": "success",
+            "latency_seconds": 2.7356,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 21,
+        "final_count": 10,
+        "planner_latency_seconds": 3.6665
+      },
+      "answer_pipeline_latency_seconds": 21.3736,
+      "judge_latency_seconds": 3.0033,
+      "evaluation_latency_seconds": 24.3772
+    },
+    {
+      "case_id": "ACV4-07",
+      "question": "How do Neural ODE and SAM reduce different kinds of computational cost?",
+      "answer": "Neural ODE 和 SAM 分别通过不同机制降低计算成本，证据如下：\n\n**Neural ODE 的计算成本降低方式：**  \n- 实现恒定内存开销（与网络深度无关），因其不存储前向传播的中间量，而是通过黑盒ODE求解器配合伴随敏感性方法（adjoint sensitivity method）反向传播梯度，避免了对求解器内部操作的反向传播 [S1][S2][S4]。  \n- 采用自适应计算：现代ODE求解器可动态调整评估步数以匹配所需精度，使模型评估成本随问题复杂度缩放；训练后可降低精度以适配实时或低功耗场景 [S1][S2]。  \n- 计算效率提升：伴随法在反向传播中所需函数评估次数约为前向传播的一半，比直接反向传播通过积分器更高效 [S3]。  \n- 梯度计算线性于问题规模：伴随法通过求解一个增广的反向ODE实现，其时间复杂度为O(n)，而前向敏感性分析为O(n²) [S5][S6]。  \n- 支持端到端训练：通过提供通用的向量-雅可比积（vector-Jacobian product），可将黑盒ODE求解器无缝集成至自动微分框架，无需访问求解器内部实现 [S5][S6]。\n\n**SAM 的计算成本降低方式：**  \n- 图像编码器仅运行一次（每图一次），且可在提示前预计算，大幅减少重复计算 [S10]。  \n- 提示编码器与掩码解码器设计为轻量级，可在浏览器CPU上以约50ms延迟运行，支持实时交互式提示 [S10]。  \n- 掩码解码器采用修改版Transformer解码块与动态线性分类器，结合两次解码块后上采样，兼顾速度与精度 [S10]。  \n- 训练时对每个提示预测多个掩码（默认3个），但仅反向传播最小损失对应的掩码，减少无效梯度更新 [S10]。  \n\n注意：检索证据未提及SAM在训练阶段的内存优化策略（如梯度检查点等），也未说明其是否使用类似Neural ODE的伴随法；相关成本节省仅限推理阶段效率与架构设计层面 [S8][S9][S10]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000014:part_0001",
+          "page_start": 1,
+          "content_type": "paragraph",
+          "section_path": [
+            "1 Introduction"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000046:part_0001",
+          "page_start": 4,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Replacing residual networks with ODEs for supervised learning"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000021:part_0001",
+          "page_start": 2,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 Reverse-mode automatic differentiation of ODE solutions"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000110:part_0001",
+          "page_start": 9,
+          "content_type": "paragraph",
+          "section_path": [
+            "7 Related Work"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:formula:formula_000031:part_0001",
+          "page_start": 2,
+          "content_type": "formula",
+          "section_path": [
+            "2 Reverse-mode automatic differentiation of ODE solutions"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000037:part_0001",
+          "page_start": 3,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Replacing residual networks with ODEs for supervised learning"
+          ],
+          "matched_query_ids": [
+            "original",
+            "neural-ode"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000480:part_0001",
+          "page_start": 28,
+          "content_type": "paragraph",
+          "section_path": [
+            "Appendix",
+            "F. Dataset, Annotation, and Model Cards",
+            "F.2. Data Annotation Card",
+            "Data"
+          ],
+          "matched_query_ids": [
+            "sam"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000089:part_0001",
+          "page_start": 10,
+          "content_type": "paragraph",
+          "section_path": [
+            "7. Zero-Shot Transfer Experiments",
+            "7.2. Zero-Shot Edge Detection"
+          ],
+          "matched_query_ids": [
+            "sam"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2304.02643_segment-anything.pdf",
+          "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000035:part_0001",
+          "page_start": 5,
+          "content_type": "paragraph",
+          "section_path": [
+            "3. Segment Anything Model"
+          ],
+          "matched_query_ids": [
+            "sam"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          2,
+          4,
+          1,
+          2,
+          3,
+          5,
+          6,
+          5,
+          6,
+          10,
+          10,
+          10,
+          10,
+          8,
+          9,
+          10
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S8",
+          "S9",
+          "S10"
+        ],
+        "cited_filenames": [
+          "1806.07366_neural-ordinary-differential-equations.pdf",
+          "2304.02643_segment-anything.pdf"
+        ],
+        "cited_chunk_ids": [
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:abstract:block_000000:part_0001",
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:formula:formula_000031:part_0001",
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000014:part_0001",
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000021:part_0001",
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000046:part_0001",
+          "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000110:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000035:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000089:part_0001",
+          "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000480:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": false,
+        "claim_count": 11,
+        "cited_claim_count": 10,
+        "claim_citation_completeness": 0.9090909090909091
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "neural-ode",
+              "target": "Neural ODE",
+              "query": "What specific computational costs does Neural ODE reduce (e.g., memory, FLOPs, training time), and under what conditions or mechanisms?"
+            },
+            {
+              "id": "sam",
+              "target": "SAM",
+              "query": "What specific computational costs does SAM reduce (e.g., memory, FLOPs, training time), and under what conditions or mechanisms?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "How do Neural ODE and SAM reduce different kinds of computational cost?",
+            "status": "success",
+            "latency_seconds": 2.8816,
+            "result_count": 10
+          },
+          {
+            "id": "neural-ode",
+            "target": "Neural ODE",
+            "query": "What specific computational costs does Neural ODE reduce (e.g., memory, FLOPs, training time), and under what conditions or mechanisms?",
+            "status": "success",
+            "latency_seconds": 3.2691,
+            "result_count": 10
+          },
+          {
+            "id": "sam",
+            "target": "SAM",
+            "query": "What specific computational costs does SAM reduce (e.g., memory, FLOPs, training time), and under what conditions or mechanisms?",
+            "status": "success",
+            "latency_seconds": 3.0646,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 23,
+        "final_count": 10,
+        "planner_latency_seconds": 4.3464
+      },
+      "answer_pipeline_latency_seconds": 22.5331,
+      "judge_latency_seconds": 2.9718,
+      "evaluation_latency_seconds": 25.5051
+    },
+    {
+      "case_id": "ACV4-08",
+      "question": "How do the GPT-4 and Llama 3 reports use iterative red teaming to improve safety?",
+      "answer": "GPT-4和Llama 3均采用迭代式红队测试（iterative red teaming）以持续识别风险并驱动安全改进，但具体实施路径存在差异。  \n\nGPT-4的红队过程是迭代的：从初始高风险假设出发，进行测试后调整方向；并在引入新层缓解措施后，重复多轮红队测试、评估与精炼循环 [S1]。该过程始于2022年8月，外部专家对早期GPT-4版本（包括GPT-4-early及带在研缓解措施的模型）进行定性探查与对抗性测试，所识别的风险直接推动了后续安全研究与关键领域迭代测试 [S1][S3]。专家反馈用于指导技术缓解、政策与执行杠杆的组合应用，尽管多数风险仍未完全消除 [S1]。  \n\nLlama 3同样强调“反复进行红队演练以持续迭代并发现新风险”，并将发现用于改进基准与安全微调数据集 [S2]。其红队聚焦于能力级对抗测试：先针对单个高风险能力开展风险发现，再组合能力测试；尤其关注提示级攻击（如多轮拒绝压制、假设场景包装、角色扮演、添加免责声明、渐进式违规等），这些攻击在长上下文模型中更易成功 [S2]。红队发现被整合至内部安全基准结果中, 用以开发针对性缓解措施，实现安全性的持续迭代提升 [S2]。此外，Llama 3还针对工具使用、儿童安全等专项开展红队评估，并联合内容专家扩展评估覆盖范围 [S6]。  \n\n两份报告均承认红队测试无法穷尽所有风险：GPT-4明确指出该方法“不是对所有可能风险的全面评估” [S1]；Llama 3则强调“无测试能保证穷尽识别每种可能风险”，模型仍可能因训练数据或熟练对抗者提示而生成有害内容 [S7]。",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000615:part_0001",
+          "page_start": 45,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 GPT-4 Observed Safety Challenges",
+            "2.1 Evaluation Approach",
+            "2.1.1 Qualitative Evaluations"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4"
+          ]
+        },
+        {
+          "source_id": "S2",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000488:part_0001",
+          "page_start": 48,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.6 Red Teaming"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S3",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000612:part_0001",
+          "page_start": 44,
+          "content_type": "paragraph",
+          "section_path": [
+            "2 GPT-4 Observed Safety Challenges",
+            "2.1 Evaluation Approach",
+            "2.1.1 Qualitative Evaluations"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4"
+          ]
+        },
+        {
+          "source_id": "S4",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000423:part_0001",
+          "page_start": 40,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S5",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000440:part_0001",
+          "page_start": 42,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.3 Safety Finetuning"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S6",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000499:part_0002",
+          "page_start": 48,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.6 Red Teaming"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S7",
+          "filename": "2407.21783_llama-3-herd-of-models.pdf",
+          "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000526:part_0001",
+          "page_start": 51,
+          "content_type": "paragraph",
+          "section_path": [
+            "5 Results",
+            "5.4 Safety",
+            "5.4.8 Limitations"
+          ],
+          "matched_query_ids": [
+            "original",
+            "llama3"
+          ]
+        },
+        {
+          "source_id": "S8",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000097:part_0001",
+          "page_start": 11,
+          "content_type": "paragraph",
+          "section_path": [
+            "6 Risks & mitigations"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4"
+          ]
+        },
+        {
+          "source_id": "S9",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:abstract:block_000000:part_0001",
+          "page_start": 1,
+          "content_type": "abstract",
+          "section_path": [
+            "Abstract"
+          ],
+          "matched_query_ids": [
+            "original",
+            "gpt4"
+          ]
+        },
+        {
+          "source_id": "S10",
+          "filename": "2303.08774_gpt-4-technical-report.pdf",
+          "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000763:part_0002",
+          "page_start": 62,
+          "content_type": "paragraph",
+          "section_path": [
+            "3 Deployment Preparation",
+            "3.1 Model Mitigations"
+          ],
+          "matched_query_ids": [
+            "gpt4"
+          ]
+        }
+      ],
+      "citation": {
+        "citation_numbers": [
+          1,
+          1,
+          3,
+          1,
+          2,
+          2,
+          2,
+          6,
+          1,
+          7
+        ],
+        "valid_citation_numbers": [
+          1,
+          2,
+          3,
+          6,
+          7
+        ],
+        "invalid_citation_numbers": [],
+        "citation_syntax_valid": true,
+        "cited_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S6",
+          "S7"
+        ],
+        "cited_filenames": [
+          "2303.08774_gpt-4-technical-report.pdf",
+          "2407.21783_llama-3-herd-of-models.pdf"
+        ],
+        "cited_chunk_ids": [
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000488:part_0001",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000499:part_0002",
+          "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000526:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000612:part_0001",
+          "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000615:part_0001"
+        ],
+        "required_source_coverage": 1.0,
+        "citation_precision": 1.0,
+        "gold_evidence_citation_hit": true,
+        "claim_count": 4,
+        "cited_claim_count": 3,
+        "claim_citation_completeness": 0.75
+      },
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "missing_concept_ids": [],
+        "unsupported_claims": [],
+        "concept_coverage": 1.0
+      },
+      "retrieval_trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "gpt4",
+              "target": "GPT-4",
+              "query": "What iterative red teaming procedure does the GPT-4 report describe for improving model safety, including the number of rounds and evaluation criteria?"
+            },
+            {
+              "id": "llama3",
+              "target": "Llama 3",
+              "query": "What iterative red teaming procedure does the Llama 3 report describe for improving model safety, including the number of rounds and evaluation criteria?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "llm"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "How do the GPT-4 and Llama 3 reports use iterative red teaming to improve safety?",
+            "status": "success",
+            "latency_seconds": 2.208,
+            "result_count": 10
+          },
+          {
+            "id": "gpt4",
+            "target": "GPT-4",
+            "query": "What iterative red teaming procedure does the GPT-4 report describe for improving model safety, including the number of rounds and evaluation criteria?",
+            "status": "success",
+            "latency_seconds": 2.6699,
+            "result_count": 10
+          },
+          {
+            "id": "llama3",
+            "target": "Llama 3",
+            "query": "What iterative red teaming procedure does the Llama 3 report describe for improving model safety, including the number of rounds and evaluation criteria?",
+            "status": "success",
+            "latency_seconds": 2.3989,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 21,
+        "final_count": 10,
+        "planner_latency_seconds": 4.1101
+      },
+      "answer_pipeline_latency_seconds": 22.758,
+      "judge_latency_seconds": 3.1522,
+      "evaluation_latency_seconds": 25.9097
+    }
+  ]
+}
