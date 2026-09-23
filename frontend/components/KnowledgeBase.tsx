@@ -1,4 +1,4 @@
-import { Search, Plus, Trash2, Database } from 'lucide-react';
+import { Database, LibraryBig, Plus, Search, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -12,8 +12,6 @@ interface KnowledgeBaseData {
   id: number;
   collection_id: string;  // Milvus collection ID
   name: string;  // 显示名称（中文）
-  icon: string;
-  iconBg: string;
   documents: number;
   chunks: number | string;
   updated: string;
@@ -51,10 +49,6 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
       if (result.status === 'success') {
         const collections = result.data.collections || [];
 
-        // 图标映射
-        const icons = ['📘', '📗', '📙', '📕', '📔', '📓'];
-        const iconBgs = ['bg-blue-100', 'bg-green-100', 'bg-orange-100', 'bg-red-100', 'bg-purple-100', 'bg-pink-100'];
-
         const kbData = collections.map((col: any, index: number) => {
           // 格式化更新时间
           let updated = '未知';
@@ -80,8 +74,6 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
             id: index + 1,
             collection_id: col.collection_id,  // Milvus内部ID
             name: col.collection_name,  // 显示名称（中文）
-            icon: icons[index % icons.length],
-            iconBg: iconBgs[index % iconBgs.length],
             documents: col.total_documents || 0,
             chunks: col.total_chunks || 0,
             updated: updated,
@@ -171,8 +163,8 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg">
-            <Database size={24} className="text-white" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800 shadow-sm">
+            <LibraryBig size={23} aria-hidden="true" />
           </div>
           <h2 className="text-gradient">知识库管理</h2>
         </div>
@@ -227,7 +219,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-violet-600" size={20} />
         <input
           type="text"
-          placeholder="🔍 搜索知识库..."
+          placeholder="搜索知识库..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full h-14 pl-12 pr-4 glass-strong rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-500 text-slate-900 placeholder-slate-400 transition-all duration-300"
@@ -268,8 +260,8 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
 
             <div className="flex items-start gap-4 relative z-10">
               {/* Icon */}
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${kb.iconBg === 'bg-blue-100' ? 'from-violet-500 to-indigo-600' : kb.iconBg === 'bg-green-100' ? 'from-emerald-500 to-emerald-600' : 'from-amber-400 to-orange-500'} flex items-center justify-center text-3xl flex-shrink-0 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
-                {kb.icon}
+              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:border-violet-200 group-hover:text-violet-700">
+                <LibraryBig size={27} aria-hidden="true" />
               </div>
 
               {/* Content */}
@@ -320,6 +312,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                     e.stopPropagation();
                     confirmDelete(kb.collection_id, kb.name);
                   }}
+                  aria-label={`删除知识库 ${kb.name}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-4 py-2.5 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"

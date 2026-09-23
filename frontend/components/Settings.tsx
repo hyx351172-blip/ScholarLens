@@ -1,4 +1,19 @@
-import { Eye, EyeOff, Check, X, Cpu, FileText, Target, Settings2 } from 'lucide-react';
+import {
+  Binary,
+  Bot,
+  Check,
+  Combine,
+  Cpu,
+  Eye,
+  EyeOff,
+  FileText,
+  ListFilter,
+  Radar,
+  Settings2,
+  Target,
+  TextSearch,
+  X,
+} from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Slider } from './ui/slider';
@@ -33,8 +48,8 @@ export function Settings() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="border-b border-slate-200">
-          <div className="flex">
+        <div className="overflow-x-auto border-b border-slate-200">
+          <div className="flex min-w-max sm:min-w-0">
             {tabs.map((tab, index) => {
               const Icon = tab.icon;
               return (
@@ -44,7 +59,7 @@ export function Settings() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`flex-1 px-6 py-4 transition-all relative flex items-center justify-center gap-2 group ${
+                  className={`relative flex min-w-[132px] items-center justify-center gap-2 px-4 py-4 transition-all sm:min-w-0 sm:flex-1 sm:px-6 group ${
                     activeTab === tab.id
                       ? 'text-violet-600'
                       : 'text-slate-500 hover:text-slate-900'
@@ -78,8 +93,8 @@ export function Settings() {
               {/* Embedding Model */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
-                    <span className="text-white">🔤</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700">
+                    <Binary size={17} aria-hidden="true" />
                   </div>
                   <h3 className="text-slate-900">Embedding模型</h3>
                 </div>
@@ -124,6 +139,7 @@ export function Settings() {
                       />
                       <button
                         onClick={() => setShowApiKey(!showApiKey)}
+                        aria-label={showApiKey ? '隐藏 API Key' : '显示 API Key'}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-violet-600 transition-colors"
                       >
                         {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -164,8 +180,8 @@ export function Settings() {
               {/* LLM Model */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
-                    <span className="text-white">🤖</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700">
+                    <Bot size={17} aria-hidden="true" />
                   </div>
                   <h3 className="text-slate-900">LLM模型</h3>
                 </div>
@@ -225,8 +241,8 @@ export function Settings() {
               {/* Rerank Model */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-                    <span className="text-white">⚡</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700">
+                    <ListFilter size={17} aria-hidden="true" />
                   </div>
                   <h3 className="text-slate-900">Rerank模型</h3>
                 </div>
@@ -471,10 +487,12 @@ export function Settings() {
 
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { id: 'vector', label: '向量搜索', icon: '🔵', desc: '基于语义相似度' },
-                    { id: 'hybrid', label: '混合搜索', icon: '⚫', desc: '结合向量和关键词' },
-                    { id: 'keyword', label: '关键词搜索', icon: '⚪', desc: '基于关键词匹配' },
-                  ].map((mode) => (
+                    { id: 'vector', label: '向量搜索', icon: Radar, desc: '基于语义相似度' },
+                    { id: 'hybrid', label: '混合搜索', icon: Combine, desc: '结合向量和关键词' },
+                    { id: 'keyword', label: '关键词搜索', icon: TextSearch, desc: '基于关键词匹配' },
+                  ].map((mode) => {
+                    const ModeIcon = mode.icon;
+                    return (
                     <motion.button
                       key={mode.id}
                       onClick={() => setSearchMode(mode.id)}
@@ -490,14 +508,15 @@ export function Settings() {
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(0,212,255,0.1)] to-transparent shimmer" />
                       )}
                       <div className="relative z-10">
-                        <div className="text-3xl mb-3">{mode.icon}</div>
+                        <ModeIcon size={24} className="mx-auto mb-3 text-slate-600" aria-hidden="true" />
                         <div className={`mb-2 ${searchMode === mode.id ? 'text-violet-600' : 'text-slate-900'}`}>
                           {mode.label}
                         </div>
                         <div className="text-xs text-slate-500">{mode.desc}</div>
                       </div>
                     </motion.button>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -514,8 +533,8 @@ export function Settings() {
               <div className="space-y-2">
                 <label className="text-slate-500">语言</label>
                 <select className="w-full px-4 py-3 glass-strong border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 text-slate-900 bg-white">
-                  <option>🇨🇳 简体中文</option>
-                  <option>🇺🇸 English</option>
+                  <option>简体中文</option>
+                  <option>English</option>
                 </select>
               </div>
 

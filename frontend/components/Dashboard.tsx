@@ -1,4 +1,16 @@
-import { ArrowRight, Bot, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  ArrowRight,
+  Bot,
+  Files,
+  LibraryBig,
+  MessageSquareText,
+  ScanSearch,
+  Search,
+  Timer,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+} from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { UploadDialog } from './UploadDialog';
@@ -11,10 +23,10 @@ interface DashboardProps {
 export function Dashboard({ onNavigate }: DashboardProps = {}) {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [stats, setStats] = useState([
-    { id: 1, label: '知识库', value: '0', unit: '个', icon: '📚', gradient: 'from-violet-500 to-indigo-600', trend: '+0', trendUp: true },
-    { id: 2, label: '文档数', value: '0', unit: '', icon: '📄', gradient: 'from-emerald-500 to-emerald-600', trend: '+0', trendUp: true },
-    { id: 3, label: '查询次数', value: '0', unit: '', icon: '🔍', gradient: 'from-violet-500 to-indigo-600', trend: '+0%', trendUp: true },
-    { id: 4, label: '响应时间', value: '0', unit: 'ms', icon: '⚡', gradient: 'from-amber-400 to-orange-500', trend: '-0ms', trendUp: true },
+    { id: 1, label: '知识库', value: '0', unit: '个', icon: LibraryBig, trend: '+0', trendUp: true },
+    { id: 2, label: '文档数', value: '0', unit: '', icon: Files, trend: '+0', trendUp: true },
+    { id: 3, label: '查询次数', value: '0', unit: '', icon: Search, trend: '+0%', trendUp: true },
+    { id: 4, label: '响应时间', value: '0', unit: 'ms', icon: Timer, trend: '-0ms', trendUp: true },
   ]);
 
   // 从Milvus API获取统计数据
@@ -26,10 +38,10 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
       if (result.status === 'success') {
         const data = result.data;
         setStats([
-          { id: 1, label: '知识库', value: String(data.total_collections), unit: '个', icon: '📚', gradient: 'from-violet-500 to-indigo-600', trend: '+0', trendUp: true },
-          { id: 2, label: '文档数', value: String(data.total_documents), unit: '', icon: '📄', gradient: 'from-emerald-500 to-emerald-600', trend: '+0', trendUp: true },
-          { id: 3, label: 'Chunk数', value: String(data.total_chunks), unit: '', icon: '🔍', gradient: 'from-violet-500 to-indigo-600', trend: '+0', trendUp: true },
-          { id: 4, label: '响应时间', value: '142', unit: 'ms', icon: '⚡', gradient: 'from-amber-400 to-orange-500', trend: '-8ms', trendUp: true },
+          { id: 1, label: '知识库', value: String(data.total_collections), unit: '个', icon: LibraryBig, trend: '+0', trendUp: true },
+          { id: 2, label: '文档数', value: String(data.total_documents), unit: '', icon: Files, trend: '+0', trendUp: true },
+          { id: 3, label: 'Chunk数', value: String(data.total_chunks), unit: '', icon: Search, trend: '+0', trendUp: true },
+          { id: 4, label: '响应时间', value: '142', unit: 'ms', icon: Timer, trend: '-8ms', trendUp: true },
         ]);
       }
     } catch (error) {
@@ -94,16 +106,18 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
   };
 
   const quickActions = [
-    { id: 1, label: '上传文档', icon: '📤', variant: 'primary' },
-    { id: 2, label: '开始对话', icon: '💬', variant: 'outline' },
-    { id: 3, label: '测试检索', icon: '🔍', variant: 'secondary' },
+    { id: 1, label: '上传文档', icon: Upload, variant: 'primary' },
+    { id: 2, label: '开始对话', icon: MessageSquareText, variant: 'outline' },
+    { id: 3, label: '测试检索', icon: ScanSearch, variant: 'secondary' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        {stats.map((stat, index) => (
+        {stats.map((stat, index) => {
+          const StatIcon = stat.icon;
+          return (
           <motion.div
             key={stat.id}
             initial={{ opacity: 0, y: 20 }}
@@ -119,8 +133,8 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
 
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  {stat.icon}
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:text-violet-700">
+                  <StatIcon size={22} aria-hidden="true" />
                 </div>
                 <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${stat.trendUp ? 'bg-emerald-50 text-emerald-600' : 'bg-[rgba(255,59,92,0.1)] text-rose-600'}`}>
                   {stat.trendUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -136,7 +150,8 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
               <div className="text-slate-500">{stat.label}</div>
             </div>
           </motion.div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Recent Conversations */}
@@ -212,7 +227,9 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
         <h3 className="text-slate-900 mb-6">快速操作</h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-          {quickActions.map((action, index) => (
+          {quickActions.map((action, index) => {
+            const ActionIcon = action.icon;
+            return (
             <motion.button
               key={action.id}
               onClick={() => {
@@ -238,10 +255,11 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
               {action.variant === 'primary' && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
               )}
-              <span className="text-2xl relative z-10">{action.icon}</span>
+              <ActionIcon size={20} className="relative z-10" aria-hidden="true" />
               <span className="relative z-10">{action.label}</span>
             </motion.button>
-          ))}
+            );
+          })}
         </div>
       </motion.div>
 

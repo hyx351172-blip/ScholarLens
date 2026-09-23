@@ -1,4 +1,4 @@
-import { BookOpen, Home, MessageSquareText, Search, Settings, Sparkles } from 'lucide-react';
+import { House, LibraryBig, MessageSquareQuote, ScanSearch, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SidebarProps {
@@ -8,10 +8,10 @@ interface SidebarProps {
   onClose: () => void;
 }
 const menuItems = [
-  { id: 'dashboard', label: '概览', icon: Home, disabled: false },
-  { id: 'knowledge', label: '文献库', icon: BookOpen, disabled: false },
-  { id: 'chat', label: '科研问答', icon: MessageSquareText, disabled: false, badge: 'RAG' },
-  { id: 'retrieval', label: '检索评测', icon: Search, disabled: true, badge: 'Soon' },
+  { id: 'dashboard', label: '概览', icon: House, disabled: false },
+  { id: 'knowledge', label: '文献库', icon: LibraryBig, disabled: false },
+  { id: 'chat', label: '科研问答', icon: MessageSquareQuote, disabled: false, badge: 'RAG' },
+  { id: 'retrieval', label: '检索评测', icon: ScanSearch, disabled: true, badge: 'Soon' },
   { id: 'settings', label: '设置', icon: Settings, disabled: false },
 ];
 
@@ -33,8 +33,8 @@ export function Sidebar({ activeView, onNavigate, mobileOpen, onClose }: Sidebar
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-[0_8px_22px_rgba(99,102,241,0.25)]">
-            <Sparkles size={18} />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800 shadow-sm">
+            <ScanSearch size={19} aria-hidden="true" />
           </div>
           <div>
             <h1 className="text-base font-semibold tracking-tight text-slate-950">ScholarLens</h1>
@@ -68,7 +68,7 @@ export function Sidebar({ activeView, onNavigate, mobileOpen, onClose }: Sidebar
               }`}
             >
               <span className="flex items-center gap-3">
-                <Icon size={18} className={isActive ? 'text-violet-600' : ''} />
+                <Icon size={19} className={isActive ? 'text-violet-700' : 'text-slate-500'} aria-hidden="true" />
                 {item.label}
               </span>
               {item.badge && (

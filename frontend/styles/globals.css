@@ -152,6 +152,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* ScholarLens academic icon system: quiet, consistent outline icons. */
+  .lucide {
+    stroke-width: 1.75;
+  }
+
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
     width: 8px;

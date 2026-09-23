@@ -1,4 +1,16 @@
-import { Search, Download, Save, GitCompare, Eye, Sparkles } from 'lucide-react';
+import {
+  BarChart3,
+  Combine,
+  Download,
+  Eye,
+  FileText,
+  GitCompare,
+  Radar,
+  Save,
+  Search,
+  ScanSearch,
+  TextSearch,
+} from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Slider } from './ui/slider';
@@ -62,7 +74,7 @@ export function RetrievalTest() {
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="💬 输入测试问题，例如：'这篇论文使用了哪些数据集？'"
+              placeholder="输入测试问题，例如：'这篇论文使用了哪些数据集？'"
               className="w-full min-h-[100px] px-5 py-4 glass-strong border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-500 resize-none text-slate-900 placeholder-slate-400 transition-all duration-300"
             />
           </div>
@@ -87,7 +99,7 @@ export function RetrievalTest() {
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg">
-            <Sparkles size={20} className="text-white" />
+            <ScanSearch size={20} className="text-white" />
           </div>
           <h3 className="text-slate-900">检索参数</h3>
         </div>
@@ -145,10 +157,12 @@ export function RetrievalTest() {
           <label className="text-slate-500">搜索模式</label>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { id: 'vector', label: '向量', icon: '🔵', desc: '语义搜索' },
-              { id: 'hybrid', label: '混合', icon: '⚫', desc: '最佳效果' },
-              { id: 'keyword', label: '关键词', icon: '⚪', desc: '精确匹配' },
-            ].map((mode) => (
+              { id: 'vector', label: '向量', icon: Radar, desc: '语义搜索' },
+              { id: 'hybrid', label: '混合', icon: Combine, desc: '最佳效果' },
+              { id: 'keyword', label: '关键词', icon: TextSearch, desc: '精确匹配' },
+            ].map((mode) => {
+              const ModeIcon = mode.icon;
+              return (
               <motion.button
                 key={mode.id}
                 onClick={() => setSearchMode(mode.id)}
@@ -163,13 +177,14 @@ export function RetrievalTest() {
                 {searchMode === mode.id && (
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(0,212,255,0.2)] to-transparent shimmer" />
                 )}
-                <span className="text-2xl relative z-10">{mode.icon}</span>
+                <ModeIcon size={22} className="relative z-10 text-slate-600" aria-hidden="true" />
                 <span className={`relative z-10 ${searchMode === mode.id ? 'text-violet-600' : 'text-slate-900'}`}>
                   {mode.label}
                 </span>
                 <span className="text-xs text-slate-500 relative z-10">{mode.desc}</span>
               </motion.button>
-            ))}
+              );
+            })}
           </div>
         </div>
       </motion.div>
@@ -183,7 +198,7 @@ export function RetrievalTest() {
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-slate-900 flex items-center gap-2">
-            <span className="text-2xl">📊</span>
+            <BarChart3 size={21} className="text-slate-600" aria-hidden="true" />
             检索结果
           </h3>
           <span className="text-slate-500 px-4 py-2 rounded-lg glass-strong border border-slate-200">
@@ -249,7 +264,7 @@ export function RetrievalTest() {
 
                 {/* Source Info */}
                 <div className="mb-3 text-slate-900 flex items-center gap-2">
-                  <span>📄</span>
+                  <FileText size={16} className="text-slate-500" aria-hidden="true" />
                   <span>{result.source}</span>
                   <span className="text-slate-500">- 第{result.page}页</span>
                 </div>

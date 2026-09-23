@@ -1,4 +1,17 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Copy, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  FileText,
+  Hash,
+  Images,
+  Loader2,
+  MapPin,
+  Ruler,
+  XCircle,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
@@ -126,8 +139,8 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
           返回
         </motion.button>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-xl shadow-lg">
-            📄
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm">
+            <FileText size={20} aria-hidden="true" />
           </div>
           <h2 className="text-gradient">{docData.filename}</h2>
         </div>
@@ -258,10 +271,12 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-slate-900">Chunk #{index + 1}</span>
                       <span className="text-slate-500 flex items-center gap-1">
-                        📍第 {chunk.page_start}{chunk.page_start !== chunk.page_end ? `-${chunk.page_end}` : ''} 页
+                        <MapPin size={14} aria-hidden="true" />
+                        第 {chunk.page_start}{chunk.page_start !== chunk.page_end ? `-${chunk.page_end}` : ''} 页
                       </span>
                       <span className="text-slate-500 flex items-center gap-1">
-                        📏 {chunk.text_length} 字符
+                        <Ruler size={14} aria-hidden="true" />
+                        {chunk.text_length} 字符
                       </span>
                     </div>
 
@@ -271,13 +286,13 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
 
                     <div className="flex gap-2">
                       <span className={`px-3 py-1 rounded-lg text-xs ${chunk.cross_page_bridge ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                        跨页: {chunk.cross_page_bridge ? '✅' : '❌'}
+                        跨页: {chunk.cross_page_bridge ? <CheckCircle2 size={13} className="inline" aria-hidden="true" /> : <XCircle size={13} className="inline" aria-hidden="true" />}
                       </span>
                       <span className={`px-3 py-1 rounded-lg text-xs ${chunk.continued ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                        续接: {chunk.continued ? '✅' : '❌'}
+                        续接: {chunk.continued ? <CheckCircle2 size={13} className="inline" aria-hidden="true" /> : <XCircle size={13} className="inline" aria-hidden="true" />}
                       </span>
                       <span className={`px-3 py-1 rounded-lg text-xs ${chunk.is_table_like ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                        表格: {chunk.is_table_like ? '✅' : '❌'}
+                        表格: {chunk.is_table_like ? <CheckCircle2 size={13} className="inline" aria-hidden="true" /> : <XCircle size={13} className="inline" aria-hidden="true" />}
                       </span>
                     </div>
                   </motion.div>
@@ -295,7 +310,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
             >
               <div className="space-y-4">
                 <h3 className="text-slate-900 flex items-center gap-2">
-                  <span className="text-2xl">📄</span>
+                  <FileText size={21} className="text-slate-600" aria-hidden="true" />
                   文档信息
                 </h3>
                 <div className="space-y-3">
@@ -314,7 +329,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
 
               <div className="space-y-4">
                 <h3 className="text-slate-900 flex items-center gap-2">
-                  <span className="text-2xl">🔢</span>
+                  <Hash size={21} className="text-slate-600" aria-hidden="true" />
                   切分统计
                 </h3>
                 <div className="space-y-3">
@@ -333,7 +348,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
 
               <div className="space-y-4">
                 <h3 className="text-slate-900 flex items-center gap-2">
-                  <span className="text-2xl">🖼️</span>
+                  <Images size={21} className="text-slate-600" aria-hidden="true" />
                   图片统计
                 </h3>
                 <div className="space-y-3">

@@ -1,4 +1,17 @@
-import { ArrowLeft, Search, Upload, Eye, Trash2, ChevronDown, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronDown,
+  CircleCheckBig,
+  Eye,
+  FileImage,
+  FileText,
+  FileType,
+  LibraryBig,
+  Loader2,
+  Search,
+  Trash2,
+  Upload,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
@@ -67,20 +80,20 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
     const ext = filename.split('.').pop()?.toLowerCase();
     switch (ext) {
       case 'pdf':
-        return '📄';
+        return FileText;
       case 'md':
       case 'txt':
-        return '📝';
+        return FileType;
       case 'docx':
       case 'doc':
-        return '📘';
+        return FileText;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
-        return '🖼️';
+        return FileImage;
       default:
-        return '📄';
+        return FileText;
     }
   };
 
@@ -163,8 +176,8 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
             返回
           </motion.button>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-2xl shadow-lg">
-              📘
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800 shadow-sm">
+              <LibraryBig size={23} aria-hidden="true" />
             </div>
             <h2 className="text-gradient">{kbInfo.collection_name}</h2>
           </div>
@@ -256,7 +269,9 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         </motion.div>
       ) : (
         <div className="space-y-3">
-          {filteredDocuments.map((doc, index) => (
+          {filteredDocuments.map((doc, index) => {
+            const FileIcon = getFileIcon(doc.filename);
+            return (
             <motion.div
               key={doc.file_id}
               initial={{ opacity: 0, y: 20 }}
@@ -272,8 +287,8 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
 
               <div className="flex items-center gap-4 relative z-10">
                 {/* File Icon */}
-                <div className="w-14 h-14 glass-strong rounded-xl flex items-center justify-center text-3xl flex-shrink-0 border border-slate-200 group-hover:scale-110 transition-transform">
-                  {getFileIcon(doc.filename)}
+                <div className="glass-strong flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all group-hover:scale-105 group-hover:text-violet-700">
+                  <FileIcon size={24} aria-hidden="true" />
                 </div>
 
                 {/* File Info */}
@@ -292,7 +307,8 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                 {/* Status */}
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs border border-emerald-200 flex items-center gap-1">
-                    ✅ 已索引
+                    <CircleCheckBig size={14} aria-hidden="true" />
+                    已索引
                   </span>
                 </div>
 
@@ -310,6 +326,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    aria-label={`删除文档 ${doc.filename}`}
                     className="px-4 py-2 border border-rose-500 text-rose-600 rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
                   >
                     <Trash2 size={16} />
@@ -317,7 +334,8 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                 </div>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
