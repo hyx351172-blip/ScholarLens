@@ -171,14 +171,14 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center shadow-lg">
-            <Database size={24} className="text-[#0a0e27]" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg">
+            <Database size={24} className="text-white" />
           </div>
           <h2 className="text-gradient">知识库管理</h2>
         </div>
         <motion.button
           onClick={() => setShowCreateDialog(true)}
-          className="px-6 py-3 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center gap-2 relative overflow-hidden group"
+          className="px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center gap-2 relative overflow-hidden group"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -191,26 +191,26 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
       {/* Stats Summary */}
       {!loading && knowledgeBases.length > 0 && (
         <motion.div
-          className="flex items-center gap-6 glass rounded-xl p-4 border border-[rgba(0,212,255,0.2)]"
+          className="flex items-center gap-6 glass rounded-xl p-4 border border-slate-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <div className="flex items-center gap-2">
-            <span className="text-[#94a3b8] text-sm">总计:</span>
-            <span className="text-[#e8eaed] font-medium">{knowledgeBases.length} 个知识库</span>
+            <span className="text-slate-500 text-sm">总计:</span>
+            <span className="text-slate-900 font-medium">{knowledgeBases.length} 个知识库</span>
           </div>
-          <div className="w-px h-4 bg-[rgba(0,212,255,0.2)]" />
+          <div className="w-px h-4 bg-violet-100" />
           <div className="flex items-center gap-2">
-            <span className="text-[#94a3b8] text-sm">文档:</span>
-            <span className="text-[#00d4ff] font-medium">
+            <span className="text-slate-500 text-sm">文档:</span>
+            <span className="text-violet-600 font-medium">
               {knowledgeBases.reduce((sum, kb) => sum + kb.documents, 0)} 个
             </span>
           </div>
-          <div className="w-px h-4 bg-[rgba(0,212,255,0.2)]" />
+          <div className="w-px h-4 bg-violet-100" />
           <div className="flex items-center gap-2">
-            <span className="text-[#94a3b8] text-sm">Chunks:</span>
-            <span className="text-[#00ff88] font-medium">
+            <span className="text-slate-500 text-sm">Chunks:</span>
+            <span className="text-emerald-600 font-medium">
               {knowledgeBases.reduce((sum, kb) => sum + (typeof kb.chunks === 'number' ? kb.chunks : 0), 0)} 个
             </span>
           </div>
@@ -224,27 +224,27 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#00d4ff]" size={20} />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-violet-600" size={20} />
         <input
           type="text"
           placeholder="🔍 搜索知识库..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-14 pl-12 pr-4 glass-strong rounded-xl border border-[rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:border-[#00d4ff] text-[#e8eaed] placeholder-[#94a3b8] transition-all duration-300"
+          className="w-full h-14 pl-12 pr-4 glass-strong rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-500 text-slate-900 placeholder-slate-400 transition-all duration-300"
         />
       </motion.div>
 
       {/* Loading State */}
       {loading && (
-        <div className="text-center text-[#94a3b8] py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ff]"></div>
+        <div className="text-center text-slate-500 py-12">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500"></div>
           <p className="mt-4">加载中...</p>
         </div>
       )}
 
       {/* Empty State */}
       {!loading && filteredKBs.length === 0 && (
-        <div className="text-center text-[#94a3b8] py-12">
+        <div className="text-center text-slate-500 py-12">
           <Database size={48} className="mx-auto mb-4 opacity-50" />
           <p>暂无知识库</p>
         </div>
@@ -268,19 +268,19 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
 
             <div className="flex items-start gap-4 relative z-10">
               {/* Icon */}
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${kb.iconBg === 'bg-blue-100' ? 'from-[#00d4ff] to-[#0066ff]' : kb.iconBg === 'bg-green-100' ? 'from-[#00ff88] to-[#00d4a0]' : 'from-[#ffb800] to-[#ff8c00]'} flex items-center justify-center text-3xl flex-shrink-0 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${kb.iconBg === 'bg-blue-100' ? 'from-violet-500 to-indigo-600' : kb.iconBg === 'bg-green-100' ? 'from-emerald-500 to-emerald-600' : 'from-amber-400 to-orange-500'} flex items-center justify-center text-3xl flex-shrink-0 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
                 {kb.icon}
               </div>
 
               {/* Content */}
               <div className="flex-1">
-                <h3 className="mb-2 text-[#e8eaed] group-hover:text-[#00d4ff] transition-colors">{kb.name}</h3>
+                <h3 className="mb-2 text-slate-900 group-hover:text-violet-600 transition-colors">{kb.name}</h3>
 
-                <div className="text-[#94a3b8] mb-4 text-sm flex items-center gap-3">
-                  <span className="px-3 py-1 rounded-lg bg-[rgba(0,212,255,0.1)] text-[#00d4ff] border border-[rgba(0,212,255,0.2)]">
+                <div className="text-slate-500 mb-4 text-sm flex items-center gap-3">
+                  <span className="px-3 py-1 rounded-lg bg-violet-50 text-violet-600 border border-slate-200">
                     {kb.documents}个文档
                   </span>
-                  <span className="px-3 py-1 rounded-lg bg-[rgba(0,255,136,0.1)] text-[#00ff88] border border-[rgba(0,255,136,0.2)]">
+                  <span className="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
                     {kb.chunks} chunks
                   </span>
                   <span>更新: {kb.updated}</span>
@@ -288,16 +288,16 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
 
                 {/* Progress Bar */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between text-xs text-[#94a3b8] mb-2">
+                  <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
                     <span>存储使用</span>
-                    <span className="text-[#00d4ff]">{kb.storageUsed}%</span>
+                    <span className="text-violet-600">{kb.storageUsed}%</span>
                   </div>
-                  <div className="h-2 bg-[rgba(15,18,53,0.6)] rounded-full overflow-hidden border border-[rgba(0,212,255,0.2)]">
+                  <div className="h-2 bg-white rounded-full overflow-hidden border border-slate-200">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${kb.storageUsed}%` }}
                       transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                      className="h-full bg-gradient-to-r from-[#00d4ff] to-[#0066ff] relative overflow-hidden"
+                      className="h-full bg-gradient-to-r from-violet-500 to-indigo-600 relative overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 shimmer" />
                     </motion.div>
@@ -311,7 +311,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   onClick={() => onViewDetail(kb.collection_id)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-2.5 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all"
+                  className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all"
                 >
                   进入
                 </motion.button>
@@ -322,7 +322,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2.5 border-2 border-[#ff3b5c] text-[#ff3b5c] rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
+                  className="px-4 py-2.5 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
                 >
                   <Trash2 size={18} />
                 </motion.button>
@@ -343,20 +343,20 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
           >
             {/* Background shimmer */}
             <div className="absolute inset-0 opacity-5">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0066ff] blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-indigo-600 blur-3xl" />
             </div>
 
             <div className="relative z-10">
-              <h3 className="text-2xl mb-6 text-[#e8eaed]">新建知识库</h3>
+              <h3 className="text-2xl mb-6 text-slate-900">新建知识库</h3>
 
               <div className="mb-6">
-                <label className="block text-[#94a3b8] mb-2">知识库名称</label>
+                <label className="block text-slate-500 mb-2">知识库名称</label>
                 <input
                   type="text"
                   value={newKbName}
                   onChange={(e) => setNewKbName(e.target.value)}
                   placeholder="请输入知识库名称（支持中文）"
-                  className="w-full px-4 py-3 glass-strong rounded-xl border border-[rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:border-[#00d4ff] text-[#e8eaed] placeholder-[#94a3b8] transition-all"
+                  className="w-full px-4 py-3 glass-strong rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-500 text-slate-900 placeholder-slate-400 transition-all"
                   onKeyDown={(e) => e.key === 'Enter' && handleCreateKB()}
                   autoFocus
                 />
@@ -367,7 +367,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   onClick={handleCreateKB}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all relative overflow-hidden group"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
                   <span className="relative z-10">创建</span>
@@ -379,7 +379,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-6 py-3 border-2 border-[#00d4ff] text-[#00d4ff] rounded-xl hover:bg-[rgba(0,212,255,0.1)] transition-all"
+                  className="flex-1 px-6 py-3 border-2 border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all"
                 >
                   取消
                 </motion.button>

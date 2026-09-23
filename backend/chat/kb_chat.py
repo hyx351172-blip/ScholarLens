@@ -89,6 +89,7 @@ class MultiQueryConfig(BaseModel):
 class SourceDocument(BaseModel):
     """来源文档"""
     source_id: Optional[str] = None
+    file_id: Optional[str] = None
     chunk_text: str
     filename: str
     score: float  # 主分数（如果有重排序则为重排序分数，否则为召回分数）
@@ -851,6 +852,7 @@ class ChatService:
                 for index, doc in enumerate(documents, 1):
                     sources.append({
                         "source_id": f"S{index}",
+                        "file_id": doc.get("file_id") or doc.get("metadata", {}).get("file_id"),
                         "chunk_text": doc["chunk_text"],
                         "filename": doc["filename"],
                         "score": doc["score"],
@@ -1000,6 +1002,7 @@ class ChatService:
                 for index, doc in enumerate(documents, 1):
                     source_doc = SourceDocument(
                         source_id=f"S{index}",
+                        file_id=doc.get("file_id") or doc.get("metadata", {}).get("file_id"),
                         chunk_text=doc["chunk_text"],
                         filename=doc["filename"],
                         score=doc["score"],  # 主分数

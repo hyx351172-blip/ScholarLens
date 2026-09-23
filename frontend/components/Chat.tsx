@@ -1,26 +1,31 @@
-import { Plus, ChevronDown, Send, Bot, User, Sparkles, Loader2, Settings, Trash2, MessageSquare } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import {
+  BookOpen,
+  ChevronDown,
+  FileText,
+  Loader2,
+  MessageSquare,
+  Plus,
+  Send,
+  Settings,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { toast } from 'sonner';
-import ReactMarkdown from 'react-markdown';
+
 import { config } from '../src/config';
+import { sourceIdFor, type CitationSource } from '../src/citations';
+import { CitationMarkdown } from './CitationMarkdown';
+import { EvidenceDrawer } from './EvidenceDrawer';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  sources?: SourceDocument[];
+  sources?: CitationSource[];
   isStreaming?: boolean;
-}
-
-interface SourceDocument {
-  chunk_text: string;
-  filename: string;
-  score: number;
-  retrieval_score?: number;
-  rerank_score?: number;
-  metadata: Record<string, any>;
 }
 
 interface KnowledgeBase {
@@ -53,13 +58,24 @@ interface ChatSession {
   updatedAt: string;
 }
 
+interface SelectedEvidence {
+  sourceId: string;
+  source: CitationSource;
+}
+
+const suggestedQuestions = [
+  '总结这些论文的核心贡献，并逐条给出证据',
+  '比较不同论文的方法、数据集与实验结论',
+  '这些论文还存在哪些研究局限？',
+];
+
 export function Chat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedKB, setSelectedKB] = useState<KnowledgeBase | null>(null);
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
-  const [expandedCitation, setExpandedCitation] = useState<string | null>(null);
+  const [selectedEvidence, setSelectedEvidence] = useState<SelectedEvidence | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -68,78 +84,87 @@ export function Chat() {
     api_key: '',
     model_name: 'qwen-plus',
     temperature: 0.7,
-    max_tokens: 2000
+    max_tokens: 2000,
   });
   const [availableModels, setAvailableModels] = useState<ModelOption[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // 加载知识库列表和默认配置
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // 加载知识库列表
-        const kbResponse = await fetch(`${config.milvusApiUrl}/knowledge_base/list`);
-        const kbResult = await kbResponse.json();
+      const [knowledgeBaseRequest, modelConfigRequest] = await Promise.allSettled([
+        fetch(`${config.milvusApiUrl}/knowledge_base/list`).then((response) => {
+          if (!response.ok) throw new Error(`知识库服务 ${response.status}`);
+          return response.json();
+        }),
+        fetch(`${config.chatApiUrl}/config/default`).then((response) => {
+          if (!response.ok) throw new Error(`对话服务 ${response.status}`);
+          return response.json();
+        }),
+      ]);
 
-        if (kbResult.status === 'success' && kbResult.knowledge_bases.length > 0) {
-          setKnowledgeBases(kbResult.knowledge_bases);
-          setSelectedKB(kbResult.knowledge_bases[0]);
+      if (knowledgeBaseRequest.status === 'fulfilled') {
+        const result = knowledgeBaseRequest.value;
+        if (result.status === 'success' && result.knowledge_bases.length > 0) {
+          setKnowledgeBases(result.knowledge_bases);
+          setSelectedKB(result.knowledge_bases[0]);
         }
+      } else {
+        console.error('知识库加载失败:', knowledgeBaseRequest.reason);
+      }
 
-        // 加载默认LLM配置
-        const configResponse = await fetch(`${config.chatApiUrl}/config/default`);
-        const configResult = await configResponse.json();
-
-        if (configResult.status === 'success') {
-          setLLMConfig(configResult.config.llm);
-          setAvailableModels(configResult.config.available_models);
+      if (modelConfigRequest.status === 'fulfilled') {
+        const result = modelConfigRequest.value;
+        if (result.status === 'success') {
+          setLLMConfig(result.config.llm);
+          setAvailableModels(result.config.available_models);
         }
+      } else {
+        console.error('模型配置加载失败:', modelConfigRequest.reason);
+      }
 
-        // 从localStorage加载对话历史
-        const savedSessions = localStorage.getItem('chat_sessions');
-        if (savedSessions) {
+      if (knowledgeBaseRequest.status === 'rejected' && modelConfigRequest.status === 'rejected') {
+        toast.error('后端服务尚未启动');
+      } else if (modelConfigRequest.status === 'rejected') {
+        toast.warning('知识库已加载，对话服务尚未启动');
+      }
+
+      const savedSessions = localStorage.getItem('chat_sessions');
+      if (savedSessions) {
+        try {
           const sessions: ChatSession[] = JSON.parse(savedSessions);
-          setChatSessions(sessions.sort((a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          ));
+          setChatSessions(
+            sessions.sort(
+              (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+            ),
+          );
+        } catch (error) {
+          console.error('历史对话数据损坏:', error);
+          localStorage.removeItem('chat_sessions');
         }
-      } catch (error) {
-        console.error('加载数据失败:', error);
-        toast.error('加载配置失败');
       }
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
-  // 自动滚动到底部
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 保存当前会话到localStorage
-  const saveCurrentSession = () => {
+  useEffect(() => {
     if (!selectedKB || messages.length === 0) return;
 
     const now = new Date().toISOString();
-    const sessionTitle = messages[0]?.content.slice(0, 30) + (messages[0]?.content.length > 30 ? '...' : '');
-
+    const firstMessage = messages[0]?.content ?? '新对话';
+    const sessionTitle = firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '');
     let updatedSessions: ChatSession[];
 
     if (currentSessionId) {
-      // 更新现有会话
-      updatedSessions = chatSessions.map(session =>
-        session.id === currentSessionId
-          ? { ...session, messages, updatedAt: now }
-          : session
+      updatedSessions = chatSessions.map((session) =>
+        session.id === currentSessionId ? { ...session, messages, updatedAt: now } : session,
       );
     } else {
-      // 创建新会话
       const newSession: ChatSession = {
         id: `session-${Date.now()}`,
         title: sessionTitle,
@@ -153,26 +178,16 @@ export function Chat() {
       updatedSessions = [newSession, ...chatSessions];
     }
 
-    // 只保留最近50个会话
     updatedSessions = updatedSessions.slice(0, 50);
-
     setChatSessions(updatedSessions);
     localStorage.setItem('chat_sessions', JSON.stringify(updatedSessions));
-  };
-
-  // 当消息变化时保存会话
-  useEffect(() => {
-    if (messages.length > 0) {
-      saveCurrentSession();
-    }
+    // Saving is driven by message changes; session state is intentionally not a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  // 发送消息
   const handleSendMessage = async () => {
     if (!message.trim() || isLoading || !selectedKB) {
-      if (!selectedKB) {
-        toast.error('请先选择知识库');
-      }
+      if (!selectedKB) toast.error('请先选择知识库');
       return;
     }
 
@@ -182,12 +197,6 @@ export function Chat() {
       content: message.trim(),
       timestamp: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
     };
-
-    setMessages(prev => [...prev, userMessage]);
-    setMessage('');
-    setIsLoading(true);
-
-    // 创建助手消息
     const assistantMessage: Message = {
       id: `assistant-${Date.now()}`,
       role: 'assistant',
@@ -195,16 +204,17 @@ export function Chat() {
       timestamp: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
       isStreaming: true,
     };
-    setMessages(prev => [...prev, assistantMessage]);
+
+    setMessages((previous) => [...previous, userMessage, assistantMessage]);
+    setMessage('');
+    setIsLoading(true);
+    setSelectedEvidence(null);
 
     try {
       abortControllerRef.current = new AbortController();
-
       const response = await fetch(`${config.chatApiUrl}/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: userMessage.content,
           collection_name: selectedKB.collection_id,
@@ -214,463 +224,398 @@ export function Chat() {
           use_reranker: false,
           stream: true,
           return_source: true,
-          history: messages.slice(-10).map(msg => ({
-            role: msg.role,
-            content: msg.content,
+          history: messages.slice(-10).map((item) => ({
+            role: item.role,
+            content: item.content,
           })),
         }),
         signal: abortControllerRef.current.signal,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const reader = response.body?.getReader();
+      if (!reader) throw new Error('无法读取响应流');
+
       const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error('无法读取响应流');
-      }
-
+      let streamBuffer = '';
       let accumulatedContent = '';
-      let sources: SourceDocument[] | undefined;
+      let sources: CitationSource[] | undefined;
+
+      const processLine = (line: string) => {
+        if (!line.trim()) return;
+        const data = JSON.parse(line);
+        if (data.type === 'content') {
+          accumulatedContent += data.data;
+          setMessages((previous) => previous.map((item) =>
+            item.id === assistantMessage.id ? { ...item, content: accumulatedContent } : item,
+          ));
+        } else if (data.type === 'sources') {
+          sources = data.data;
+        } else if (data.type === 'error') {
+          throw new Error(data.data?.error ?? '对话服务返回错误');
+        }
+      };
 
       while (true) {
         const { value, done } = await reader.read();
+        streamBuffer += decoder.decode(value, { stream: !done });
+        const lines = streamBuffer.split('\n');
+        streamBuffer = lines.pop() ?? '';
+        lines.forEach(processLine);
         if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n').filter(line => line.trim());
-
-        for (const line of lines) {
-          try {
-            const data = JSON.parse(line);
-
-            if (data.type === 'content') {
-              accumulatedContent += data.data;
-              setMessages(prev =>
-                prev.map(msg =>
-                  msg.id === assistantMessage.id
-                    ? { ...msg, content: accumulatedContent }
-                    : msg
-                )
-              );
-            } else if (data.type === 'sources') {
-              sources = data.data;
-            } else if (data.type === 'metadata') {
-              console.log('对话元数据:', data.data);
-            } else if (data.type === 'error') {
-              console.error('对话错误:', data.data);
-              toast.error(`对话失败: ${data.data.error}`);
-            }
-          } catch (e) {
-            console.warn('解析流数据失败:', line, e);
-          }
-        }
       }
+      if (streamBuffer.trim()) processLine(streamBuffer);
 
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === assistantMessage.id
-            ? { ...msg, isStreaming: false, sources }
-            : msg
-        )
-      );
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('请求已取消');
+      setMessages((previous) => previous.map((item) =>
+        item.id === assistantMessage.id ? { ...item, isStreaming: false, sources } : item,
+      ));
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
         toast.info('对话已取消');
       } else {
         console.error('对话失败:', error);
-        toast.error('对话失败，请稍后重试');
+        toast.error(error instanceof Error ? error.message : '对话失败，请稍后重试');
       }
-
-      setMessages(prev => prev.filter(msg => msg.id !== assistantMessage.id));
+      setMessages((previous) => previous.filter((item) => item.id !== assistantMessage.id));
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   const handleNewChat = () => {
     setMessages([]);
     setCurrentSessionId(null);
+    setSelectedEvidence(null);
     toast.success('已创建新对话');
   };
 
   const loadSession = (session: ChatSession) => {
     setMessages(session.messages);
     setCurrentSessionId(session.id);
-
-    // 切换到对应的知识库
-    const kb = knowledgeBases.find(k => k.collection_id === session.knowledgeBaseId);
-    if (kb) {
-      setSelectedKB(kb);
-    }
-
-    toast.success(`已加载对话: ${session.title}`);
+    setSelectedEvidence(null);
+    const knowledgeBase = knowledgeBases.find(
+      (item) => item.collection_id === session.knowledgeBaseId,
+    );
+    if (knowledgeBase) setSelectedKB(knowledgeBase);
   };
 
-  const deleteSession = (sessionId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const updatedSessions = chatSessions.filter(s => s.id !== sessionId);
+  const deleteSession = (sessionId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    const updatedSessions = chatSessions.filter((session) => session.id !== sessionId);
     setChatSessions(updatedSessions);
     localStorage.setItem('chat_sessions', JSON.stringify(updatedSessions));
+    if (currentSessionId === sessionId) handleNewChat();
+  };
 
-    if (currentSessionId === sessionId) {
-      setMessages([]);
-      setCurrentSessionId(null);
+  const selectSource = (sourceId: string, source?: CitationSource) => {
+    if (!source) {
+      toast.warning(`来源 ${sourceId} 未随回答返回，已阻止错误跳转`);
+      return;
     }
-
-    toast.success('已删除对话');
+    setSelectedEvidence({ sourceId, source });
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)]">
-      {/* Left Sidebar */}
-      <div className="w-[280px] glass-strong border-r border-[rgba(0,212,255,0.15)] flex flex-col">
-        <div className="p-4 border-b border-[rgba(0,212,255,0.15)] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles size={18} className="text-[#00d4ff]" />
-            <h3 className="text-[#e8eaed]">对话历史</h3>
+    <div className="relative flex h-[calc(100vh-64px)] overflow-hidden bg-[#f8f8fb]">
+      <aside className="hidden w-[252px] flex-col border-r border-slate-200 bg-white xl:flex">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Workspace</p>
+            <h3 className="mt-1 font-semibold text-slate-900">研究对话</h3>
           </div>
-          <motion.button
+          <button
+            type="button"
             onClick={handleNewChat}
-            className="w-8 h-8 rounded-lg glass hover:bg-[rgba(0,212,255,0.1)] flex items-center justify-center transition-all"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="rounded-xl border border-violet-200 bg-violet-50 p-2 text-violet-700 transition hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-300"
+            aria-label="新建对话"
           >
-            <Plus size={18} className="text-[#00d4ff]" />
-          </motion.button>
+            <Plus size={17} />
+          </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-2">
+
+        <div className="flex-1 space-y-2 overflow-y-auto p-3">
           {chatSessions.length === 0 ? (
-            <div className="text-[#94a3b8] text-sm text-center py-4">暂无历史对话</div>
-          ) : (
-            chatSessions.map(session => (
-              <motion.div
-                key={session.id}
+            <div className="rounded-xl border border-dashed border-slate-200 px-3 py-8 text-center text-sm text-slate-400">
+              暂无历史对话
+            </div>
+          ) : chatSessions.map((session) => (
+            <motion.div
+              key={session.id}
+              className={`group flex w-full items-start rounded-xl border transition ${
+                currentSessionId === session.id
+                  ? 'border-violet-200 bg-violet-50'
+                  : 'border-transparent hover:border-slate-200 hover:bg-slate-50'
+              }`}
+              whileTap={{ scale: 0.99 }}
+            >
+              <button
+                type="button"
                 onClick={() => loadSession(session)}
-                className={`p-3 rounded-lg cursor-pointer transition-all group ${
-                  currentSessionId === session.id
-                    ? 'bg-[rgba(0,212,255,0.15)] border border-[rgba(0,212,255,0.3)]'
-                    : 'glass hover:bg-[rgba(0,212,255,0.1)]'
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="min-w-0 flex-1 p-3 text-left"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <MessageSquare size={14} className="text-[#00d4ff] flex-shrink-0" />
-                      <p className="text-[#e8eaed] text-sm font-medium truncate">
-                        {session.title}
-                      </p>
-                    </div>
-                    <p className="text-[#94a3b8] text-xs truncate">
-                      {session.knowledgeBaseName} • {session.messages.length}条消息
-                    </p>
-                    <p className="text-[#64748b] text-xs mt-1">
-                      {new Date(session.updatedAt).toLocaleString('zh-CN', {
-                        month: 'numeric',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                  <motion.button
-                    onClick={(e) => deleteSession(session.id, e)}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-all"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Trash2 size={14} className="text-red-400" />
-                  </motion.button>
+                <div className="min-w-0">
+                  <p className="flex items-center gap-2 truncate text-sm font-medium text-slate-800">
+                    <MessageSquare size={14} className="shrink-0 text-violet-600" />
+                    {session.title}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-slate-500">{session.knowledgeBaseName}</p>
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    {new Date(session.updatedAt).toLocaleString('zh-CN', {
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
                 </div>
-              </motion.div>
-            ))
-          )}
+              </button>
+              <button
+                type="button"
+                onClick={(event) => deleteSession(session.id, event)}
+                className="mr-2 mt-3 rounded-md p-1 text-slate-300 opacity-0 transition hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                aria-label={`删除对话 ${session.title}`}
+              >
+                <Trash2 size={14} />
+              </button>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </aside>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-[rgba(10,14,39,0.3)]">
-        {/* Top Bar */}
-        <div className="h-16 glass border-b border-[rgba(0,212,255,0.15)] px-6 flex items-center justify-between">
-          <div className="relative">
-            <select
-              value={selectedKB?.collection_id || ''}
-              onChange={(e) => {
-                const kb = knowledgeBases.find(k => k.collection_id === e.target.value);
-                setSelectedKB(kb || null);
-              }}
-              className="px-4 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl text-[#e8eaed] appearance-none pr-10 cursor-pointer hover:bg-[rgba(0,212,255,0.1)] transition-all focus:outline-none focus:ring-2 focus:ring-[#00d4ff]"
-            >
-              {knowledgeBases.length === 0 && <option value="">暂无知识库</option>}
-              {knowledgeBases.map(kb => (
-                <option key={kb.collection_id} value={kb.collection_id}>
-                  知识库: {kb.display_name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={16} className="text-[#00d4ff] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-[#94a3b8] text-sm">
-              {messages.length > 0 && `${messages.length} 条消息`}
+      <section className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-3 md:px-7">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-violet-600" />
+              <h2 className="font-semibold text-slate-950">论文证据问答</h2>
             </div>
-            <motion.button
-              onClick={() => setShowSettings(!showSettings)}
-              className="w-9 h-9 rounded-lg glass hover:bg-[rgba(0,212,255,0.1)] flex items-center justify-center transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <p className="mt-1 truncate text-xs text-slate-500">回答中的引用可点击核对原文</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="relative hidden sm:block">
+              <span className="sr-only">选择知识库</span>
+              <select
+                value={selectedKB?.collection_id || ''}
+                onChange={(event) => {
+                  const knowledgeBase = knowledgeBases.find(
+                    (item) => item.collection_id === event.target.value,
+                  );
+                  setSelectedKB(knowledgeBase ?? null);
+                }}
+                className="max-w-[220px] appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-9 text-sm text-slate-700 outline-none transition hover:border-violet-300 focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              >
+                {knowledgeBases.length === 0 && <option value="">暂无知识库</option>}
+                {knowledgeBases.map((knowledgeBase) => (
+                  <option key={knowledgeBase.collection_id} value={knowledgeBase.collection_id}>
+                    {knowledgeBase.display_name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowSettings((visible) => !visible)}
+              className={`rounded-xl border p-2.5 transition focus:outline-none focus:ring-2 focus:ring-violet-200 ${
+                showSettings
+                  ? 'border-violet-200 bg-violet-50 text-violet-700'
+                  : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
+              }`}
+              aria-label="模型设置"
             >
-              <Settings size={18} className={`${showSettings ? 'text-[#00d4ff]' : 'text-[#94a3b8]'} transition-colors`} />
-            </motion.button>
+              <Settings size={17} />
+            </button>
           </div>
         </div>
 
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center mb-6 animate-pulse-glow">
-                <Bot size={48} className="text-[#0a0e27]" />
-              </div>
-              <h2 className="text-2xl text-gradient mb-3">开始新对话</h2>
-              <p className="text-[#94a3b8] max-w-md">
-                {selectedKB ? `已选择知识库「${selectedKB.display_name}」，现在可以向我提问了` : '请先选择一个知识库，然后开始对话'}
-              </p>
-            </div>
-          ) : (
-            <AnimatePresence>
-              {messages.map((msg, index) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  {msg.role === 'assistant' ? (
-                    <div className="flex gap-3 items-start">
-                      <motion.div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Bot size={22} className="text-[#0a0e27]" />
-                      </motion.div>
-                      <div className="flex-1 max-w-[70%]">
-                        <motion.div className="glass-strong rounded-2xl p-5 shadow-lg border border-[rgba(0,212,255,0.2)]">
-                          <div className="prose prose-invert max-w-none text-[#e8eaed]">
-                            <ReactMarkdown
-                              components={{
-                                h1: ({node, ...props}) => <h1 className="text-xl text-gradient mb-3" {...props} />,
-                                h2: ({node, ...props}) => <h2 className="text-lg text-[#00d4ff] mb-2" {...props} />,
-                                h3: ({node, ...props}) => <h3 className="text-base text-[#00d4ff] mb-2" {...props} />,
-                                p: ({node, ...props}) => <p className="text-[#e8eaed] mb-2 leading-relaxed" {...props} />,
-                                ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-1 text-[#e8eaed] mb-2" {...props} />,
-                                ol: ({node, ...props}) => <ol className="list-decimal list-inside space-y-1 text-[#e8eaed] mb-2" {...props} />,
-                                li: ({node, ...props}) => <li className="text-[#e8eaed]" {...props} />,
-                                strong: ({node, ...props}) => <strong className="text-[#00d4ff] font-semibold" {...props} />,
-                                em: ({node, ...props}) => <em className="text-[#00ff88] italic" {...props} />,
-                                code: ({node, ...props}) => (
-                                  <code className="bg-[rgba(0,212,255,0.1)] text-[#00ff88] px-1.5 py-0.5 rounded text-sm" {...props} />
-                                ),
-                                pre: ({node, ...props}) => (
-                                  <pre className="bg-[rgba(0,212,255,0.1)] p-3 rounded-xl overflow-x-auto my-2" {...props} />
-                                ),
-                                blockquote: ({node, ...props}) => (
-                                  <blockquote className="border-l-4 border-[#00d4ff] pl-4 py-2 my-2 text-[#94a3b8] italic" {...props} />
-                                ),
-                                table: ({node, ...props}) => (
-                                  <table className="w-full border border-[rgba(0,212,255,0.2)] rounded-lg my-2" {...props} />
-                                ),
-                                th: ({node, ...props}) => (
-                                  <th className="border border-[rgba(0,212,255,0.2)] px-3 py-2 bg-[rgba(0,212,255,0.1)] text-[#00d4ff]" {...props} />
-                                ),
-                                td: ({node, ...props}) => (
-                                  <td className="border border-[rgba(0,212,255,0.2)] px-3 py-2 text-[#e8eaed]" {...props} />
-                                ),
-                                hr: ({node, ...props}) => (
-                                  <hr className="my-4 border-t border-[rgba(0,212,255,0.3)]" {...props} />
-                                ),
-                              }}
-                            >
-                              {msg.content}
-                            </ReactMarkdown>
-                            {msg.isStreaming && <span className="inline-block w-2 h-5 bg-[#00d4ff] ml-1 animate-pulse" />}
-                          </div>
-                        </motion.div>
-                        {msg.sources && msg.sources.length > 0 && (
-                          <div className="mt-3">
-                            <motion.button
-                              onClick={() => setExpandedCitation(expandedCitation === msg.id ? null : msg.id)}
-                              className="text-[#00d4ff] text-sm flex items-center gap-1 px-3 py-1.5 glass rounded-lg border border-[rgba(0,212,255,0.2)]"
-                            >
-                              📚 引用来源 [{msg.sources.length}个]
-                              <ChevronDown size={14} className={`transition-transform ${expandedCitation === msg.id ? 'rotate-180' : ''}`} />
-                            </motion.button>
-                            {expandedCitation === msg.id && (
-                              <div className="mt-3 space-y-2">
-                                {msg.sources.map((source, idx) => (
-                                  <div key={idx} className="glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl p-4 text-sm">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-[#e8eaed]">📄 {source.filename}</span>
-                                    </div>
-                                    <div className="flex gap-2 mb-3">
-                                      <span className="px-2 py-1 bg-[rgba(0,212,255,0.1)] text-[#00d4ff] rounded-lg text-xs">
-                                        相似度: {source.score.toFixed(3)}
-                                      </span>
-                                    </div>
-                                    <div className="text-[#94a3b8] text-xs line-clamp-3">{source.chunk_text}</div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        <div className="text-[#94a3b8] text-xs mt-2">{msg.timestamp}</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-3 items-start justify-end">
-                      <div className="max-w-[70%]">
-                        <div className="bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-2xl p-5 shadow-lg">
-                          <p className="whitespace-pre-wrap">{msg.content}</p>
-                        </div>
-                        <div className="text-[#94a3b8] text-xs mt-2 text-right">{msg.timestamp}</div>
-                      </div>
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <User size={22} className="text-white" />
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Settings Panel */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {showSettings && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="glass-strong border-t border-[rgba(0,212,255,0.15)] overflow-hidden"
+              className="overflow-hidden border-b border-slate-200 bg-white"
             >
-              <div className="p-4 space-y-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[#e8eaed] font-medium flex items-center gap-2">
-                    <Settings size={16} className="text-[#00d4ff]" />
-                    模型配置
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[#94a3b8] text-sm mb-2 block">模型选择</label>
-                    <select
-                      value={llmConfig.model_name}
-                      onChange={(e) => setLLMConfig({...llmConfig, model_name: e.target.value})}
-                      className="w-full px-3 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-lg text-[#e8eaed] focus:outline-none focus:ring-2 focus:ring-[#00d4ff]"
-                    >
-                      {availableModels.map(model => (
-                        <option key={model.name} value={model.name}>
-                          {model.display} ({model.provider})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[#94a3b8] text-sm mb-2 block">Temperature: {llmConfig.temperature}</label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="2"
-                      step="0.1"
-                      value={llmConfig.temperature}
-                      onChange={(e) => setLLMConfig({...llmConfig, temperature: parseFloat(e.target.value)})}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-[#94a3b8] mt-1">
-                      <span>精确</span>
-                      <span>创造</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[#94a3b8] text-sm mb-2 block">最大Token数</label>
-                    <input
-                      type="number"
-                      min="100"
-                      max="4000"
-                      step="100"
-                      value={llmConfig.max_tokens}
-                      onChange={(e) => setLLMConfig({...llmConfig, max_tokens: parseInt(e.target.value)})}
-                      className="w-full px-3 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-lg text-[#e8eaed] focus:outline-none focus:ring-2 focus:ring-[#00d4ff]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[#94a3b8] text-sm mb-2 block">API Key</label>
-                    <input
-                      type="password"
-                      value={llmConfig.api_key}
-                      onChange={(e) => setLLMConfig({...llmConfig, api_key: e.target.value})}
-                      placeholder="sk-xxxxxxxxxxxx"
-                      className="w-full px-3 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-lg text-[#e8eaed] focus:outline-none focus:ring-2 focus:ring-[#00d4ff]"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 text-xs text-[#94a3b8]">
-                  💡 提示：调整参数后立即生效，无需重启
-                </div>
+              <div className="grid gap-4 px-5 py-4 md:grid-cols-3 md:px-7">
+                <label className="text-xs font-medium text-slate-500">
+                  模型
+                  <select
+                    value={llmConfig.model_name}
+                    onChange={(event) => setLLMConfig({ ...llmConfig, model_name: event.target.value })}
+                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-violet-400"
+                  >
+                    {availableModels.map((model) => (
+                      <option key={model.name} value={model.name}>{model.display} · {model.provider}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-xs font-medium text-slate-500">
+                  Temperature · {llmConfig.temperature}
+                  <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={llmConfig.temperature}
+                    onChange={(event) => setLLMConfig({ ...llmConfig, temperature: Number(event.target.value) })}
+                    className="mt-3 w-full accent-violet-600"
+                  />
+                </label>
+                <label className="text-xs font-medium text-slate-500">
+                  最大 Token 数
+                  <input
+                    type="number"
+                    min="100"
+                    max="4000"
+                    step="100"
+                    value={llmConfig.max_tokens}
+                    onChange={(event) => setLLMConfig({ ...llmConfig, max_tokens: Number(event.target.value) })}
+                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-violet-400"
+                  />
+                </label>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Input Area */}
-        <div className="glass-strong border-t border-[rgba(0,212,255,0.15)] p-4">
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 relative">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={selectedKB ? '💬 输入你的问题...' : '⚠️ 请先选择知识库'}
-                disabled={!selectedKB || isLoading}
-                className="w-full min-h-[56px] max-h-[200px] px-4 py-3 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00d4ff] resize-none text-[#e8eaed] placeholder-[#94a3b8] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                rows={1}
-              />
-              <div className="absolute bottom-3 right-3 text-xs text-[#94a3b8]">
-                {message.length}/2000
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
+          {messages.length === 0 ? (
+            <div className="mx-auto flex h-full max-w-3xl flex-col items-center justify-center text-center">
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-[0_16px_40px_rgba(99,102,241,0.24)]">
+                <BookOpen size={30} />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-600">ScholarLens</p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">从论文原文获得可验证的答案</h1>
+              <p className="mt-3 max-w-xl leading-7 text-slate-500">
+                {selectedKB
+                  ? `当前知识库：${selectedKB.display_name}。每条事实性回答都会尽量附上可追溯来源。`
+                  : '选择一个知识库后开始提问。'}
+              </p>
+              <div className="mt-7 grid w-full gap-3 md:grid-cols-3">
+                {suggestedQuestions.map((question) => (
+                  <button
+                    type="button"
+                    key={question}
+                    onClick={() => setMessage(question)}
+                    className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-sm leading-6 text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md"
+                  >
+                    <FileText size={17} className="mb-3 text-violet-600" />
+                    {question}
+                  </button>
+                ))}
               </div>
             </div>
-            <motion.button
-              onClick={handleSendMessage}
-              disabled={!message.trim() || isLoading || !selectedKB}
-              className="w-14 h-14 rounded-xl bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-              whileHover={!isLoading && message.trim() && selectedKB ? { scale: 1.05 } : {}}
-              whileTap={!isLoading && message.trim() && selectedKB ? { scale: 0.95 } : {}}
-            >
-              {isLoading ? <Loader2 size={22} className="animate-spin" /> : <Send size={22} />}
-            </motion.button>
+          ) : (
+            <div className="mx-auto max-w-4xl space-y-7">
+              {messages.map((item) => (
+                <motion.article
+                  key={item.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={item.role === 'user' ? 'flex justify-end' : ''}
+                >
+                  {item.role === 'user' ? (
+                    <div className="max-w-[82%] rounded-2xl rounded-br-md bg-violet-600 px-5 py-3.5 text-sm leading-7 text-white shadow-sm">
+                      <p className="whitespace-pre-wrap">{item.content}</p>
+                      <p className="mt-1 text-right text-[11px] text-violet-200">{item.timestamp}</p>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] md:px-6">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 text-violet-700"><Sparkles size={16} /></span>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">ScholarLens</p>
+                            <p className="text-[11px] text-slate-400">基于检索证据生成</p>
+                          </div>
+                        </div>
+                        <span className="text-[11px] text-slate-400">{item.timestamp}</span>
+                      </div>
+                      <CitationMarkdown
+                        content={item.content}
+                        sources={item.sources}
+                        onSelectSource={selectSource}
+                      />
+                      {item.isStreaming && <span className="mt-1 inline-block h-4 w-1.5 animate-pulse rounded-full bg-violet-500" />}
+                      {item.sources && item.sources.length > 0 && (
+                        <div className="mt-5 border-t border-slate-100 pt-4">
+                          <div className="mb-2 flex items-center justify-between">
+                            <p className="text-xs font-medium text-slate-500">本回答引用的证据</p>
+                            <span className="text-[11px] text-slate-400">{item.sources.length} 个片段</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {item.sources.map((source, index) => {
+                              const sourceId = sourceIdFor(source, index);
+                              return (
+                                <button
+                                  type="button"
+                                  key={`${item.id}-${sourceId}`}
+                                  onClick={() => selectSource(sourceId, source)}
+                                  className="inline-flex max-w-full items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-left text-xs text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
+                                  title={`${source.filename} · 查看证据`}
+                                >
+                                  <span className="rounded bg-white px-1.5 py-0.5 font-semibold text-violet-700 shadow-sm">{sourceId}</span>
+                                  <span className="max-w-[220px] truncate">{source.filename}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.article>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-slate-200 bg-white px-4 py-4 md:px-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="flex items-end gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition focus-within:border-violet-300 focus-within:ring-4 focus-within:ring-violet-50">
+              <textarea
+                value={message}
+                onChange={(event) => setMessage(event.target.value.slice(0, 2000))}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    void handleSendMessage();
+                  }
+                }}
+                placeholder={selectedKB ? '询问论文中的方法、实验、结论或差异…' : '请先选择知识库'}
+                disabled={!selectedKB || isLoading}
+                rows={1}
+                className="min-h-[48px] max-h-40 flex-1 resize-none bg-transparent px-3 py-3 text-sm leading-6 text-slate-800 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <button
+                type="button"
+                onClick={() => void handleSendMessage()}
+                disabled={!message.trim() || isLoading || !selectedKB}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                aria-label="发送问题"
+              >
+                {isLoading ? <Loader2 size={19} className="animate-spin" /> : <Send size={18} />}
+              </button>
+            </div>
+            <div className="mt-2 flex items-center justify-between px-1 text-[11px] text-slate-400">
+              <span>Enter 发送 · Shift + Enter 换行</span>
+              <span>{message.length}/2000</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <AnimatePresence>
+        {selectedEvidence && (
+          <EvidenceDrawer
+            sourceId={selectedEvidence.sourceId}
+            source={selectedEvidence.source}
+            onClose={() => setSelectedEvidence(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

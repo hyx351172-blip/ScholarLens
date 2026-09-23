@@ -129,7 +129,7 @@ Query → Dense Embedding → Milvus Top-K → Score Threshold → LLM Answer
 
 - [ ] 为每个 Chunk 增加论文标题、章节、页码、DOI/arXiv ID 等科研元数据。
 - [x] 后端生成稳定来源编号并完成逐句引用质量开发集验收。
-- [ ] 回答中生成可点击、可定位原文的引用。
+- [x] 将回答中的 `[Sx]` 渲染为可点击引用，并展示论文、页码、章节、Chunk 与原文证据。
 - [ ] 增加 BM25 + Dense + RRF 混合检索。
 - [x] 建立 Chunk 级完整证据 Hit@K、MRR、nDCG 和延迟评测。
 - [x] 实现跨论文 Query Planner、多路召回及覆盖感知选择原型。

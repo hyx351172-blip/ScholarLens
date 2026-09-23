@@ -152,8 +152,16 @@ and passed without lowering any threshold.
 
 ## Remaining work
 
-1. Build a new human-reviewed claim-level held-out set not used during evaluator development.
-2. Render `[Sx]` as a frontend link to filename, page and `chunk_id` evidence.
-3. Evaluate an independent judge model or add human claim-level grounding review.
-4. Add production observability for invalid or missing citations without storing sensitive
+Completed after the v4 report:
+
+- a frozen, human-reviewed claim-level held-out v5 set validated the entailment evaluator;
+- the frontend now renders `[Sx]` as a message-scoped evidence control and exposes filename,
+  page range, section path, `chunk_id`, retrieved text and a PDF locator when `file_id` exists.
+
+Still remaining:
+
+1. Evaluate an independent judge model or add human claim-level grounding review.
+2. Add production observability for invalid or missing citations without storing sensitive
    paper text in logs.
+3. Build a new end-to-end held-out set spanning question, retrieval, generated answer,
+   citation rendering and evidence navigation rather than evaluating the judge alone.

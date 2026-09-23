@@ -96,7 +96,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 size={48} className="text-[#00d4ff] animate-spin" />
+        <Loader2 size={48} className="text-violet-600 animate-spin" />
       </div>
     );
   }
@@ -104,7 +104,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
   if (!docData) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#94a3b8]">文档不存在</p>
+        <p className="text-slate-500">文档不存在</p>
       </div>
     );
   }
@@ -119,14 +119,14 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
       >
         <motion.button
           onClick={onBack}
-          className="text-[#00d4ff] hover:text-[#00ffaa] flex items-center gap-2 transition-colors group"
+          className="text-violet-600 hover:text-emerald-600 flex items-center gap-2 transition-colors group"
           whileHover={{ x: -4 }}
         >
           <ArrowLeft size={18} className="group-hover:animate-pulse" />
           返回
         </motion.button>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center text-xl shadow-lg">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-xl shadow-lg">
             📄
           </div>
           <h2 className="text-gradient">{docData.filename}</h2>
@@ -140,7 +140,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="border-b border-[rgba(0,212,255,0.15)]">
+        <div className="border-b border-slate-200">
           <div className="flex">
             {tabs.map((tab, index) => (
               <motion.button
@@ -151,15 +151,15 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                 transition={{ delay: 0.2 + index * 0.05 }}
                 className={`flex-1 px-6 py-4 transition-all relative ${
                   activeTab === tab.id
-                    ? 'text-[#00d4ff]'
-                    : 'text-[#94a3b8] hover:text-[#e8eaed]'
+                    ? 'text-violet-600'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeDocTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00d4ff] to-[#0066ff]"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 to-indigo-600"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -177,8 +177,8 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h3 className="text-[#e8eaed]">PDF文档</h3>
-              <div className="aspect-[8.5/11] glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl overflow-hidden">
+              <h3 className="text-slate-900">PDF文档</h3>
+              <div className="aspect-[8.5/11] glass-strong border border-slate-200 rounded-xl overflow-hidden">
                 <iframe
                   src={`http://localhost:8000${docData.pdf_url}`}
                   className="w-full h-full"
@@ -196,34 +196,34 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[#e8eaed]">Markdown 内容</h3>
+                <h3 className="text-slate-900">Markdown 内容</h3>
                 <motion.button
                   onClick={handleCopyMarkdown}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-3 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] transition-all flex items-center gap-2 text-[#e8eaed]"
+                  className="px-3 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all flex items-center gap-2 text-slate-900"
                 >
-                  <Copy size={16} className="text-[#00d4ff]" />
+                  <Copy size={16} className="text-violet-600" />
                   复制
                 </motion.button>
               </div>
 
-              <div className="p-6 rounded-xl glass-strong border border-[rgba(0,212,255,0.3)] max-h-[600px] overflow-y-auto">
-                <div className="prose prose-invert max-w-none text-[#e8eaed]">
+              <div className="p-6 rounded-xl glass-strong border border-violet-200 max-h-[600px] overflow-y-auto">
+                <div className="prose prose-invert max-w-none text-slate-900">
                   <ReactMarkdown
                     components={{
                       h1: ({node, ...props}) => <h1 className="text-2xl text-gradient mb-4" {...props} />,
-                      h2: ({node, ...props}) => <h2 className="text-xl text-[#00d4ff] mb-3" {...props} />,
-                      h3: ({node, ...props}) => <h3 className="text-lg text-[#00d4ff] mb-2" {...props} />,
-                      p: ({node, ...props}) => <p className="text-[#94a3b8] mb-3" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="text-xl text-violet-600 mb-3" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-lg text-violet-600 mb-2" {...props} />,
+                      p: ({node, ...props}) => <p className="text-slate-500 mb-3" {...props} />,
                       code: ({node, ...props}) => (
-                        <code className="bg-[rgba(0,212,255,0.1)] text-[#00ff88] px-2 py-1 rounded" {...props} />
+                        <code className="bg-violet-50 text-emerald-600 px-2 py-1 rounded" {...props} />
                       ),
                       pre: ({node, ...props}) => (
-                        <pre className="bg-[rgba(0,212,255,0.1)] p-4 rounded-xl overflow-x-auto" {...props} />
+                        <pre className="bg-violet-50 p-4 rounded-xl overflow-x-auto" {...props} />
                       ),
                       img: ({node, ...props}) => (
-                        <img className="max-w-full h-auto rounded-xl border border-[rgba(0,212,255,0.2)] my-4" {...props} />
+                        <img className="max-w-full h-auto rounded-xl border border-slate-200 my-4" {...props} />
                       ),
                     }}
                   >
@@ -242,7 +242,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[#e8eaed]">共 {docData.total_chunks} 个切分块</h3>
+                <h3 className="text-slate-900">共 {docData.total_chunks} 个切分块</h3>
               </div>
 
               <div className="space-y-4 max-h-[600px] overflow-y-auto">
@@ -256,27 +256,27 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                     className="glass gradient-border rounded-xl p-5 hover:shadow-[0_0_20px_rgba(0,212,255,0.2)] transition-all group"
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="text-[#e8eaed]">Chunk #{index + 1}</span>
-                      <span className="text-[#94a3b8] flex items-center gap-1">
+                      <span className="text-slate-900">Chunk #{index + 1}</span>
+                      <span className="text-slate-500 flex items-center gap-1">
                         📍第 {chunk.page_start}{chunk.page_start !== chunk.page_end ? `-${chunk.page_end}` : ''} 页
                       </span>
-                      <span className="text-[#94a3b8] flex items-center gap-1">
+                      <span className="text-slate-500 flex items-center gap-1">
                         📏 {chunk.text_length} 字符
                       </span>
                     </div>
 
-                    <div className="p-4 glass-strong rounded-xl border border-[rgba(0,212,255,0.1)] font-mono text-sm mb-4 text-[#94a3b8] max-h-[200px] overflow-y-auto whitespace-pre-wrap">
+                    <div className="p-4 glass-strong rounded-xl border border-slate-100 font-mono text-sm mb-4 text-slate-500 max-h-[200px] overflow-y-auto whitespace-pre-wrap">
                       {chunk.text}
                     </div>
 
                     <div className="flex gap-2">
-                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.cross_page_bridge ? 'bg-[rgba(0,255,136,0.1)] text-[#00ff88] border border-[rgba(0,255,136,0.2)]' : 'bg-[rgba(148,163,184,0.1)] text-[#94a3b8] border border-[rgba(148,163,184,0.2)]'}`}>
+                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.cross_page_bridge ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
                         跨页: {chunk.cross_page_bridge ? '✅' : '❌'}
                       </span>
-                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.continued ? 'bg-[rgba(0,255,136,0.1)] text-[#00ff88] border border-[rgba(0,255,136,0.2)]' : 'bg-[rgba(148,163,184,0.1)] text-[#94a3b8] border border-[rgba(148,163,184,0.2)]'}`}>
+                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.continued ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
                         续接: {chunk.continued ? '✅' : '❌'}
                       </span>
-                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.is_table_like ? 'bg-[rgba(0,255,136,0.1)] text-[#00ff88] border border-[rgba(0,255,136,0.2)]' : 'bg-[rgba(148,163,184,0.1)] text-[#94a3b8] border border-[rgba(148,163,184,0.2)]'}`}>
+                      <span className={`px-3 py-1 rounded-lg text-xs ${chunk.is_table_like ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
                         表格: {chunk.is_table_like ? '✅' : '❌'}
                       </span>
                     </div>
@@ -294,18 +294,18 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="space-y-4">
-                <h3 className="text-[#e8eaed] flex items-center gap-2">
+                <h3 className="text-slate-900 flex items-center gap-2">
                   <span className="text-2xl">📄</span>
                   文档信息
                 </h3>
                 <div className="space-y-3">
-                  <div className="p-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl">
-                    <p className="text-[#94a3b8] mb-2">总页数</p>
-                    <div className="text-2xl text-[#00d4ff]">{docData.total_pages}</div>
+                  <div className="p-4 glass-strong border border-slate-200 rounded-xl">
+                    <p className="text-slate-500 mb-2">总页数</p>
+                    <div className="text-2xl text-violet-600">{docData.total_pages}</div>
                   </div>
-                  <div className="p-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl">
-                    <p className="text-[#94a3b8] mb-2">提取时间</p>
-                    <div className="text-sm text-[#00d4ff]">
+                  <div className="p-4 glass-strong border border-slate-200 rounded-xl">
+                    <p className="text-slate-500 mb-2">提取时间</p>
+                    <div className="text-sm text-violet-600">
                       {new Date(docData.extraction_time).toLocaleString('zh-CN')}
                     </div>
                   </div>
@@ -313,18 +313,18 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-[#e8eaed] flex items-center gap-2">
+                <h3 className="text-slate-900 flex items-center gap-2">
                   <span className="text-2xl">🔢</span>
                   切分统计
                 </h3>
                 <div className="space-y-3">
-                  <div className="p-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl">
-                    <p className="text-[#94a3b8] mb-2">总切分块数</p>
-                    <div className="text-2xl text-[#00d4ff]">{docData.total_chunks}</div>
+                  <div className="p-4 glass-strong border border-slate-200 rounded-xl">
+                    <p className="text-slate-500 mb-2">总切分块数</p>
+                    <div className="text-2xl text-violet-600">{docData.total_chunks}</div>
                   </div>
-                  <div className="p-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl">
-                    <p className="text-[#94a3b8] mb-2">跨页块数</p>
-                    <div className="text-2xl text-[#00ff88]">
+                  <div className="p-4 glass-strong border border-slate-200 rounded-xl">
+                    <p className="text-slate-500 mb-2">跨页块数</p>
+                    <div className="text-2xl text-emerald-600">
                       {docData.chunks.filter(c => c.cross_page_bridge).length}
                     </div>
                   </div>
@@ -332,14 +332,14 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-[#e8eaed] flex items-center gap-2">
+                <h3 className="text-slate-900 flex items-center gap-2">
                   <span className="text-2xl">🖼️</span>
                   图片统计
                 </h3>
                 <div className="space-y-3">
-                  <div className="p-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl">
-                    <p className="text-[#94a3b8] mb-2">提取图片数</p>
-                    <div className="text-2xl text-[#00d4ff]">{docData.total_images}</div>
+                  <div className="p-4 glass-strong border border-slate-200 rounded-xl">
+                    <p className="text-slate-500 mb-2">提取图片数</p>
+                    <div className="text-2xl text-violet-600">{docData.total_images}</div>
                   </div>
                 </div>
               </div>
@@ -349,7 +349,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
           {/* Page Navigation - Only for PDF tab */}
           {activeTab === 'original' && docData.total_pages > 1 && (
             <motion.div
-              className="flex items-center justify-center gap-4 mt-6 pt-6 border-t border-[rgba(0,212,255,0.15)]"
+              className="flex items-center justify-center gap-4 mt-6 pt-6 border-t border-slate-200"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -359,14 +359,14 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                 disabled={currentPage === 1}
                 whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
                 whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
-                className="px-4 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-[#e8eaed]"
+                className="px-4 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-slate-900"
               >
                 <ChevronLeft size={16} />
                 上一页
               </motion.button>
 
-              <span className="text-[#94a3b8] px-4 py-2 glass rounded-xl border border-[rgba(0,212,255,0.2)]">
-                第 <span className="text-[#00d4ff]">{currentPage}</span> / {docData.total_pages} 页
+              <span className="text-slate-500 px-4 py-2 glass rounded-xl border border-slate-200">
+                第 <span className="text-violet-600">{currentPage}</span> / {docData.total_pages} 页
               </span>
 
               <motion.button
@@ -374,7 +374,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                 disabled={currentPage === docData.total_pages}
                 whileHover={{ scale: currentPage === docData.total_pages ? 1 : 1.05 }}
                 whileTap={{ scale: currentPage === docData.total_pages ? 1 : 0.95 }}
-                className="px-4 py-2 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-[#e8eaed]"
+                className="px-4 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-slate-900"
               >
                 下一页
                 <ChevronRight size={16} />

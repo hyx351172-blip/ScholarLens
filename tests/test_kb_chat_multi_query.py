@@ -1,4 +1,5 @@
 import asyncio
+import json
 import threading
 import time
 import unittest
@@ -291,7 +292,8 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
             "query_ranks": {"original": 2, "paper-a": 1},
             "chunk_text": "evidence",
             "filename": "paper-a.pdf",
-            "metadata": {"chunk_id": "chunk-a"},
+            "file_id": "file-paper-a",
+            "metadata": {"chunk_id": "chunk-a", "file_id": "file-paper-a"},
         }
         trace = {"mode": "multi_query", "final_count": 1}
 
@@ -308,8 +310,42 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(response.metadata["retrieval_trace"], trace)
         self.assertEqual(response.sources[0].source_id, "S1")
+        self.assertEqual(response.sources[0].file_id, "file-paper-a")
         self.assertEqual(response.sources[0].matched_query_ids, ["original", "paper-a"])
         self.assertEqual(response.sources[0].query_ranks["paper-a"], 1)
+
+    async def test_stream_source_event_exposes_stable_file_locator(self):
+        service = ChatService()
+        document = {
+            "score": 0.8,
+            "chunk_text": "stream evidence",
+            "filename": "paper-stream.pdf",
+            "file_id": "file-paper-stream",
+            "metadata": {
+                "chunk_id": "chunk-stream",
+                "page_start": 7,
+                "file_id": "file-paper-stream",
+            },
+        }
+
+        async def fake_retrieve_for_request(_request):
+            return RetrievalExecution(documents=[document], trace={"mode": "single_query"})
+
+        async def fake_stream(_messages, _config):
+            yield "supported answer [S1]"
+
+        service.retrieve_for_request = fake_retrieve_for_request
+        service.call_llm_stream = fake_stream
+
+        events = [
+            json.loads(event)
+            async for event in service.chat_stream(_request(stream=True, return_source=True))
+        ]
+        source_event = next(event for event in events if event["type"] == "sources")
+
+        self.assertEqual(source_event["data"][0]["source_id"], "S1")
+        self.assertEqual(source_event["data"][0]["file_id"], "file-paper-stream")
+        self.assertEqual(source_event["data"][0]["metadata"]["page_start"], 7)
 
     async def test_multi_query_reranker_cannot_truncate_coverage_context(self):
         service = ChatService()
