@@ -33,6 +33,31 @@ class ChatRequestMultiQueryTests(unittest.TestCase):
 
 
 class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
+    def test_context_and_default_prompt_expose_stable_source_ids(self):
+        service = ChatService()
+        context = service.format_context(
+            [
+                {
+                    "score": 0.9,
+                    "chunk_text": "first evidence",
+                    "filename": "paper-a.pdf",
+                    "metadata": {"page_start": 2},
+                },
+                {
+                    "score": 0.8,
+                    "chunk_text": "second evidence",
+                    "filename": "paper-b.pdf",
+                    "metadata": {"page_start": 4},
+                },
+            ]
+        )
+
+        self.assertIn("[S1] 来源: paper-a.pdf(第2页)", context)
+        self.assertIn("[S2] 来源: paper-b.pdf(第4页)", context)
+        self.assertIn("[S1]", service.default_prompt_template)
+        self.assertIn("每个事实性陈述", service.default_prompt_template)
+        self.assertIn("段首概述", service.default_prompt_template)
+
     async def test_enabled_request_uses_plan_and_returns_trace(self):
         service = ChatService()
         plan = parse_query_plan(
@@ -131,6 +156,7 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
         response = await service.chat_non_stream(_request(return_source=True))
 
         self.assertEqual(response.metadata["retrieval_trace"], trace)
+        self.assertEqual(response.sources[0].source_id, "S1")
         self.assertEqual(response.sources[0].matched_query_ids, ["original", "paper-a"])
         self.assertEqual(response.sources[0].query_ranks["paper-a"], 1)
 

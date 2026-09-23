@@ -16,6 +16,7 @@ ScholarLens 是一个面向学生与科研人员的论文阅读工作台。系�
 - 后端可选启用跨论文 Query Planner、多路并行 Dense 召回、Query RRF
   去重和覆盖感知 Top-K；默认关闭并保留单查询降级路径。
 - 基于召回片段进行流式或非流式问答。
+- 回答上下文和来源响应使用稳定的 `[S1]`、`[S2]` 编号；默认提示词要求事实陈述逐句引用检索证据。
 - 后端已提供可选 Reranker 接口；前端当前默认关闭。
 - 管理多个论文知识库，并查看文档、切片和原始 PDF。
 
@@ -121,9 +122,13 @@ Query → Dense Embedding → Milvus Top-K → Score Threshold → LLM Answer
 或子查询失败都会退回原始单查询。配置和返回 Trace 见
 [`docs/technical/MULTI_QUERY_RETRIEVAL.md`](docs/technical/MULTI_QUERY_RETRIEVAL.md)。
 
+答案引用契约、确定性检查、语义判分边界和开发集实验结果见
+[`docs/technical/ANSWER_CITATION_EVALUATION.md`](docs/technical/ANSWER_CITATION_EVALUATION.md)。
+
 ## 路线图
 
 - [ ] 为每个 Chunk 增加论文标题、章节、页码、DOI/arXiv ID 等科研元数据。
+- [x] 后端生成稳定来源编号并完成逐句引用质量开发集验收。
 - [ ] 回答中生成可点击、可定位原文的引用。
 - [ ] 增加 BM25 + Dense + RRF 混合检索。
 - [x] 建立 Chunk 级完整证据 Hit@K、MRR、nDCG 和延迟评测。

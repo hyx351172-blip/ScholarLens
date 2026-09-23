@@ -86,6 +86,7 @@ class MultiQueryConfig(BaseModel):
 
 class SourceDocument(BaseModel):
     """来源文档"""
+    source_id: Optional[str] = None
     chunk_text: str
     filename: str
     score: float  # 主分数（如果有重排序则为重排序分数，否则为召回分数）
@@ -137,14 +138,22 @@ class ChatService:
     """RAG对话服务"""
 
     def __init__(self):
-        self.default_prompt_template = """你是一个专业的AI助手。请根据以下检索到的相关信息回答用户的问题。
+        self.default_prompt_template = """你是一个严谨的科研论文助手。请仅根据以下检索证据回答用户问题。
 
-相关信息：
+检索证据：
 {context}
 
 用户问题：{query}
 
-请基于以上信息给出准确、详细的回答。如果信息不足以回答问题，请如实说明。"""
+回答要求：
+1. 每个事实性陈述后必须在同一句或同一条项目末尾紧跟来源编号，例如 [S1] 或 [S1][S2]；不要用段末的一次引用覆盖前面的多个句子。
+2. 只能使用上面实际存在的 [S1]、[S2] 等编号，不得编造来源。
+3. 段首概述、带事实的过渡句、每个列表项和总结中的事实同样必须引用；只有不包含事实的纯标题可以不引用。
+4. 回答第一行就必须包含有效来源编号；不要先写无引用的概述，也不要单独写“具体如下：”或“Specifically:”等引导句。
+5. 每条列表项尽量只写一个事实句；如含多个事实句，则每句分别引用。
+6. 比较类问题必须分别回答每个比较对象，并引用支持各对象的证据。
+7. 不要使用检索证据之外的知识补全；证据不足时明确说明缺少什么。
+8. 回答保持紧凑，删除没有证据或仅重复后文的引言，不要单独列出未在正文中使用的参考文献列表。"""
 
     async def retrieve_documents(
         self,
@@ -553,7 +562,7 @@ class ChatService:
         """
         context_parts = []
 
-        for i, doc in enumerate(documents):
+        for i, doc in enumerate(documents, 1):
             filename = doc.get("filename", "未知文件")
             text = doc.get("chunk_text", "")
             score = doc.get("score", 0.0)
@@ -576,7 +585,7 @@ class ChatService:
                     page_info = f"(第{page_start}-{page_end}页)"
 
             context_parts.append(
-                f"[文档片段 {i+1}] 来源: {filename}{page_info} | 相关度: {score:.3f}\n{text}"
+                f"[S{i}] 来源: {filename}{page_info} | 相关度: {score:.3f}\n{text}"
             )
 
         return "\n\n".join(context_parts)
@@ -749,8 +758,9 @@ class ChatService:
             # 7. 发送来源文档
             if request.return_source and documents:
                 sources = []
-                for doc in documents:
+                for index, doc in enumerate(documents, 1):
                     sources.append({
+                        "source_id": f"S{index}",
                         "chunk_text": doc["chunk_text"],
                         "filename": doc["filename"],
                         "score": doc["score"],
@@ -897,8 +907,9 @@ class ChatService:
             sources = None
             if request.return_source:
                 sources = []
-                for doc in documents:
+                for index, doc in enumerate(documents, 1):
                     source_doc = SourceDocument(
+                        source_id=f"S{index}",
                         chunk_text=doc["chunk_text"],
                         filename=doc["filename"],
                         score=doc["score"],  # 主分数
