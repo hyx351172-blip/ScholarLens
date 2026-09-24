@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-claim-citation-entailment-dev-v1",
+  "split": "development",
+  "annotation_status": "synthetic_contract_cases",
+  "purpose": "Verify that each answer claim is judged only against the evidence cited by that claim.",
+  "cases": [
+    {
+      "id": "CCE-01-correct-single",
+      "scenario": "correct_single_citation",
+      "question": "Which objectives does BERT use during pre-training?",
+      "expected_answer": "BERT uses masked language modelling and next-sentence prediction.",
+      "required_concepts": ["masked language modelling", "next-sentence prediction"],
+      "answer": "BERT pre-trains with masked language modelling and next-sentence prediction [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "bert.pdf",
+          "chunk_text": "BERT is pre-trained using two unsupervised tasks: masked language modelling and next-sentence prediction."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [1],
+          "evidence_source_ids": ["S1"],
+          "supported": true
+        }
+      ]
+    },
+    {
+      "id": "CCE-02-wrong-citation-global-rescue",
+      "scenario": "wrong_citation_correct_evidence_elsewhere",
+      "question": "How does LoRA adapt a pretrained model?",
+      "expected_answer": "LoRA freezes pretrained weights and learns low-rank update matrices.",
+      "required_concepts": ["frozen pretrained weights", "low-rank updates"],
+      "answer": "LoRA freezes pretrained weights and learns low-rank updates [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "bert.pdf",
+          "chunk_text": "BERT is pre-trained with masked language modelling and next-sentence prediction."
+        },
+        {
+          "source_id": "S2",
+          "filename": "lora.pdf",
+          "chunk_text": "LoRA freezes the pretrained model weights and injects trainable low-rank decomposition matrices into each layer."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [1],
+          "evidence_source_ids": ["S1"],
+          "supported": false
+        }
+      ]
+    },
+    {
+      "id": "CCE-03-grouped-citations",
+      "scenario": "grouped_citation_one_source_supports",
+      "question": "Does Donut require a separate OCR engine?",
+      "expected_answer": "Donut is an OCR-free document understanding model.",
+      "required_concepts": ["OCR-free document understanding"],
+      "answer": "Donut performs OCR-free document understanding [S1, S2].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "vision-transformer.pdf",
+          "chunk_text": "A vision transformer applies a transformer encoder to sequences of image patches."
+        },
+        {
+          "source_id": "S2",
+          "filename": "donut.pdf",
+          "chunk_text": "Donut is an OCR-free end-to-end transformer for visual document understanding."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [1, 2],
+          "evidence_source_ids": ["S1", "S2"],
+          "supported": true
+        }
+      ]
+    },
+    {
+      "id": "CCE-04-uncited",
+      "scenario": "uncited_factual_claim",
+      "question": "What does Nougat convert document images into?",
+      "expected_answer": "Nougat converts document images into markup.",
+      "required_concepts": ["document images to markup"],
+      "answer": "Nougat converts document images into markup.",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "nougat.pdf",
+          "chunk_text": "Nougat is a neural network that converts scientific document images into a markup language."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [],
+          "evidence_source_ids": [],
+          "supported": false
+        }
+      ]
+    },
+    {
+      "id": "CCE-05-invalid-source-id",
+      "scenario": "invalid_citation_only",
+      "question": "What modalities does LayoutLMv3 mask?",
+      "expected_answer": "LayoutLMv3 applies masking to text and image content.",
+      "required_concepts": ["text masking", "image masking"],
+      "answer": "LayoutLMv3 jointly learns text and image masking [S9].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "layoutlmv3.pdf",
+          "chunk_text": "LayoutLMv3 uses unified text and image masking objectives during pre-training."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [9],
+          "evidence_source_ids": [],
+          "supported": false
+        }
+      ]
+    },
+    {
+      "id": "CCE-06-contradiction",
+      "scenario": "cited_evidence_contradicts_claim",
+      "question": "What happened to factual accuracy after retrieval augmentation?",
+      "expected_answer": "The reported experiment improved factual accuracy.",
+      "required_concepts": ["factual accuracy improved"],
+      "answer": "The cited experiment reports that retrieval augmentation reduced factual accuracy [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "rag-study.pdf",
+          "chunk_text": "Adding retrieved passages improved factual accuracy from 71 percent to 79 percent in the reported experiment."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [1],
+          "evidence_source_ids": ["S1"],
+          "supported": false
+        }
+      ]
+    },
+    {
+      "id": "CCE-07-mixed-multiple-claims",
+      "scenario": "same_source_supports_one_claim_only",
+      "question": "How does ColBERT represent and compare passages?",
+      "expected_answer": "ColBERT keeps token-level representations and uses late interaction.",
+      "required_concepts": ["token-level representations", "late interaction"],
+      "answer": "ColBERT uses late interaction between query and passage representations [S1]. It represents every passage with one pooled dense vector [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "colbert.pdf",
+          "chunk_text": "ColBERT independently encodes query and document tokens, then applies a late-interaction MaxSim operator over their token-level embeddings rather than pooling each passage into one vector."
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "citation_numbers": [1],
+          "evidence_source_ids": ["S1"],
+          "supported": true
+        },
+        {
+          "id": "A2",
+          "citation_numbers": [1],
+          "evidence_source_ids": ["S1"],
+          "supported": false
+        }
+      ]
+    }
+  ]
+}

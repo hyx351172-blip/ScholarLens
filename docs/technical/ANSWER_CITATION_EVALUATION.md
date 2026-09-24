@@ -66,9 +66,16 @@ invalid citation. Citation syntax and provenance checks never depend on an LLM j
 ### Semantic diagnostic layer
 
 The configured model is used at temperature zero as a development-time judge. The short
-reference answer and required concepts determine concept coverage. Retrieved `[Sx]`
-snippets determine whether a cited claim is grounded. A detail is not labelled unsupported
-merely because the short reference answer omits it.
+reference answer and required concepts determine concept coverage. Every parsed factual
+claim receives a stable request-local `A1`, `A2`, ... identifier and a separate evidence
+bundle containing only the `[Sx]` snippets cited inside that claim. The judge must report
+every concept and claim exactly once with a boolean decision and a reason.
+
+Evidence from another claim is not included as a fallback. If a claim has no valid cited
+evidence because it is uncited or cites only invalid source IDs, a deterministic policy
+marks it unsupported even if the judge or reference answer agrees with the statement.
+The LLM therefore handles semantic entailment only after citation-to-evidence binding has
+been enforced in code.
 
 Retrieved text is delimited as untrusted quoted data, and the judge is told not to follow
 instructions contained in it. The raw provider response and API credentials are never
@@ -86,7 +93,45 @@ independent held-out evaluation.
 | Complete Gold evidence cited | at least 5/6 cases |
 | Mean claim citation completeness | at least 90% |
 | Mean required-concept coverage | at least 90% |
+| Mean claim entailment | at least 90% |
 | Cases with unsupported claims | at most 1/6 |
+
+## Claim-entailment development contract
+
+The independent synthetic development set can be validated without API calls:
+
+```powershell
+python -B scripts/evaluate_claim_citation_entailment.py --validate-only
+```
+
+Run the semantic development judge with:
+
+```powershell
+python -B scripts/evaluate_claim_citation_entailment.py `
+  --output docs/evaluation/claim-citation-entailment-dev-v1-results.json `
+  --markdown-output docs/evaluation/claim-citation-entailment-dev-v1.md
+```
+
+It contains seven purpose-built scenarios and eight claim decisions: correct citations,
+a wrong citation while the correct source exists elsewhere, grouped citations, no citation,
+an invalid source ID, contradictory evidence, and two claims citing the same source where
+only one is supported. The accepted run achieved 100% claim accuracy, case exact match,
+unsupported-claim recall, and supported-claim recall.
+
+## Held-out v5 draft
+
+`claim-citation-entailment-heldout-v5.json` is a frozen claim-level held-out
+dataset built from exact indexed ScholarLens chunks. It contains 11
+scenarios and 13 claim decisions, with five supported and eight unsupported
+labels. Its source chunk IDs do not overlap Gold evidence from v1 through v4,
+and every embedded source text carries a SHA-256 integrity hash.
+
+The draft initially blocked execution until the project owner verified it and
+explicitly authorized one evaluation plus transmission of the evidence excerpts
+to DashScope. The completed run passed all gates: 11/11 cases, 13/13 claim
+decisions, 100% supported-claim recall, and 100% unsupported-claim recall. The
+dataset is now `human_verified` and `consumed=true`; the evaluator rejects any
+rerun, and v5 must not be used for tuning.
 
 ## Development result
 
@@ -107,8 +152,16 @@ and passed without lowering any threshold.
 
 ## Remaining work
 
-1. Build a new human-reviewed held-out set not used during prompt or evaluator development.
-2. Render `[Sx]` as a frontend link to filename, page and `chunk_id` evidence.
-3. Evaluate an independent judge model or add human claim-level grounding review.
-4. Add production observability for invalid or missing citations without storing sensitive
+Completed after the v4 report:
+
+- a frozen, human-reviewed claim-level held-out v5 set validated the entailment evaluator;
+- the frontend now renders `[Sx]` as a message-scoped evidence control and exposes filename,
+  page range, section path, `chunk_id`, retrieved text and a PDF locator when `file_id` exists.
+
+Still remaining:
+
+1. Evaluate an independent judge model or add human claim-level grounding review.
+2. Add production observability for invalid or missing citations without storing sensitive
    paper text in logs.
+3. Build a new end-to-end held-out set spanning question, retrieval, generated answer,
+   citation rendering and evidence navigation rather than evaluating the judge alone.

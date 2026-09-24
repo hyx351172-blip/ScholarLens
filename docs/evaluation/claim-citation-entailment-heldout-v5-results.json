@@ -1,0 +1,677 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-claim-citation-entailment-dev-v1",
+  "dataset_id": "scholarlens-claim-citation-entailment-heldout-v5",
+  "dataset_split": "held_out",
+  "configuration": {
+    "model_name": "qwen3-vl-plus",
+    "judge": "same_model_structured_development_judge",
+    "model_host": "dashscope.aliyuncs.com",
+    "api_key_source": "API_KEY"
+  },
+  "summary": {
+    "case_count": 11,
+    "claim_count": 13,
+    "claim_decision_accuracy": 1,
+    "case_exact_match_rate": 1,
+    "unsupported_claim_recall": 1,
+    "supported_claim_recall": 1
+  },
+  "acceptance": {
+    "passed": true,
+    "checks": {
+      "claim_decision_accuracy": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "case_exact_match_rate": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "unsupported_claim_recall": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "supported_claim_recall": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "CCHV5-01",
+      "scenario": "correct_single_real_evidence",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "LoRA freezes the pretrained weight and represents its update as the low-rank product BA [S1].",
+            "supported": true,
+            "reason": "Evidence [S1] explicitly states: 'W₀ is frozen and does not receive gradient updates' and 'we constrain its update by representing the latter with a low-rank decomposition W₀ + ∆W = W₀ + BA', directly supporting both freezing and low-rank product BA."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [],
+        "unsupported_claims": [],
+        "claim_entailment_rate": 1.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-02",
+      "scenario": "wrong_citation_correct_real_evidence_elsewhere",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Mamba makes SSM parameters input-dependent and computes them with a hardware-aware recurrent scan [S1].",
+            "supported": false,
+            "reason": "The cited evidence [S1] describes FlashAttention, an attention algorithm, and contains no mention of Mamba, SSM parameters, input-dependence, or recurrent scans. Thus, it provides no support for claim A1."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "Mamba makes SSM parameters input-dependent and computes them with a hardware-aware recurrent scan [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-03",
+      "scenario": "grouped_citations_one_real_source_supports",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1,
+            2
+          ],
+          "valid_citation_numbers": [
+            1,
+            2
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "LayoutLMv3 jointly uses MLM, MIM, and word-patch alignment [S1, S2].",
+            "supported": true,
+            "reason": "Evidence [S2] explicitly states LayoutLMv3 uses 'unified MLM, MIM and WPA objectives' and describes WPA as 'Word-Patch Alignment (WPA) objective', confirming joint use of all three."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [],
+        "unsupported_claims": [],
+        "claim_entailment_rate": 1.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-04",
+      "scenario": "uncited_claim_real_evidence_available",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [],
+          "valid_citation_numbers": [],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": []
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C2"
+        ],
+        "missing_concept_ids": [
+          "C1"
+        ],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "The neural ODE adjoint method computes gradients by solving an augmented ODE backward in time.",
+            "supported": false,
+            "reason": "No valid claim-scoped cited evidence was supplied."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "The neural ODE adjoint method computes gradients by solving an augmented ODE backward in time."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 0.5
+      }
+    },
+    {
+      "case_id": "CCHV5-05",
+      "scenario": "invalid_source_id_real_evidence_available",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            9
+          ],
+          "valid_citation_numbers": [],
+          "invalid_citation_numbers": [
+            9
+          ],
+          "evidence_source_ids": []
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Multi-head attention applies different learned projections to queries, keys, and values in parallel [S9].",
+            "supported": false,
+            "reason": "No valid claim-scoped cited evidence was supplied."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "Multi-head attention applies different learned projections to queries, keys, and values in parallel [S9]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-06",
+      "scenario": "real_evidence_contradicts_claim",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [],
+        "missing_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "FlashAttention is an approximate attention algorithm that materializes the full attention matrix in HBM [S1].",
+            "supported": false,
+            "reason": "The cited evidence explicitly states FlashAttention computes 'exact attention' and its main goal is to 'avoid reading and writing the attention matrix to and from HBM', directly contradicting claim A1."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "FlashAttention is an approximate attention algorithm that materializes the full attention matrix in HBM [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 0.0
+      }
+    },
+    {
+      "case_id": "CCHV5-07",
+      "scenario": "same_real_source_mixed_claims",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        },
+        {
+          "id": "A2",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        },
+        {
+          "id": "A2",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Multi-head attention applies different learned projections in parallel [S1].",
+            "supported": true,
+            "reason": "Evidence [S1] explicitly states 'linearly project the queries, keys and values h times with different, learned linear projections' and 'perform the attention function in parallel', directly supporting A1."
+          },
+          {
+            "id": "A2",
+            "claim": "It uses one shared projection and a single head [S1].",
+            "supported": false,
+            "reason": "Evidence [S1] states 'h times with different, learned linear projections' and 'perform the attention function in parallel', contradicting 'one shared projection and a single head'; no evidence supports A2."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [
+          "A2"
+        ],
+        "unsupported_claims": [
+          "It uses one shared projection and a single head [S1]."
+        ],
+        "claim_entailment_rate": 0.5,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-08",
+      "scenario": "same_real_source_supported_and_fabricated_detail",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        },
+        {
+          "id": "A2",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        },
+        {
+          "id": "A2",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "SynthDoG generated 0.5 million samples per language for Chinese, Japanese, Korean, and English [S1].",
+            "supported": true,
+            "reason": "Evidence [S1] explicitly states: 'Using the SynthDog and Chinese, Japanese, Korean and English Wikipedia, we generated 0.5M samples per language.'"
+          },
+          {
+            "id": "A2",
+            "claim": "It uses only real scanned documents and no synthetic backgrounds [S1].",
+            "supported": false,
+            "reason": "Evidence [S1] states background image is sampled from ImageNet and document texture from paper photos, and that rendering techniques are applied to mimic real documents—indicating synthetic composition, not 'only real scanned documents'. The claim contradicts the evidence."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [
+          "A2"
+        ],
+        "unsupported_claims": [
+          "It uses only real scanned documents and no synthetic backgrounds [S1]."
+        ],
+        "claim_entailment_rate": 0.5,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCHV5-09",
+      "scenario": "wrong_method_attribution",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [],
+        "missing_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Neural ODE freezes pretrained weights and injects trainable low-rank update matrices [S1].",
+            "supported": false,
+            "reason": "The cited evidence [S1] describes LoRA's method (freezing W0 and using trainable low-rank BA), but does not state that Neural ODE uses this; the candidate answer incorrectly attributes LoRA's mechanism to Neural ODE without supporting evidence for Neural ODE."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "Neural ODE freezes pretrained weights and injects trainable low-rank update matrices [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 0.0
+      }
+    },
+    {
+      "case_id": "CCHV5-10",
+      "scenario": "partially_supported_composite_claim",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1"
+        ],
+        "missing_concept_ids": [
+          "C2"
+        ],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Mamba makes SSM parameters input-dependent but computes them by convolution rather than a recurrent scan [S1].",
+            "supported": false,
+            "reason": "The cited evidence explicitly states Mamba computes recurrently with a scan instead of convolution; the claim contradicts this."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "Mamba makes SSM parameters input-dependent but computes them by convolution rather than a recurrent scan [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 0.5
+      }
+    },
+    {
+      "case_id": "CCHV5-11",
+      "scenario": "correct_downstream_output_contract",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Donut formulates downstream document tasks as token generation that can be converted into JSON [S1].",
+            "supported": true,
+            "reason": "Evidence [S1] explicitly states 'we interpret all downstream tasks as a JSON prediction problem' and 'the decoder is trained to generate a token sequence that can be converted into a JSON', directly supporting the claim."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [],
+        "unsupported_claims": [],
+        "claim_entailment_rate": 1.0,
+        "concept_coverage": 1.0
+      }
+    }
+  ],
+  "dataset_validation": {
+    "dataset_id": "scholarlens-claim-citation-entailment-heldout-v5",
+    "case_count": 11,
+    "claim_count": 13,
+    "scenario_count": 11
+  }
+}

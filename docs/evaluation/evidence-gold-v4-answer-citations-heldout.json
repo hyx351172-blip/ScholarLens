@@ -1,0 +1,415 @@
+{
+  "schema_version": "1.1",
+  "dataset_id": "scholarlens-evidence-gold-v4-answer-citations-heldout",
+  "split": "held_out",
+  "annotation_status": "human_verified",
+  "created_at": "2026-09-23",
+  "human_review": {
+    "status": "confirmed",
+    "reviewer": "project_owner",
+    "date": "2026-09-23",
+    "scope": "all_cases_questions_expected_answers_required_concepts_and_gold_evidence"
+  },
+  "collection_id": "kb_1790061860190",
+  "purpose": "Fresh question-and-evidence-combination gate for the automatic multi-query planner, cross-paper answer synthesis, and inline citations after v3 development tuning.",
+  "consumed": true,
+  "consumption": {
+    "date": "2026-09-23",
+    "completed_run": "answer-citations-heldout-v4-results.json",
+    "outcome": "no_go",
+    "acceptance_passed": false,
+    "policy": "Do not tune against or rerun this split.",
+    "technical_note": "An initial launch stopped before answer generation because a quoted MODEL_URL was loaded without dotenv parsing. The completed run used the same frozen dataset and parameters after correcting only environment loading."
+  },
+  "do_not_execute_before_human_review": false,
+  "corpus": {
+    "paper_count": 19,
+    "chunk_count": 2057,
+    "chunk_schema_version": "1.1"
+  },
+  "heldout_scope": {
+    "level": "question_and_gold_chunk_combination",
+    "paper_level_holdout": false,
+    "reason": "Only seven verified papers remain outside the v3 development paper set; all were already used by the consumed v2 split. V4 therefore freezes new questions and previously unused Gold chunk IDs without claiming paper-level independence.",
+    "excluded_corpus_files": [
+      {
+        "filename": "2106.10379_alphafold.pdf",
+        "reason": "Filename/content mismatch: the indexed document is a superconductivity paper, not AlphaFold."
+      },
+      {
+        "filename": "2307.12037_multilingual-noisy-materials-paper.pdf",
+        "reason": "Filename/content mismatch: the indexed document is an LK-99 superconductivity paper."
+      }
+    ]
+  },
+  "frozen_configuration": {
+    "model_name": "qwen3-vl-plus",
+    "top_k": 10,
+    "score_threshold": 0.1,
+    "use_multi_query": true,
+    "candidate_k_per_query": 10,
+    "rrf_k": 60,
+    "original_reserve": 4,
+    "per_target_reserve": 2,
+    "use_reranker": false,
+    "temperature": 0.0,
+    "max_answer_tokens": 1400
+  },
+  "leakage_controls": {
+    "questions_overlap_v1_v2_v3": false,
+    "gold_chunk_overlap_v1_v2_v3": false,
+    "source_papers_overlap_consumed_v2": true,
+    "source_papers_overlap_v3_development": false,
+    "questions_and_gold_selected_by_direct_corpus_reading": true,
+    "semantic_retriever_not_used_to_select_gold": true,
+    "parameters_frozen_before_human_review": true,
+    "no_parameter_tuning_on_this_split": true,
+    "single_execution_after_human_verification": true
+  },
+  "cases": [
+    {
+      "id": "ACV4-01",
+      "category": "cross_paper_comparison",
+      "question": "Compare how the GPT-4 report and the DeepSeek-R1 report construct quantitative safety evaluations.",
+      "answerable": true,
+      "expected_answer": "GPT-4 uses internal content-policy evaluations with prompts designed to elicit categories such as hate speech, self-harm advice, and illicit advice, then labels generated text with classifiers and human analysis. DeepSeek-R1 builds specialized prompts for fine-grained safety subcategories, uses an LLM judge, verifies more than 95% sampled agreement with human assessments, and reports both unsafe and rejection rates.",
+      "required_concepts": [
+        "GPT-4 content-policy categories and elicitation prompts",
+        "GPT-4 classifier plus human analysis",
+        "DeepSeek-R1 specialized prompts for safety subcategories",
+        "DeepSeek-R1 human-checked LLM judgement and unsafe/rejection rates"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "gpt4_safety_evaluation",
+          "target": "2303.08774_gpt-4-technical-report.pdf",
+          "query": "How did GPT-4's quantitative safety evaluations define risky categories and classify generated responses?"
+        },
+        {
+          "id": "deepseek_r1_safety_evaluation",
+          "target": "2501.12948_deepseek-r1.pdf",
+          "query": "How did DeepSeek-R1 use specialized safety prompts, an LLM judge, and human agreement checks in its in-house evaluation?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000621:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 46,
+            "content_type": "paragraph",
+            "section_path": ["2 GPT-4 Observed Safety Challenges", "2.1 Evaluation Approach", "2.1.2 Quantitative Evaluations"]
+          },
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000355:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 51,
+            "content_type": "paragraph",
+            "section_path": ["Appendix", "D. Evaluation of DeepSeek-R1", "D.3. DeepSeek-R1 Safety Report", "D.3.3. Safety Taxonomic Study of R1 on In-House Benchmark"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-02",
+      "category": "cross_paper_comparison",
+      "question": "How do GPT-4 and Llama 3 approach multilingual capability evaluation or improvement?",
+      "answerable": true,
+      "expected_answer": "GPT-4 evaluates multilingual capability by machine-translating the 57-subject MMLU benchmark into multiple languages and comparing performance, including on low-resource languages. Llama 3 improves multilinguality by continuing pre-training of a specialist on a 90% multilingual-token mixture and using that expert to obtain higher-quality non-English annotations and instruction-tuning data for seven named languages.",
+      "required_concepts": [
+        "GPT-4 translated MMLU across languages",
+        "GPT-4 includes low-resource-language evaluation",
+        "Llama 3 multilingual expert uses a 90% multilingual-token mixture",
+        "Llama 3 collects multilingual annotations and instruction data"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "gpt4_multilingual",
+          "target": "2303.08774_gpt-4-technical-report.pdf",
+          "query": "How was GPT-4 evaluated on translated MMLU across high- and low-resource languages?"
+        },
+        {
+          "id": "llama3_multilingual",
+          "target": "2407.21783_llama-3-herd-of-models.pdf",
+          "query": "How did Llama 3 train a multilingual expert and collect non-English instruction-tuning data?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000050:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 7,
+            "content_type": "paragraph",
+            "section_path": ["4 Capabilities"]
+          },
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000229:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 22,
+            "content_type": "paragraph",
+            "section_path": ["4 Post-Training", "4.3 Capabilities", "4.3.2 Multilinguality"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-03",
+      "category": "cross_paper_comparison",
+      "question": "Compare the visual prompting interfaces and outputs described for GPT-4 and the Segment Anything Model.",
+      "answerable": true,
+      "expected_answer": "GPT-4 accepts arbitrarily interlaced image and text inputs and generates text for vision or language tasks. SAM instead encodes an image once, encodes sparse prompts such as points, boxes, or text and dense mask prompts, then uses a fast mask decoder to produce segmentation masks.",
+      "required_concepts": [
+        "GPT-4 interlaced image and text inputs",
+        "GPT-4 text output",
+        "SAM image encoder, prompt encoder, and mask decoder",
+        "SAM point, box, text, or mask prompts produce masks"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "gpt4_visual_interface",
+          "target": "2303.08774_gpt-4-technical-report.pdf",
+          "query": "What visual inputs does GPT-4 accept and what form of output does it generate?"
+        },
+        {
+          "id": "sam_prompt_interface",
+          "target": "2304.02643_segment-anything.pdf",
+          "query": "What prompt types and encoder-decoder components does SAM use to generate masks?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000060:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 8,
+            "content_type": "paragraph",
+            "section_path": ["4 Capabilities", "4.1 Visual Inputs"]
+          },
+          {
+            "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000035:part_0001",
+            "filename": "2304.02643_segment-anything.pdf",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": ["3. Segment Anything Model"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-04",
+      "category": "cross_paper_comparison",
+      "question": "How do Docling's layout analysis and the structured-digital-tables method recover machine-usable structure from document content?",
+      "answerable": true,
+      "expected_answer": "Docling detects page-element classes and bounding boxes, removes overlapping proposals, and intersects them with PDF text tokens to form units such as paragraphs, titles, captions, figures, and tables. The structured-digital-tables method maps each table row to an RDF subject, each column header to a property, and each cell to a property value, then associates the resulting graph with provenance metadata.",
+      "required_concepts": [
+        "Docling page-element bounding boxes and classes",
+        "Docling intersects proposals with PDF text tokens",
+        "table rows, headers, and cells map to RDF subject, property, and value",
+        "RDF graph retains provenance metadata"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "docling_layout_structure",
+          "target": "2408.09869_docling-technical-report.pdf",
+          "query": "How does Docling combine page layout bounding boxes with PDF text tokens into document units?"
+        },
+        {
+          "id": "structured_table_rdf",
+          "target": "PMC2950080_structured-digital-tables.pdf",
+          "query": "How are table rows, column headers, and cells mapped into RDF triples with provenance?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000035:part_0001",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "page_start": 3,
+            "content_type": "paragraph",
+            "section_path": ["3 Processing pipeline", "3.2 AI models", "Layout Analysis Model"]
+          },
+          {
+            "chunk_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2:paragraph:block_000081:part_0001",
+            "filename": "PMC2950080_structured-digital-tables.pdf",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": ["Introduction", "Properties table"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-05",
+      "category": "cross_paper_comparison",
+      "question": "Compare the system-level safety filters described for Llama 3 and the hosted DeepSeek-R1 service.",
+      "answerable": true,
+      "expected_answer": "Llama 3 supplements model-level mitigation with Llama Guard 3, an 8B safety classifier that can inspect prompts and outputs for policy violations, including multilingual text and tool calls. The DeepSeek-R1 service first flags queries using a predefined safety keyword list and then sends the flagged dialogue with a review prompt to DeepSeek-V3 for model-based risk review.",
+      "required_concepts": [
+        "Llama Guard 3 is an 8B safety classifier",
+        "Llama Guard checks prompts and/or outputs",
+        "DeepSeek-R1 first applies keyword filtering",
+        "DeepSeek-R1 sends flagged dialogue to DeepSeek-V3 for review"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "llama3_system_safety",
+          "target": "2407.21783_llama-3-herd-of-models.pdf",
+          "query": "How does Llama Guard 3 provide system-level input and output safety filtering?"
+        },
+        {
+          "id": "deepseek_r1_risk_control",
+          "target": "2501.12948_deepseek-r1.pdf",
+          "query": "How does the hosted DeepSeek-R1 service combine keyword filtering with a DeepSeek-V3 risk review?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000507:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 49,
+            "content_type": "paragraph",
+            "section_path": ["5 Results", "5.4 Safety", "5.4.7 System Level Safety"]
+          },
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000323:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 46,
+            "content_type": "paragraph",
+            "section_path": ["Appendix", "D. Evaluation of DeepSeek-R1", "D.3. DeepSeek-R1 Safety Report", "D.3.1. Risk Control System for DeepSeek-R1", "<Workflow>"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-06",
+      "category": "cross_paper_comparison",
+      "question": "What multilingual safety problems and evaluation responses are described for Llama 3 and DeepSeek-R1?",
+      "answerable": true,
+      "expected_answer": "Llama 3 finds that English safety knowledge does not reliably transfer across languages, so it collects language-specific high-quality safety data and balances violation and false-refusal rates with adversarial and borderline examples. DeepSeek-R1 measures disparities by translating its bilingual safety set into 50 languages, fully translating high-frequency languages and sampling low-frequency ones to create a 9,330-question test set with LLM translation and human calibration.",
+      "required_concepts": [
+        "Llama 3 observes weak cross-language transfer of safety knowledge",
+        "Llama 3 uses language-specific safety data and monitors violation and false-refusal rates",
+        "DeepSeek-R1 evaluates 50 languages with 9,330 questions",
+        "DeepSeek-R1 combines LLM translation with human calibration"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "llama3_multilingual_safety",
+          "target": "2407.21783_llama-3-herd-of-models.pdf",
+          "query": "What cross-language safety-transfer problem did Llama 3 observe and how did it adapt its data?"
+        },
+        {
+          "id": "deepseek_r1_multilingual_safety",
+          "target": "2501.12948_deepseek-r1.pdf",
+          "query": "How was DeepSeek-R1's multilingual safety test set built across 50 languages?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000464:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 45,
+            "content_type": "paragraph",
+            "section_path": ["5 Results", "5.4 Safety", "5.4.4 Safety Results"]
+          },
+          {
+            "chunk_id": "b191b0a365a64b4ab2791d117069ed17a2933d03554a662ced58b37df52018f4:paragraph:block_000362:part_0001",
+            "filename": "2501.12948_deepseek-r1.pdf",
+            "page_start": 53,
+            "content_type": "paragraph",
+            "section_path": ["Appendix", "D. Evaluation of DeepSeek-R1", "D.3. DeepSeek-R1 Safety Report", "D.3.4. Multilingual Safety Performance"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-07",
+      "category": "cross_paper_comparison",
+      "question": "How do Neural ODE and SAM reduce different kinds of computational cost?",
+      "answerable": true,
+      "expected_answer": "Neural ODE avoids storing forward-pass intermediates by using an adjoint-based backward solve, giving constant memory cost with respect to depth while allowing adaptive numerical computation. SAM amortizes a heavyweight image encoder by running it once per image and reusing the image embedding across prompts, leaving a lightweight prompt encoder and mask decoder for interactive mask generation.",
+      "required_concepts": [
+        "Neural ODE avoids storing forward intermediates",
+        "Neural ODE has constant memory with respect to depth and adaptive computation",
+        "SAM runs the heavyweight image encoder once",
+        "SAM reuses the embedding with a lightweight prompt path"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "neural_ode_efficiency",
+          "target": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "query": "How does Neural ODE obtain constant-memory training and adaptive computation?"
+        },
+        {
+          "id": "sam_efficiency",
+          "target": "2304.02643_segment-anything.pdf",
+          "query": "How does SAM amortize its image-encoder cost across multiple interactive prompts?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000014:part_0001",
+            "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+            "page_start": 1,
+            "content_type": "paragraph",
+            "section_path": ["1 Introduction"]
+          },
+          {
+            "chunk_id": "c6ca524e47200c3e542587ca76ac1dbc89cc67340f948c819250d16fdbd90cfb:paragraph:block_000015:part_0002",
+            "filename": "2304.02643_segment-anything.pdf",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": ["1. Introduction"]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ACV4-08",
+      "category": "cross_paper_comparison",
+      "question": "How do the GPT-4 and Llama 3 reports use iterative red teaming to improve safety?",
+      "answerable": true,
+      "expected_answer": "GPT-4 begins from hypotheses about high-risk areas, repeatedly tests them with domain experts, and incorporates new mitigations before testing again, while acknowledging demographic and professional bias in its expert pool. Llama 3 runs recurring red-team exercises with security, adversarial-ML, responsible-AI, integrity, and multilingual specialists, then feeds discoveries into benchmarks, safety-tuning data, risk taxonomies, and focused mitigations.",
+      "required_concepts": [
+        "GPT-4 iterates from risk hypotheses through tests and mitigations",
+        "GPT-4 uses domain experts and acknowledges selection bias",
+        "Llama 3 uses recurring multidisciplinary and multilingual red teams",
+        "Llama 3 feeds discoveries into benchmarks, safety data, and mitigations"
+      ],
+      "retrieval_subqueries": [
+        {
+          "id": "gpt4_red_teaming",
+          "target": "2303.08774_gpt-4-technical-report.pdf",
+          "query": "How was GPT-4 expert red teaming iterated and what limitations did the report note about expert selection?"
+        },
+        {
+          "id": "llama3_red_teaming",
+          "target": "2407.21783_llama-3-herd-of-models.pdf",
+          "query": "How did Llama 3 use recurring red-team findings to update benchmarks, training data, and mitigations?"
+        }
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774:paragraph:block_000615:part_0001",
+            "filename": "2303.08774_gpt-4-technical-report.pdf",
+            "page_start": 45,
+            "content_type": "paragraph",
+            "section_path": ["2 GPT-4 Observed Safety Challenges", "2.1 Evaluation Approach", "2.1.1 Qualitative Evaluations"]
+          },
+          {
+            "chunk_id": "481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083:paragraph:block_000488:part_0001",
+            "filename": "2407.21783_llama-3-herd-of-models.pdf",
+            "page_start": 48,
+            "content_type": "paragraph",
+            "section_path": ["5 Results", "5.4 Safety", "5.4.6 Red Teaming"]
+          }
+        ]
+      ]
+    }
+  ]
+}

@@ -1,49 +1,37 @@
-import { Bell, User, Activity } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Activity, Bell, Menu, User } from 'lucide-react';
+import { buttonStyles } from './ui/button';
 
 interface HeaderProps {
   title: string;
+  onOpenNavigation: () => void;
 }
 
-export function Header({ title }: HeaderProps) {
+export function Header({ title, onOpenNavigation }: HeaderProps) {
   return (
-    <header className="h-16 glass fixed top-0 left-[260px] right-0 z-40 border-b border-[rgba(0,212,255,0.15)]">
-      <div className="h-full px-6 flex items-center justify-between">
-        <motion.h2
-          className="text-[#e8eaed]"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {title}
-        </motion.h2>
-
+    <header className="app-shell-header fixed right-0 top-0 z-40 h-16 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <div className="flex h-full items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
-          {/* Activity Indicator */}
-          <motion.div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-[rgba(0,212,255,0.2)]"
-            whileHover={{ scale: 1.05 }}
-          >
-            <Activity size={14} className="text-[#00ff88]" />
-            <span className="text-xs text-[#94a3b8]">运行中</span>
-          </motion.div>
+          <button type="button" onClick={onOpenNavigation} className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true, className: 'md:hidden' })} aria-label="打开导航">
+            <Menu size={19} />
+          </button>
+          <div>
+            <h2 className="font-semibold text-slate-950">{title}</h2>
+            <p className="hidden text-[11px] text-slate-400 sm:block">面向科研论文的可溯源智能阅读</p>
+          </div>
+        </div>
 
-          <motion.button
-            className="w-10 h-10 rounded-xl glass-strong flex items-center justify-center transition-all duration-300 hover:bg-[rgba(0,212,255,0.1)] hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] relative group"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Bell size={18} className="text-[#94a3b8] group-hover:text-[#00d4ff] transition-colors" />
-            <div className="absolute top-2 right-2 w-2 h-2 bg-[#ff3b5c] rounded-full animate-pulse" />
-          </motion.button>
-
-          <motion.button
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center shadow-[0_0_20px_rgba(0,212,255,0.4)] hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all duration-300"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <User size={18} className="text-[#0a0e27]" />
-          </motion.button>
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 sm:flex">
+            <Activity size={13} className="text-emerald-600" />
+            <span className="text-xs font-medium text-emerald-700">本地工作区</span>
+          </div>
+          <button type="button" className={buttonStyles({ variant: 'quiet', iconOnly: true, className: 'relative text-slate-500' })} aria-label="通知">
+            <Bell size={17} />
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500" />
+          </button>
+          <button type="button" className={buttonStyles({ variant: 'primary', size: 'sm', iconOnly: true })} aria-label="用户账户">
+            <User size={16} />
+          </button>
         </div>
       </div>
     </header>

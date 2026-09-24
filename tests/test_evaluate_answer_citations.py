@@ -1,8 +1,10 @@
 import unittest
 
 from scripts.evaluate_answer_citations import (
+    _build_claim_evidence_bundles,
     _build_judge_prompt,
     _claim_units,
+    _enforce_claim_evidence_policy,
     _evaluate_citation_contract,
     _extract_citation_numbers,
     _parse_judge_output,
@@ -18,10 +20,43 @@ def _source(index, filename, chunk_id):
 
 
 class AnswerCitationEvaluationTests(unittest.TestCase):
-    def test_judge_prompt_uses_retrieved_evidence_for_grounding(self):
+    def test_claim_evidence_bundles_include_only_each_claims_cited_sources(self):
+        # @covers AC-202.1, AC-202.2
+        sources = [
+            {
+                "source_id": "S1",
+                "filename": "bert.pdf",
+                "chunk_text": "BERT uses masked language modelling.",
+            },
+            {
+                "source_id": "S2",
+                "filename": "lora.pdf",
+                "chunk_text": "LoRA freezes pretrained weights and learns low-rank updates.",
+            },
+        ]
+
+        bundles = _build_claim_evidence_bundles(
+            "BERT uses masked language modelling [S1]. "
+            "LoRA learns low-rank updates [S1]. "
+            "LoRA freezes pretrained weights [S2][S9]. "
+            "The method is efficient.",
+            sources,
+        )
+
+        self.assertEqual([item["id"] for item in bundles], ["A1", "A2", "A3", "A4"])
+        self.assertEqual(bundles[0]["valid_citation_numbers"], [1])
+        self.assertEqual(bundles[1]["valid_citation_numbers"], [1])
+        self.assertEqual(bundles[2]["citation_numbers"], [2, 9])
+        self.assertEqual(bundles[2]["valid_citation_numbers"], [2])
+        self.assertEqual(bundles[2]["invalid_citation_numbers"], [9])
+        self.assertEqual(bundles[3]["evidence"], [])
+        self.assertNotIn("lora.pdf", str(bundles[1]["evidence"]))
+
+    def test_judge_prompt_isolates_evidence_under_the_claim_that_cited_it(self):
+        # @covers AC-202.2
         prompt = _build_judge_prompt(
             question="Compare A and B.",
-            answer="A differs from B [S1].",
+            answer="A uses mechanism X [S1]. B uses mechanism Y [S2].",
             expected_answer="A and B differ.",
             required_concepts=["difference between A and B"],
             sources=[
@@ -29,13 +64,20 @@ class AnswerCitationEvaluationTests(unittest.TestCase):
                     "source_id": "S1",
                     "filename": "paper-a.pdf",
                     "chunk_text": "A uses mechanism X while B uses mechanism Y.",
-                }
+                },
+                {
+                    "source_id": "S2",
+                    "filename": "paper-b.pdf",
+                    "chunk_text": "B uses mechanism Y.",
+                },
             ],
         )
 
-        self.assertIn("[S1] paper-a.pdf", prompt)
+        self.assertIn("Claim A1", prompt)
+        self.assertIn("Claim A2", prompt)
+        self.assertIn("Cited evidence for A1 only", prompt)
         self.assertIn("A uses mechanism X", prompt)
-        self.assertIn("unsupported only when", prompt)
+        self.assertIn("never borrow evidence attached to another claim", prompt)
         self.assertIn("C1", prompt)
 
     def test_claim_units_ignore_pure_markdown_headings_only(self):
@@ -96,22 +138,71 @@ The method follows Li et al. (2018) and preserves one sentence [S2].
         self.assertFalse(metrics["gold_evidence_citation_hit"])
         self.assertAlmostEqual(metrics["claim_citation_completeness"], 2 / 3)
 
-    def test_judge_output_requires_every_declared_concept(self):
+    def test_judge_output_requires_every_concept_and_claim_exactly_once(self):
+        # @covers AC-202.3
         judgement = _parse_judge_output(
             '{"concepts":[{"id":"C1","covered":true},'
-            '{"id":"C2","covered":false}],"unsupported_claims":[]}',
+            '{"id":"C2","covered":false}],'
+            '"claims":[{"id":"A1","supported":true,"reason":"direct support"},'
+            '{"id":"A2","supported":false,"reason":"wrong cited source"}]}',
             ["C1", "C2"],
+            {"A1": "Supported claim [S1].", "A2": "Wrong citation [S1]."},
         )
 
         self.assertEqual(judgement["covered_concept_ids"], ["C1"])
         self.assertEqual(judgement["missing_concept_ids"], ["C2"])
+        self.assertEqual(judgement["supported_claim_ids"], ["A1"])
+        self.assertEqual(judgement["unsupported_claim_ids"], ["A2"])
+        self.assertEqual(judgement["unsupported_claims"], ["Wrong citation [S1]."])
+        self.assertEqual(judgement["claim_entailment_rate"], 0.5)
 
         with self.assertRaisesRegex(ValueError, "exactly once"):
             _parse_judge_output(
                 '{"concepts":[{"id":"C1","covered":true}],'
-                '"unsupported_claims":[]}',
+                '"claims":[{"id":"A1","supported":true,"reason":"ok"},'
+                '{"id":"A2","supported":false,"reason":"wrong"}]}',
                 ["C1", "C2"],
+                {"A1": "Supported claim [S1].", "A2": "Wrong citation [S1]."},
             )
+
+        with self.assertRaisesRegex(ValueError, "expected claim exactly once"):
+            _parse_judge_output(
+                '{"concepts":[{"id":"C1","covered":true},'
+                '{"id":"C2","covered":false}],'
+                '"claims":[{"id":"A1","supported":true,"reason":"ok"}]}',
+                ["C1", "C2"],
+                {"A1": "Supported claim [S1].", "A2": "Wrong citation [S1]."},
+            )
+
+    def test_uncited_claim_is_deterministically_unsupported(self):
+        # @covers AC-202.2, AC-202.3
+        bundles = _build_claim_evidence_bundles(
+            "Nougat converts document images into markup.",
+            [
+                {
+                    "source_id": "S1",
+                    "filename": "nougat.pdf",
+                    "chunk_text": "Nougat converts document images into markup.",
+                }
+            ],
+        )
+        judgement = {
+            "claim_support": [
+                {
+                    "id": "A1",
+                    "claim": bundles[0]["claim"],
+                    "supported": True,
+                    "reason": "The reference answer agrees.",
+                }
+            ]
+        }
+
+        enforced = _enforce_claim_evidence_policy(judgement, bundles)
+
+        self.assertEqual(enforced["supported_claim_ids"], [])
+        self.assertEqual(enforced["unsupported_claim_ids"], ["A1"])
+        self.assertEqual(enforced["claim_entailment_rate"], 0.0)
+        self.assertIn("No valid claim-scoped cited evidence", enforced["claim_support"][0]["reason"])
 
 
 if __name__ == "__main__":

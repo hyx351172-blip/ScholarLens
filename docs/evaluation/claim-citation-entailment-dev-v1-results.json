@@ -1,0 +1,436 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-claim-citation-entailment-dev-v1",
+  "dataset_id": "scholarlens-claim-citation-entailment-dev-v1",
+  "dataset_split": "development",
+  "configuration": {
+    "model_name": "qwen3-vl-plus",
+    "judge": "same_model_structured_development_judge",
+    "model_host": "dashscope.aliyuncs.com",
+    "api_key_source": "API_KEY"
+  },
+  "summary": {
+    "case_count": 7,
+    "claim_count": 8,
+    "claim_decision_accuracy": 1,
+    "case_exact_match_rate": 1,
+    "unsupported_claim_recall": 1,
+    "supported_claim_recall": 1
+  },
+  "acceptance": {
+    "passed": true,
+    "checks": {
+      "claim_decision_accuracy": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "case_exact_match_rate": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "unsupported_claim_recall": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      "supported_claim_recall": {
+        "actual": 1,
+        "operator": ">=",
+        "threshold": 1.0,
+        "passed": true
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "CCE-01-correct-single",
+      "scenario": "correct_single_citation",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "BERT pre-trains with masked language modelling and next-sentence prediction [S1].",
+            "supported": true,
+            "reason": "The cited evidence [S1] explicitly states BERT is pre-trained using 'masked language modelling and next-sentence prediction', directly supporting the claim."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [],
+        "unsupported_claims": [],
+        "claim_entailment_rate": 1.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-02-wrong-citation-global-rescue",
+      "scenario": "wrong_citation_correct_evidence_elsewhere",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "LoRA freezes pretrained weights and learns low-rank updates [S1].",
+            "supported": false,
+            "reason": "The cited evidence [S1] describes BERT pretraining objectives and provides no information about LoRA freezing weights or learning low-rank updates; thus, the claim lacks supporting evidence from its designated citation."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "LoRA freezes pretrained weights and learns low-rank updates [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-03-grouped-citations",
+      "scenario": "grouped_citation_one_source_supports",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1,
+            2
+          ],
+          "valid_citation_numbers": [
+            1,
+            2
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Donut performs OCR-free document understanding [S1, S2].",
+            "supported": true,
+            "reason": "Evidence [S2] explicitly states 'Donut is an OCR-free end-to-end transformer for visual document understanding', directly supporting the claim. [S1] is irrelevant but does not undermine support."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [],
+        "unsupported_claims": [],
+        "claim_entailment_rate": 1.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-04-uncited",
+      "scenario": "uncited_factual_claim",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [],
+          "valid_citation_numbers": [],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": []
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "Nougat converts document images into markup.",
+            "supported": false,
+            "reason": "No valid claim-scoped cited evidence was supplied."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "Nougat converts document images into markup."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-05-invalid-source-id",
+      "scenario": "invalid_citation_only",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            9
+          ],
+          "valid_citation_numbers": [],
+          "invalid_citation_numbers": [
+            9
+          ],
+          "evidence_source_ids": []
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "LayoutLMv3 jointly learns text and image masking [S9].",
+            "supported": false,
+            "reason": "No valid claim-scoped cited evidence was supplied."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "LayoutLMv3 jointly learns text and image masking [S9]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-06-contradiction",
+      "scenario": "cited_evidence_contradicts_claim",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "The cited experiment reports that retrieval augmentation reduced factual accuracy [S1].",
+            "supported": false,
+            "reason": "The cited evidence [S1] states factual accuracy improved from 71% to 79%, directly contradicting the claim that it was reduced."
+          }
+        ],
+        "supported_claim_ids": [],
+        "unsupported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claims": [
+          "The cited experiment reports that retrieval augmentation reduced factual accuracy [S1]."
+        ],
+        "claim_entailment_rate": 0.0,
+        "concept_coverage": 1.0
+      }
+    },
+    {
+      "case_id": "CCE-07-mixed-multiple-claims",
+      "scenario": "same_source_supports_one_claim_only",
+      "claims": [
+        {
+          "id": "A1",
+          "expected_supported": true,
+          "predicted_supported": true,
+          "correct": true
+        },
+        {
+          "id": "A2",
+          "expected_supported": false,
+          "predicted_supported": false,
+          "correct": true
+        }
+      ],
+      "exact_match": true,
+      "claim_evidence": [
+        {
+          "id": "A1",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        },
+        {
+          "id": "A2",
+          "citation_numbers": [
+            1
+          ],
+          "valid_citation_numbers": [
+            1
+          ],
+          "invalid_citation_numbers": [],
+          "evidence_source_ids": [
+            "S1"
+          ]
+        }
+      ],
+      "judgement": {
+        "covered_concept_ids": [
+          "C1",
+          "C2"
+        ],
+        "missing_concept_ids": [],
+        "claim_support": [
+          {
+            "id": "A1",
+            "claim": "ColBERT uses late interaction between query and passage representations [S1].",
+            "supported": true,
+            "reason": "Evidence [S1] explicitly states ColBERT applies a 'late-interaction MaxSim operator over their token-level embeddings', confirming late interaction between query and passage representations."
+          },
+          {
+            "id": "A2",
+            "claim": "It represents every passage with one pooled dense vector [S1].",
+            "supported": false,
+            "reason": "Evidence [S1] directly contradicts A2 by stating ColBERT uses token-level embeddings 'rather than pooling each passage into one vector'."
+          }
+        ],
+        "supported_claim_ids": [
+          "A1"
+        ],
+        "unsupported_claim_ids": [
+          "A2"
+        ],
+        "unsupported_claims": [
+          "It represents every passage with one pooled dense vector [S1]."
+        ],
+        "claim_entailment_rate": 0.5,
+        "concept_coverage": 1.0
+      }
+    }
+  ],
+  "dataset_validation": {
+    "dataset_id": "scholarlens-claim-citation-entailment-dev-v1",
+    "case_count": 7,
+    "claim_count": 8,
+    "scenario_count": 7
+  }
+}

@@ -1,7 +1,20 @@
-import { Search, Download, Save, GitCompare, Eye, Sparkles } from 'lucide-react';
+import {
+  BarChart3,
+  Combine,
+  Download,
+  Eye,
+  FileText,
+  GitCompare,
+  Radar,
+  Save,
+  Search,
+  ScanSearch,
+  TextSearch,
+} from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Slider } from './ui/slider';
+import { buttonStyles } from './ui/button';
 
 export function RetrievalTest() {
   const [query, setQuery] = useState('');
@@ -44,7 +57,7 @@ export function RetrievalTest() {
     let highlighted = text;
     keywords.forEach((keyword) => {
       const regex = new RegExp(`(${keyword})`, 'gi');
-      highlighted = highlighted.replace(regex, '<mark class="bg-[rgba(0,212,255,0.3)] text-[#00d4ff] px-1 rounded">$1</mark>');
+      highlighted = highlighted.replace(regex, '<mark class="bg-[rgba(0,212,255,0.3)] text-violet-600 px-1 rounded">$1</mark>');
     });
     return highlighted;
   };
@@ -62,18 +75,17 @@ export function RetrievalTest() {
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="💬 输入测试问题，例如：'这篇论文使用了哪些数据集？'"
-              className="w-full min-h-[100px] px-5 py-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:border-[#00d4ff] resize-none text-[#e8eaed] placeholder-[#94a3b8] transition-all duration-300"
+              placeholder="输入测试问题，例如：'这篇论文使用了哪些数据集？'"
+              className="w-full min-h-[100px] px-5 py-4 glass-strong border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-500 resize-none text-slate-900 placeholder-slate-400 transition-all duration-300"
             />
           </div>
           <motion.button
-            className="w-40 h-12 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center justify-center gap-2 self-end relative overflow-hidden group"
+            className={buttonStyles({ variant: 'primary', size: 'lg', className: 'w-40 self-end' })}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-            <Search size={20} className="relative z-10" />
-            <span className="relative z-10">检索</span>
+            <Search size={18} aria-hidden="true" />
+            <span>检索</span>
           </motion.button>
         </div>
       </motion.div>
@@ -86,18 +98,18 @@ export function RetrievalTest() {
         transition={{ delay: 0.1 }}
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center shadow-lg">
-            <Sparkles size={20} className="text-[#0a0e27]" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg">
+            <ScanSearch size={20} className="text-white" />
           </div>
-          <h3 className="text-[#e8eaed]">检索参数</h3>
+          <h3 className="text-slate-900">检索参数</h3>
         </div>
 
         {/* Parameters */}
         <div className="grid grid-cols-2 gap-6 mb-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-[#94a3b8]">Top K</label>
-              <span className="text-[#00d4ff] px-3 py-1 rounded-lg bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)]">{topK[0]}</span>
+              <label className="text-slate-500">Top K</label>
+              <span className="text-violet-600 px-3 py-1 rounded-lg bg-violet-50 border border-slate-200">{topK[0]}</span>
             </div>
             <Slider
               value={topK}
@@ -111,7 +123,7 @@ export function RetrievalTest() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-[#94a3b8]">相似度阈值</label>
+              <label className="text-slate-500">相似度阈值</label>
               <input
                 type="number"
                 value={similarityThreshold}
@@ -119,7 +131,7 @@ export function RetrievalTest() {
                 min={0}
                 max={1}
                 step={0.05}
-                className="w-24 px-3 py-1 glass-strong border border-[rgba(0,212,255,0.2)] rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-[#00d4ff] text-[#e8eaed]"
+                className="w-24 px-3 py-1 glass-strong border border-slate-200 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-violet-300 text-slate-900"
               />
             </div>
           </div>
@@ -133,22 +145,24 @@ export function RetrievalTest() {
                 type="checkbox"
                 checked={enableRerank}
                 onChange={(e) => setEnableRerank(e.target.checked)}
-                className="w-5 h-5 rounded border-[rgba(0,212,255,0.3)] text-[#00d4ff] focus:ring-2 focus:ring-[#00d4ff] bg-[rgba(15,18,53,0.6)] cursor-pointer"
+                className="w-5 h-5 rounded border-violet-200 text-violet-600 focus:ring-2 focus:ring-violet-300 bg-white cursor-pointer"
               />
             </div>
-            <span className="text-[#e8eaed] group-hover:text-[#00d4ff] transition-colors">启用Rerank</span>
+            <span className="text-slate-900 group-hover:text-violet-600 transition-colors">启用Rerank</span>
           </label>
         </div>
 
         {/* Search Mode */}
         <div className="space-y-3">
-          <label className="text-[#94a3b8]">搜索模式</label>
+          <label className="text-slate-500">搜索模式</label>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { id: 'vector', label: '向量', icon: '🔵', desc: '语义搜索' },
-              { id: 'hybrid', label: '混合', icon: '⚫', desc: '最佳效果' },
-              { id: 'keyword', label: '关键词', icon: '⚪', desc: '精确匹配' },
-            ].map((mode) => (
+              { id: 'vector', label: '向量', icon: Radar, desc: '语义搜索' },
+              { id: 'hybrid', label: '混合', icon: Combine, desc: '最佳效果' },
+              { id: 'keyword', label: '关键词', icon: TextSearch, desc: '精确匹配' },
+            ].map((mode) => {
+              const ModeIcon = mode.icon;
+              return (
               <motion.button
                 key={mode.id}
                 onClick={() => setSearchMode(mode.id)}
@@ -156,20 +170,21 @@ export function RetrievalTest() {
                 whileTap={{ scale: 0.95 }}
                 className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
                   searchMode === mode.id
-                    ? 'border-[#00d4ff] bg-[rgba(0,212,255,0.1)] shadow-[0_0_20px_rgba(0,212,255,0.3)]'
-                    : 'border-[rgba(0,212,255,0.2)] glass hover:border-[rgba(0,212,255,0.4)]'
+                    ? 'border-violet-500 bg-violet-50 shadow-[0_0_20px_rgba(0,212,255,0.3)]'
+                    : 'border-slate-200 glass hover:border-violet-300'
                 }`}
               >
                 {searchMode === mode.id && (
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(0,212,255,0.2)] to-transparent shimmer" />
                 )}
-                <span className="text-2xl relative z-10">{mode.icon}</span>
-                <span className={`relative z-10 ${searchMode === mode.id ? 'text-[#00d4ff]' : 'text-[#e8eaed]'}`}>
+                <ModeIcon size={22} className="relative z-10 text-slate-600" aria-hidden="true" />
+                <span className={`relative z-10 ${searchMode === mode.id ? 'text-violet-600' : 'text-slate-900'}`}>
                   {mode.label}
                 </span>
-                <span className="text-xs text-[#94a3b8] relative z-10">{mode.desc}</span>
+                <span className="text-xs text-slate-500 relative z-10">{mode.desc}</span>
               </motion.button>
-            ))}
+              );
+            })}
           </div>
         </div>
       </motion.div>
@@ -182,12 +197,12 @@ export function RetrievalTest() {
         transition={{ delay: 0.2 }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#e8eaed] flex items-center gap-2">
-            <span className="text-2xl">📊</span>
+          <h3 className="text-slate-900 flex items-center gap-2">
+            <BarChart3 size={21} className="text-slate-600" aria-hidden="true" />
             检索结果
           </h3>
-          <span className="text-[#94a3b8] px-4 py-2 rounded-lg glass-strong border border-[rgba(0,212,255,0.2)]">
-            (共{results.length}个，耗时<span className="text-[#00d4ff] mx-1">0.5s</span>)
+          <span className="text-slate-500 px-4 py-2 rounded-lg glass-strong border border-slate-200">
+            (共{results.length}个，耗时<span className="text-violet-600 mx-1">0.5s</span>)
           </span>
         </div>
 
@@ -199,7 +214,7 @@ export function RetrievalTest() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
               whileHover={{ y: -2 }}
-              className="glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl p-6 hover:border-[rgba(0,212,255,0.4)] hover:shadow-[0_0_20px_rgba(0,212,255,0.2)] transition-all relative overflow-hidden group"
+              className="glass-strong border border-slate-200 rounded-xl p-6 hover:border-violet-300 hover:shadow-[0_0_20px_rgba(0,212,255,0.2)] transition-all relative overflow-hidden group"
             >
               {/* Hover effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -207,7 +222,7 @@ export function RetrievalTest() {
               </div>
 
               {/* Rank Badge */}
-              <div className="absolute top-4 left-4 w-10 h-10 bg-gradient-to-br from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl flex items-center justify-center shadow-lg z-10">
+              <div className="absolute top-4 left-4 w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg z-10">
                 #{result.rank}
               </div>
 
@@ -215,54 +230,54 @@ export function RetrievalTest() {
                 {/* Score Visualization */}
                 <div className="mb-4 space-y-3">
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-[#94a3b8] w-20">相似度:</span>
-                    <div className="flex-1 h-2.5 bg-[rgba(15,18,53,0.8)] rounded-full overflow-hidden border border-[rgba(0,212,255,0.2)]">
+                    <span className="text-sm text-slate-500 w-20">相似度:</span>
+                    <div className="flex-1 h-2.5 bg-white rounded-full overflow-hidden border border-slate-200">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${result.similarity * 100}%` }}
                         transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                        className="h-full bg-gradient-to-r from-[#00d4ff] to-[#0066ff] relative overflow-hidden"
+                        className="h-full bg-gradient-to-r from-violet-500 to-indigo-600 relative overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 shimmer" />
                       </motion.div>
                     </div>
-                    <span className="text-sm text-[#00d4ff] w-14 text-right">{result.similarity}</span>
+                    <span className="text-sm text-violet-600 w-14 text-right">{result.similarity}</span>
                   </div>
 
                   {enableRerank && (
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-[#94a3b8] w-20">重排序:</span>
-                      <div className="flex-1 h-2.5 bg-[rgba(15,18,53,0.8)] rounded-full overflow-hidden border border-[rgba(0,255,136,0.2)]">
+                      <span className="text-sm text-slate-500 w-20">重排序:</span>
+                      <div className="flex-1 h-2.5 bg-white rounded-full overflow-hidden border border-emerald-200">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${result.rerank * 100}%` }}
                           transition={{ duration: 1, delay: 0.6 + index * 0.1 }}
-                          className="h-full bg-gradient-to-r from-[#00ff88] to-[#00d4a0] relative overflow-hidden"
+                          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 relative overflow-hidden"
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 shimmer" />
                         </motion.div>
                       </div>
-                      <span className="text-sm text-[#00ff88] w-14 text-right">{result.rerank}</span>
+                      <span className="text-sm text-emerald-600 w-14 text-right">{result.rerank}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Source Info */}
-                <div className="mb-3 text-[#e8eaed] flex items-center gap-2">
-                  <span>📄</span>
+                <div className="mb-3 text-slate-900 flex items-center gap-2">
+                  <FileText size={16} className="text-slate-500" aria-hidden="true" />
                   <span>{result.source}</span>
-                  <span className="text-[#94a3b8]">- 第{result.page}页</span>
+                  <span className="text-slate-500">- 第{result.page}页</span>
                 </div>
 
                 {/* Content Preview */}
-                <div className="glass rounded-xl p-4 mb-4 text-sm text-[#94a3b8] max-h-[120px] overflow-auto border border-[rgba(0,212,255,0.1)]">
+                <div className="glass rounded-xl p-4 mb-4 text-sm text-slate-500 max-h-[120px] overflow-auto border border-slate-100">
                   <div dangerouslySetInnerHTML={{ __html: highlightKeywords(result.content, ['RAG', 'retrieval', 'generation']) }} />
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   <motion.button
-                    className="px-4 py-2 border border-[#00d4ff] text-[#00d4ff] rounded-xl hover:bg-[rgba(0,212,255,0.1)] transition-all flex items-center gap-2"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -270,7 +285,7 @@ export function RetrievalTest() {
                     查看完整Chunk
                   </motion.button>
                   <motion.button
-                    className="px-4 py-2 border border-[#00d4ff] text-[#00d4ff] rounded-xl hover:bg-[rgba(0,212,255,0.1)] transition-all"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -291,29 +306,28 @@ export function RetrievalTest() {
         transition={{ delay: 0.6 }}
       >
         <motion.button
-          className="flex-1 px-6 py-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] hover:border-[rgba(0,212,255,0.4)] transition-all flex items-center justify-center gap-2 text-[#e8eaed] group"
+          className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Download size={18} className="group-hover:text-[#00d4ff] transition-colors" />
+          <Download size={18} className="group-hover:text-violet-600 transition-colors" />
           <span>导出结果</span>
         </motion.button>
         <motion.button
-          className="flex-1 px-6 py-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] hover:border-[rgba(0,212,255,0.4)] transition-all flex items-center justify-center gap-2 text-[#e8eaed] group"
+          className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Save size={18} className="group-hover:text-[#00d4ff] transition-colors" />
+          <Save size={18} className="group-hover:text-violet-600 transition-colors" />
           <span>保存测试案例</span>
         </motion.button>
         <motion.button
-          className="flex-1 px-6 py-4 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center justify-center gap-2 relative overflow-hidden group"
+          className={buttonStyles({ variant: 'primary', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-          <GitCompare size={18} className="relative z-10" />
-          <span className="relative z-10">对比不同参数</span>
+          <GitCompare size={18} aria-hidden="true" />
+          <span>对比不同参数</span>
         </motion.button>
       </motion.div>
     </div>

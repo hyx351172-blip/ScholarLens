@@ -27,16 +27,20 @@ try:
         RetrievalPlan,
         create_query_plan,
         execute_retrieval_plan,
+        resolve_target_filename,
         single_query_plan,
     )
+    from backend.chat.section_intent_retrieval import rerank_section_intent
 except ModuleNotFoundError:  # Direct execution from backend/chat.
     from multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
         create_query_plan,
         execute_retrieval_plan,
+        resolve_target_filename,
         single_query_plan,
     )
+    from section_intent_retrieval import rerank_section_intent
 
 # 加载仓库根目录 .env 文件
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -87,6 +91,7 @@ class MultiQueryConfig(BaseModel):
 class SourceDocument(BaseModel):
     """来源文档"""
     source_id: Optional[str] = None
+    file_id: Optional[str] = None
     chunk_text: str
     filename: str
     score: float  # 主分数（如果有重排序则为重排序分数，否则为召回分数）
@@ -95,6 +100,8 @@ class SourceDocument(BaseModel):
     query_rrf_score: Optional[float] = None
     matched_query_ids: Optional[List[str]] = None
     query_ranks: Optional[Dict[str, int]] = None
+    section_intent: Optional[str] = None
+    section_boost: Optional[float] = None
     metadata: Dict[str, Any] = {}
 
 class ChatRequest(BaseModel):
@@ -161,7 +168,8 @@ class ChatService:
         collection_name: str,
         milvus_api_url: str,
         top_k: int = 10,
-        score_threshold: float = 0.1
+        score_threshold: float = 0.1,
+        filter_expr: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         从Milvus召回相关文档
@@ -180,10 +188,15 @@ class ChatService:
         """
         try:
             url = f"{milvus_api_url}/search"
+            # Broad cross-language questions can rank the correct scientific
+            # section below the final Top-K. Pull a bounded candidate pool,
+            # apply deterministic section-intent scoring, then truncate.
+            candidate_top_k = min(50, max(top_k, top_k * 5))
             payload = {
                 "collection_name": collection_name,
                 "query_text": query,
-                "top_k": top_k
+                "top_k": candidate_top_k,
+                "filter_expr": filter_expr,
             }
 
             print(f"正在从Milvus召回文档: {url}")
@@ -215,14 +228,69 @@ class ChatService:
                 doc for doc in documents
                 if doc["score"] >= score_threshold
             ]
+            ranked_docs = rerank_section_intent(query, filtered_docs)
+            section_matches = [
+                doc for doc in ranked_docs
+                if doc.get("section_intent") and float(doc.get("section_boost", 0.0)) > 0
+            ]
+            if section_matches:
+                ranked_docs = section_matches
+            ranked_docs = ranked_docs[:top_k]
 
-            print(f"✓ 召回 {len(documents)} 个文档，过滤后保留 {len(filtered_docs)} 个")
-            return filtered_docs
+            print(
+                f"✓ 候选 {len(documents)} 个，阈值后 {len(filtered_docs)} 个，"
+                f"章节排序后返回 {len(ranked_docs)} 个"
+            )
+            return ranked_docs
 
         except requests.exceptions.RequestException as e:
             raise HTTPException(
                 status_code=500,
                 detail=f"调用Milvus API失败: {str(e)}"
+            )
+
+    async def list_collection_filenames(
+        self,
+        collection_name: str,
+        milvus_api_url: str,
+    ) -> List[str]:
+        """Read the current corpus catalog used for safe target resolution."""
+
+        try:
+            url = (
+                f"{milvus_api_url.rstrip('/')}/knowledge_base/"
+                f"{collection_name}/documents"
+            )
+            response = await asyncio.to_thread(
+                requests.get,
+                url,
+                timeout=30,
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"知识库文档目录读取失败: {response.text}",
+                )
+            result = response.json()
+            if result.get("status") != "success":
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"知识库文档目录读取失败: {result}",
+                )
+            documents = result.get("documents", [])
+            if not isinstance(documents, list):
+                raise HTTPException(status_code=500, detail="知识库文档目录格式错误")
+            return sorted(
+                {
+                    str(item.get("filename", "")).strip()
+                    for item in documents
+                    if isinstance(item, dict) and str(item.get("filename", "")).strip()
+                }
+            )
+        except requests.exceptions.RequestException as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"调用Milvus文档目录API失败: {str(e)}",
             )
 
     async def plan_retrieval(
@@ -274,6 +342,45 @@ class ChatService:
             else request.top_k
         )
 
+        target_filters: Dict[str, str] = {}
+        target_resolutions: Dict[str, Dict[str, Any]] = {}
+        target_resolution_status = "not_applicable"
+        if plan.is_multi_query:
+            try:
+                filenames = await self.list_collection_filenames(
+                    request.collection_name,
+                    request.milvus_api_url,
+                )
+                for subquery in plan.subqueries:
+                    resolution = resolve_target_filename(subquery.target, filenames)
+                    target_resolutions[subquery.query_id] = resolution.to_dict()
+                    if resolution.filename:
+                        target_filters[subquery.query] = (
+                            f"filename == {json.dumps(resolution.filename, ensure_ascii=False)}"
+                        )
+                resolved_count = sum(
+                    item["status"] == "resolved"
+                    for item in target_resolutions.values()
+                )
+                if resolved_count == len(plan.subqueries):
+                    target_resolution_status = "complete"
+                elif resolved_count:
+                    target_resolution_status = "partial"
+                else:
+                    target_resolution_status = "unresolved"
+            except Exception as exc:
+                target_resolution_status = "catalog_error"
+                target_resolutions = {
+                    item.query_id: {
+                        "target": item.target,
+                        "status": "catalog_error",
+                        "filename": None,
+                        "score": 0.0,
+                        "reason": type(exc).__name__,
+                    }
+                    for item in plan.subqueries
+                }
+
         async def retrieve(query: str) -> List[Dict[str, Any]]:
             return await self.retrieve_documents(
                 query=query,
@@ -281,6 +388,7 @@ class ChatService:
                 milvus_api_url=request.milvus_api_url,
                 top_k=candidate_k,
                 score_threshold=request.score_threshold,
+                filter_expr=target_filters.get(query),
             )
 
         execution = await execute_retrieval_plan(
@@ -293,6 +401,8 @@ class ChatService:
             per_target_reserve=request.multi_query_config.per_target_reserve,
         )
         execution.trace["planner_latency_seconds"] = round(planner_latency, 4)
+        execution.trace["target_resolution_status"] = target_resolution_status
+        execution.trace["target_resolutions"] = target_resolutions
         return execution
 
     async def rerank_for_request(
@@ -761,6 +871,7 @@ class ChatService:
                 for index, doc in enumerate(documents, 1):
                     sources.append({
                         "source_id": f"S{index}",
+                        "file_id": doc.get("file_id") or doc.get("metadata", {}).get("file_id"),
                         "chunk_text": doc["chunk_text"],
                         "filename": doc["filename"],
                         "score": doc["score"],
@@ -769,6 +880,8 @@ class ChatService:
                         "query_rrf_score": doc.get("query_rrf_score"),
                         "matched_query_ids": doc.get("matched_query_ids"),
                         "query_ranks": doc.get("query_ranks"),
+                        "section_intent": doc.get("section_intent"),
+                        "section_boost": doc.get("section_boost"),
                         "metadata": doc.get("metadata", {})
                     })
 
@@ -910,6 +1023,7 @@ class ChatService:
                 for index, doc in enumerate(documents, 1):
                     source_doc = SourceDocument(
                         source_id=f"S{index}",
+                        file_id=doc.get("file_id") or doc.get("metadata", {}).get("file_id"),
                         chunk_text=doc["chunk_text"],
                         filename=doc["filename"],
                         score=doc["score"],  # 主分数
@@ -918,6 +1032,8 @@ class ChatService:
                         query_rrf_score=doc.get("query_rrf_score"),
                         matched_query_ids=doc.get("matched_query_ids"),
                         query_ranks=doc.get("query_ranks"),
+                        section_intent=doc.get("section_intent"),
+                        section_boost=doc.get("section_boost"),
                         metadata=doc.get("metadata", {})
                     )
                     sources.append(source_doc)

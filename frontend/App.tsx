@@ -13,17 +13,18 @@ import { Toaster } from './components/ui/sonner';
 
 export default function App() {
   const [activeView, setActiveView] = useState('dashboard');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [selectedKnowledgeBase, setSelectedKnowledgeBase] = useState<string | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
 
   const getHeaderTitle = () => {
     switch (activeView) {
       case 'dashboard':
-        return '仪表盘';
+        return '概览';
       case 'knowledge':
-        return selectedKnowledgeBase ? '知识库详情' : '知识库管理';
+        return selectedKnowledgeBase ? '文献详情' : '文献库';
       case 'chat':
-        return '对话';
+        return '科研问答';
       case 'retrieval':
         return '检索测试';
       case 'settings':
@@ -35,6 +36,7 @@ export default function App() {
 
   const handleNavigate = (view: string) => {
     setActiveView(view);
+    setMobileNavOpen(false);
     setSelectedKnowledgeBase(null);
     setSelectedDocument(null);
   };
@@ -90,57 +92,29 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,212,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,212,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+    <div className="min-h-screen bg-[#f8f8fb]">
+      <Sidebar
+        activeView={activeView}
+        onNavigate={handleNavigate}
+        mobileOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
 
-        {/* Floating Orbs */}
-        <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full bg-[#00d4ff] opacity-10 blur-[120px]"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -100, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ top: '10%', left: '20%' }}
-        />
-        <motion.div
-          className="absolute w-[400px] h-[400px] rounded-full bg-[#0066ff] opacity-10 blur-[120px]"
-          animate={{
-            x: [0, -80, 0],
-            y: [0, 80, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ bottom: '10%', right: '20%' }}
-        />
-      </div>
-
-      <Sidebar activeView={activeView} onNavigate={handleNavigate} />
-
-      <div style={{ marginLeft: '260px', position: 'relative', zIndex: 10, minHeight: '100vh' }}>
-        <Header title={getHeaderTitle()} />
+      <div className="app-shell-content min-h-screen">
+        <Header title={getHeaderTitle()} onOpenNavigation={() => setMobileNavOpen(true)} />
 
         <main style={{
           paddingTop: (activeView === 'chat' || (activeView === 'knowledge' && selectedDocument)) ? '64px' : '80px',
           minHeight: 'calc(100vh - 64px)'
         }}>
-          <div className={(activeView === 'chat' || (activeView === 'knowledge' && selectedDocument)) ? '' : 'max-w-[1440px] mx-auto p-6'}>
+          <div className={(activeView === 'chat' || (activeView === 'knowledge' && selectedDocument)) ? '' : 'mx-auto max-w-[1440px] p-6'}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeView + (selectedKnowledgeBase || '') + (selectedDocument || '')}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 {renderContent()}
               </motion.div>

@@ -1,0 +1,576 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-claim-citation-entailment-heldout-v5",
+  "split": "held_out",
+  "benchmark_target": "claim_to_citation_entailment_judge",
+  "annotation_status": "human_verified",
+  "created_at": "2026-09-23",
+  "human_review": {
+    "status": "confirmed",
+    "reviewer": "project_owner",
+    "date": "2026-09-23",
+    "scope": "all_questions_answers_claim_labels_rationales_and_exact_evidence"
+  },
+  "data_transfer_authorization": {
+    "status": "confirmed",
+    "authorized_by": "project_owner",
+    "date": "2026-09-23",
+    "destination": "dashscope.aliyuncs.com",
+    "model": "qwen3-vl-plus",
+    "scope": "heldout_v5_paper_evidence_for_one_evaluation_run"
+  },
+  "collection_id": "kb_1790061860190",
+  "consumed": true,
+  "consumption": {
+    "date": "2026-09-23",
+    "completed_run": "claim-citation-entailment-heldout-v5-results.json",
+    "outcome": "go",
+    "acceptance_passed": true,
+    "policy": "Do not tune against or rerun this split."
+  },
+  "do_not_execute_before_human_review": false,
+  "selection": {
+    "source": "exact_chunks_read_directly_from_the_indexed_corpus",
+    "semantic_retriever_used_to_select_evidence": false,
+    "previous_gold_datasets_checked": [
+      "evidence-gold-v1.json",
+      "evidence-gold-v2-heldout.json",
+      "evidence-gold-v3-multi-query-dev.json",
+      "evidence-gold-v4-answer-citations-heldout.json"
+    ]
+  },
+  "leakage_controls": {
+    "prior_gold_chunk_overlap": false,
+    "exact_question_overlap_v1_v2_v3_v4": false,
+    "labels_hidden_from_judge_prompt": true,
+    "single_execution_after_human_confirmation": true,
+    "no_tuning_on_this_split": true
+  },
+  "cases": [
+    {
+      "id": "CCHV5-01",
+      "scenario": "correct_single_real_evidence",
+      "question": "How does LoRA parameterize a weight update during adaptation?",
+      "expected_answer": "LoRA freezes the pretrained weight and represents its update as a low-rank product BA.",
+      "required_concepts": [
+        "frozen pretrained weight",
+        "low-rank update BA"
+      ],
+      "answer": "LoRA freezes the pretrained weight and represents its update as the low-rank product BA [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_text": "LORA: LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS\n4 OUR METHOD > 4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES\nA neural network contains many dense layers which perform matrix multiplication. The weight matrices in these layers typically have full-rank. When adapting to a specific task, Aghajanyan et al. (2020) shows that the pre-trained language models have a low 'instrisic dimension' and can still learn efficiently despite a random projection to a smaller subspace. Inspired by this, we hypothesize the updates to the weights also have a low 'intrinsic rank' during adaptation. For a pre-trained weight matrix W 0 ∈ R d × k , we constrain its update by representing the latter with a low-rank decomposition W 0 +∆ W = W 0 + BA , where B ∈ R d × r , A ∈ R r × k , and the rank r ≪ min( d, k ) . During training, W 0 is frozen and does not receive gradient updates, while A and B contain trainable parameters. Note both W 0 and ∆ W = BA are multiplied with the same input, and their respective output vectors are summed coordinate-wise. For h = W 0 x , our modified forward pass yields:",
+          "chunk_text_sha256": "263031d2f521389ace055873ff3ed4ed9e62dd1d203da7f3568f2c047b331781",
+          "metadata": {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000053:part_0001",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "4 OUR METHOD",
+              "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "LoRA freezes the pretrained weight and represents its update as the low-rank product BA [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": true,
+          "rationale": "S1 explicitly states that W0 is frozen and the update is represented as BA."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-02",
+      "scenario": "wrong_citation_correct_real_evidence_elsewhere",
+      "question": "What makes Mamba selective and how is it computed efficiently?",
+      "expected_answer": "Mamba makes SSM parameters input-dependent and uses a hardware-aware recurrent scan without materializing the expanded state.",
+      "required_concepts": [
+        "input-dependent SSM parameters",
+        "hardware-aware recurrent scan"
+      ],
+      "answer": "Mamba makes SSM parameters input-dependent and computes them with a hardware-aware recurrent scan [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_text": "FlashAttention : Fast and Memory-Efficient Exact Attention with IO-Awareness\n1 Introduction\nGPUs, compute speed has out-paced memory speed [61, 62, 63], and most operations in Transformers are bottlenecked by memory accesses [43]. IO-aware algorithms have been critical for similar memory-bound operations, when reading and writing data can account for a large portion of the runtime-such as database joins [71], image processing [70], numerical linear algebra [4], and more [40, 85]. However, common Python interfaces to deep learning such as PyTorch and Tensorflow do not allow fine-grained control of memory access.\n\nWe propose FlashAttention , a new attention algorithm that computes exact attention with far fewer memory accesses. Our main goal is to avoid reading and writing the attention matrix to and from HBM. This requires (i) computing the softmax reduction without access to the whole input (ii) not storing the large intermediate attention matrix for the backward pass. We apply two well-established techniques to address these challenges. (i) We restructure the attention computation to split the input into blocks and make several passes over input blocks, thus incrementally performing the softmax reduction (also known as tiling ). (ii) We store the softmax normalization factor from the forward pass to quickly recompute attention on-chip in the backward pass, which is faster than the standard approach of reading the intermediate attention matrix from HBM. We implement FlashAttention in CUDA to achieve fine-grained control over memory access and fuse all the attention operations into one GPU kernel. Even with the increased FLOPs due to recomputation, our algorithm both runs faster (up to 7.6x on GPT-2 [67], Figure 1 right) and uses less memory -linear in sequence length-than standard attention, thanks to the massively reduced amount of HBM access.\n\nWe analyze the IO complexity [1] of FlashAttention , proving that it requires 𝑂 𝑁 2 𝑑 2 𝑀 1 HBM accesses where 𝑑 is the head dimension and 𝑀 is the size of SRAM, as compared to Ω 𝑁𝑑 𝑁 2 of standard attention. For typical values of 𝑑 and 𝑀 , FlashAttention requires many times fewer HBM accesses compared to standard attention (up to 9 fewer, as shown in Fig. 2). Moreover, we provide a lower bound, showing that no exact attention algorithm can asymptotically improve on the number of HBM accesses over all SRAM sizes.\n\nWe also show that FlashAttention can serve as a useful primitive for realizing the potential of approximate attention algorithms by overcoming their issues with memory access overhead. As a proof of concept, we implement block-sparse FlashAttention , a sparse attention algorithm that is 2-4 faster than even FlashAttention , scaling up to sequence length of 64k. We prove that block-sparse FlashAttention has better IO complexity than FlashAttention by a factor proportional to the sparsity ratio. We discuss further extensions to other operations (attention on multi-GPU, kernel regression, block-sparse matrix multiply) in Section 5. We open-source FlashAttention to make it easier to build on this primitive. 1\n\nWe empirically validate that FlashAttention speeds up model training and improves model quality by modeling longer context. We also benchmark the runtime and memory footprint of FlashAttention and block-sparse FlashAttention compared to prior attention implementations.",
+          "chunk_text_sha256": "fbd5e2bcbb29915c606a45895fe6799bd1014c80b3ad0eb56a049c2a40cbbfd6",
+          "metadata": {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000013:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        },
+        {
+          "source_id": "S2",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_text": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces\n1 Introduction\nWe propose a new class of selective state space models , that improves on prior work on several axes to achieve the modeling power of Transformers while scaling linearly in sequence length.\n\nSelection Mechanism. First, we identify a key limitation of prior models: the ability to efficiently select data in an input-dependent manner (i.e. focus on or ignore particular inputs). Building on intuition based on important synthetic tasks such as selective copy and induction heads, we design a simple selection mechanism by parameterizing the SSM parameters based on the input. This allows the model to filter out irrelevant information and remember relevant information indefinitely.\n\nHardware-aware Algorithm. This simple change poses a technical challenge for the computation of the model; in fact, all prior SSMs models must be time- and input-invariant in order to be computationally efficient. We overcome this with a hardware-aware algorithm that computes the model recurrently with a scan instead of convolution, but does not materialize the expanded state in order to avoid IO access between different levels of the GPU memory hierarchy. The resulting implementation is faster than previous methods both in theory (scaling linearly in sequence length, compared to pseudo-linear for all convolution-based SSMs) and on modern hardware (up to 3 × faster on A100 GPUs).\n\nArchitecture. We simplify prior deep sequence model architectures by combining the design of prior SSM architectures (Dao, Fu, Saab, et al. 2023) with the MLP block of Transformers into a single block, leading to a simple and homogenous architecture design ( Mamba ) incorporating selective state spaces.\n\nSelective SSMs, and by extension the Mamba architecture, are fully recurrent models with key properties that make them suitable as the backbone of general foundation models operating on sequences. (i) High quality: selectivity brings strong performance on dense modalities such as language and genomics. (ii) Fast training and inference: computation and memory scales linearly in sequence length during training, and unrolling the model autoregressively during inference requires only constant time per step since it does not require a cache of previous elements. (iii) Long context: the quality and efficiency together yield performance improvements on real data up to sequence length 1M.\n\nWe empirically validate Mamba's potential as a general sequence FM backbone, in both pretraining quality and domainspecific task performance, on several types of modalities and settings:\n\nSynthetics. On important synthetic tasks such as copying and induction heads that have been proposed as being key to large language models, Mamba not only solves them easily but can extrapolate solutions indefinitely long ( > 1M tokens).\n\nAudio and Genomics. Mamba out-performs prior state-of-the-art models such as SaShiMi, Hyena, and Transformers on modeling audio waveforms and DNA sequences, both in pretraining quality and downstream metrics (e.g. reducing FID on a challenging speech generation dataset by more than half). In both settings, its performance improves with longer context up to million-length sequences .\n\nLanguage Modeling. Mamba is the first linear-time sequence model that truly achieves Transformer-quality performance , both in pretraining perplexity and downstream evaluations. With scaling laws up to 1B parameters, we show that Mamba exceeds the performance of a large range of baselines, including very strong modern Transformer training recipes based on LLaMa (Touvron et al. 2023). Our Mamba language model has 5 × generation throughput compared to Transformers of similar size, and Mamba-3B's quality matches that of Transformers twice its size (e.g. 4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B).",
+          "chunk_text_sha256": "eeebe3d10d30656ce05a41af92c662c9d3241da20d844990c2b0269cfd9feda8",
+          "metadata": {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Mamba makes SSM parameters input-dependent and computes them with a hardware-aware recurrent scan [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "The claim cites S1 about FlashAttention; the matching Mamba evidence exists only in uncited S2."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-03",
+      "scenario": "grouped_citations_one_real_source_supports",
+      "question": "Which pre-training objectives does LayoutLMv3 combine?",
+      "expected_answer": "LayoutLMv3 combines MLM, MIM, and word-patch alignment.",
+      "required_concepts": [
+        "MLM",
+        "MIM",
+        "word-patch alignment"
+      ],
+      "answer": "LayoutLMv3 jointly uses MLM, MIM, and word-patch alignment [S1, S2].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_text": "LORA: LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS\n4 OUR METHOD > 4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES\nA neural network contains many dense layers which perform matrix multiplication. The weight matrices in these layers typically have full-rank. When adapting to a specific task, Aghajanyan et al. (2020) shows that the pre-trained language models have a low 'instrisic dimension' and can still learn efficiently despite a random projection to a smaller subspace. Inspired by this, we hypothesize the updates to the weights also have a low 'intrinsic rank' during adaptation. For a pre-trained weight matrix W 0 ∈ R d × k , we constrain its update by representing the latter with a low-rank decomposition W 0 +∆ W = W 0 + BA , where B ∈ R d × r , A ∈ R r × k , and the rank r ≪ min( d, k ) . During training, W 0 is frozen and does not receive gradient updates, while A and B contain trainable parameters. Note both W 0 and ∆ W = BA are multiplied with the same input, and their respective output vectors are summed coordinate-wise. For h = W 0 x , our modified forward pass yields:",
+          "chunk_text_sha256": "263031d2f521389ace055873ff3ed4ed9e62dd1d203da7f3568f2c047b331781",
+          "metadata": {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000053:part_0001",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "4 OUR METHOD",
+              "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+            ]
+          }
+        },
+        {
+          "source_id": "S2",
+          "filename": "2204.08387_layoutlmv3.pdf",
+          "chunk_text": "LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking\n1 INTRODUCTION\nTo overcome the discrepancy in pre-training objectives of text and image modalities and facilitate multimodal representation learning, we propose LayoutLMv3 to pre-train multimodal Transformers for Document AI with unified text and image masking objectives MLMand MIM. As shown in Figure 3, LayoutLMv3 learns to reconstruct masked word tokens of the text modality and symmetrically reconstruct masked patch tokens of the image modality. Inspired by DALL-E [43] and BEiT [3], we obtain the target image tokens from latent codes of a discrete VAE. For documents, each text word corresponds to an image patch. To learn this cross-modal alignment, we propose a Word-Patch Alignment (WPA) objective to predict whether the corresponding image patch of a text word is masked.\n\nInspired by ViT [11] and ViLT [22], LayoutLMv3 directly leverages raw image patches from document images without complex pre-processing steps such as page object detection. LayoutLMv3 jointly learns image, text and multimodal representations in a Transformer model with unified MLM, MIM and WPA objectives. This makes LayoutLMv3 the first multimodal pre-trained Document AI\n\nmodel without CNNs for image embeddings, which significantly saves parameters and gets rid of region annotations. The simple unified architecture and objectives make LayoutLMv3 a generalpurpose pre-trained model for both text-centric tasks and imagecentric Document AI tasks.\n\nWe evaluated pre-trained LayoutLMv3 models across five public benchmarks, including text-centric benchmarks: FUNSD [20] for form understanding, CORD [39] for receipt understanding, DocVQA [38] for document visual question answering, and imagecentric benchmarks: RVL-CDIP [16] for document image classification, PubLayNet [59] for document layout analysis. Experiment results demonstrate that LayoutLMv3 achieves state-of-the-art performance on these benchmarks with parameter efficiency. Furthermore, LayoutLMv3 is easy to reproduce for its simple and neat architecture and pre-training objectives.\n\nOur contributions are summarized as follows:\n\nLayoutLMv3 is the first multimodal model in Document AI that does not rely on a pre-trained CNN or Faster R-CNN backbone to extract visual features, which significantly saves parameters and eliminates region annotations.\n\nLayoutLMv3 mitigates the discrepancy between text and image multimodal representation learning with unified discrete token reconstructive objectives MLM and MIM. We further propose a Word-Patch Alignment (WPA) objective to facilitate cross-modal alignment learning.\n\nLayoutLMv3 is a general-purpose model for both text-centric and image-centric Document AI tasks. For the first time, we demonstrate the generality of multimodal Transformers to vision tasks in Document AI.\n\nExperimental results show that LayoutLMv3 achieves stateof-the-art performance in text-centric tasks and image-centric tasks in Document AI. The code and models are publicly available at https://aka.ms/layoutlmv3.",
+          "chunk_text_sha256": "f9f0790f6909763484f5bfed6a13926fe98eef01ce2d2f6ecabf216d3c2a82f7",
+          "metadata": {
+            "chunk_id": "bd5395610755a49e6419c406e651906e688e7a0cfe155b3c43566469dfd641fe:paragraph:block_000029:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "1 INTRODUCTION"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "LayoutLMv3 jointly uses MLM, MIM, and word-patch alignment [S1, S2].",
+          "citation_numbers": [
+            1,
+            2
+          ],
+          "evidence_source_ids": [
+            "S1",
+            "S2"
+          ],
+          "supported": true,
+          "rationale": "S2 explicitly lists MLM, MIM, and WPA; grouped citation S1 is irrelevant but does not remove S2 support."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-04",
+      "scenario": "uncited_claim_real_evidence_available",
+      "question": "How does the neural ODE adjoint method compute gradients?",
+      "expected_answer": "It solves an augmented ODE backward in time with low memory cost.",
+      "required_concepts": [
+        "adjoint sensitivity",
+        "backward ODE solve"
+      ],
+      "answer": "The neural ODE adjoint method computes gradients by solving an augmented ODE backward in time.",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_text": "Neural Ordinary Differential Equations\n2 Reverse-mode automatic differentiation of ODE solutions\nThe main technical difficulty in training continuous-depth networks is performing reverse-mode differentiation (also known as backpropagation) through the ODE solver. Differentiating through the operations of the forward pass is straightforward, but incurs a high memory cost and introduces additional numerical error.\n\nWe treat the ODE solver as a black box, and compute gradients using the adjoint sensitivity method (Pontryagin et al., 1962). This approach computes gradients by solving a second, augmented ODE backwards in time, and is applicable to all ODE solvers. This approach scales linearly with problem size, has low memory cost, and explicitly controls numerical error.\n\nConsider optimizing a scalar-valued loss function L () , whose input is the result of an ODE solver:",
+          "chunk_text_sha256": "a017069ec0a47fc5193e63624c0721d27efebf22d6df404a687b6b31182ad8d7",
+          "metadata": {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000021:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "2 Reverse-mode automatic differentiation of ODE solutions"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "The neural ODE adjoint method computes gradients by solving an augmented ODE backward in time.",
+          "citation_numbers": [],
+          "evidence_source_ids": [],
+          "supported": false,
+          "rationale": "The statement is factually present in S1, but the claim contains no citation and therefore has no bound evidence."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-05",
+      "scenario": "invalid_source_id_real_evidence_available",
+      "question": "How are queries, keys, and values transformed in multi-head attention?",
+      "expected_answer": "They are projected multiple times with different learned linear projections and processed in parallel.",
+      "required_concepts": [
+        "different learned projections",
+        "parallel attention heads"
+      ],
+      "answer": "Multi-head attention applies different learned projections to queries, keys, and values in parallel [S9].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_text": "Attention Is All You Need\n3 Model Architecture > 3.2 Attention > 3.2.2 Multi-Head Attention\nInstead of performing a single attention function with d model-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to d k , d k and d v dimensions, respectively. On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding d v -dimensional output values. These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.",
+          "chunk_text_sha256": "e860b2eee15312a8994ac14d2825a05f270d8221c860db0da932a5cfa8571b83",
+          "metadata": {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000042:part_0001",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.2 Attention",
+              "3.2.2 Multi-Head Attention"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Multi-head attention applies different learned projections to queries, keys, and values in parallel [S9].",
+          "citation_numbers": [
+            9
+          ],
+          "evidence_source_ids": [],
+          "supported": false,
+          "rationale": "S9 is outside the one-source response, so the claim has no valid bound evidence."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-06",
+      "scenario": "real_evidence_contradicts_claim",
+      "question": "Does FlashAttention approximate attention and materialize the attention matrix in HBM?",
+      "expected_answer": "No. It computes exact attention and avoids reading and writing the full attention matrix to HBM.",
+      "required_concepts": [
+        "exact attention",
+        "avoid attention-matrix HBM traffic"
+      ],
+      "answer": "FlashAttention is an approximate attention algorithm that materializes the full attention matrix in HBM [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2205.14135_flashattention.pdf",
+          "chunk_text": "FlashAttention : Fast and Memory-Efficient Exact Attention with IO-Awareness\n1 Introduction\nGPUs, compute speed has out-paced memory speed [61, 62, 63], and most operations in Transformers are bottlenecked by memory accesses [43]. IO-aware algorithms have been critical for similar memory-bound operations, when reading and writing data can account for a large portion of the runtime-such as database joins [71], image processing [70], numerical linear algebra [4], and more [40, 85]. However, common Python interfaces to deep learning such as PyTorch and Tensorflow do not allow fine-grained control of memory access.\n\nWe propose FlashAttention , a new attention algorithm that computes exact attention with far fewer memory accesses. Our main goal is to avoid reading and writing the attention matrix to and from HBM. This requires (i) computing the softmax reduction without access to the whole input (ii) not storing the large intermediate attention matrix for the backward pass. We apply two well-established techniques to address these challenges. (i) We restructure the attention computation to split the input into blocks and make several passes over input blocks, thus incrementally performing the softmax reduction (also known as tiling ). (ii) We store the softmax normalization factor from the forward pass to quickly recompute attention on-chip in the backward pass, which is faster than the standard approach of reading the intermediate attention matrix from HBM. We implement FlashAttention in CUDA to achieve fine-grained control over memory access and fuse all the attention operations into one GPU kernel. Even with the increased FLOPs due to recomputation, our algorithm both runs faster (up to 7.6x on GPT-2 [67], Figure 1 right) and uses less memory -linear in sequence length-than standard attention, thanks to the massively reduced amount of HBM access.\n\nWe analyze the IO complexity [1] of FlashAttention , proving that it requires 𝑂 𝑁 2 𝑑 2 𝑀 1 HBM accesses where 𝑑 is the head dimension and 𝑀 is the size of SRAM, as compared to Ω 𝑁𝑑 𝑁 2 of standard attention. For typical values of 𝑑 and 𝑀 , FlashAttention requires many times fewer HBM accesses compared to standard attention (up to 9 fewer, as shown in Fig. 2). Moreover, we provide a lower bound, showing that no exact attention algorithm can asymptotically improve on the number of HBM accesses over all SRAM sizes.\n\nWe also show that FlashAttention can serve as a useful primitive for realizing the potential of approximate attention algorithms by overcoming their issues with memory access overhead. As a proof of concept, we implement block-sparse FlashAttention , a sparse attention algorithm that is 2-4 faster than even FlashAttention , scaling up to sequence length of 64k. We prove that block-sparse FlashAttention has better IO complexity than FlashAttention by a factor proportional to the sparsity ratio. We discuss further extensions to other operations (attention on multi-GPU, kernel regression, block-sparse matrix multiply) in Section 5. We open-source FlashAttention to make it easier to build on this primitive. 1\n\nWe empirically validate that FlashAttention speeds up model training and improves model quality by modeling longer context. We also benchmark the runtime and memory footprint of FlashAttention and block-sparse FlashAttention compared to prior attention implementations.",
+          "chunk_text_sha256": "fbd5e2bcbb29915c606a45895fe6799bd1014c80b3ad0eb56a049c2a40cbbfd6",
+          "metadata": {
+            "chunk_id": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4:paragraph:block_000013:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "FlashAttention is an approximate attention algorithm that materializes the full attention matrix in HBM [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "S1 says FlashAttention is exact and aims to avoid attention-matrix HBM reads and writes."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-07",
+      "scenario": "same_real_source_mixed_claims",
+      "question": "What does multi-head attention do with its learned projections?",
+      "expected_answer": "It applies multiple different learned projections in parallel, concatenates their outputs, and projects again.",
+      "required_concepts": [
+        "multiple projections",
+        "parallel heads",
+        "concatenation"
+      ],
+      "answer": "Multi-head attention applies different learned projections in parallel [S1]. It uses one shared projection and a single head [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "1706.03762_attention-is-all-you-need.pdf",
+          "chunk_text": "Attention Is All You Need\n3 Model Architecture > 3.2 Attention > 3.2.2 Multi-Head Attention\nInstead of performing a single attention function with d model-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to d k , d k and d v dimensions, respectively. On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding d v -dimensional output values. These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.",
+          "chunk_text_sha256": "e860b2eee15312a8994ac14d2825a05f270d8221c860db0da932a5cfa8571b83",
+          "metadata": {
+            "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000042:part_0001",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.2 Attention",
+              "3.2.2 Multi-Head Attention"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Multi-head attention applies different learned projections in parallel [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": true,
+          "rationale": "S1 explicitly describes h different learned projections whose attention operations run in parallel."
+        },
+        {
+          "id": "A2",
+          "claim": "It uses one shared projection and a single head [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "S1 describes multiple projections and heads, contradicting a single shared projection and head."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-08",
+      "scenario": "same_real_source_supported_and_fabricated_detail",
+      "question": "How is SynthDoG used for Donut pre-training?",
+      "expected_answer": "It generates synthetic document images for Chinese, Japanese, Korean, and English, with 0.5 million samples per language.",
+      "required_concepts": [
+        "four languages",
+        "0.5 million samples per language",
+        "synthetic document generation"
+      ],
+      "answer": "SynthDoG generated 0.5 million samples per language for Chinese, Japanese, Korean, and English [S1]. It uses only real scanned documents and no synthetic backgrounds [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_text": "OCR-free Document Understanding Transformer\n2 Method > 2.3 Pre-training\nTask. The model is trained to read all texts in the image in reading order (from top-left to bottom-right, basically). The objective is to minimize cross-entropy loss of next token prediction by jointly conditioning on the image and previous contexts. This task can be interpreted as a pseudo-OCR task. The model is trained as a visual language model over the visual corpora, i.e., document images.\n\nVisual Corpora. We use IIT-CDIP [32], which is a set of 11M scanned english document images. A commercial CLOVA OCR API is applied to get the pseudo text labels. As aforementioned, however, this kind of dataset is not always available, especially for languages other than English. To alleviate the dependencies, we build a scalable Synth etic Do cument G enerator , referred to as SynthDoG . Using the SynthDog and Chinese, Japanese, Korean and English Wikipedia, we generated 0.5M samples per language.\n\nSynthetic Document Generator. The pipeline of image rendering basically follows Yim et al. [67]. As shown in Figure 4, the generated sample consists of several components; background, document, text, and layout. Background image is sampled from ImageNet [7], and a texture of document is sampled from the collected paper photos. Words and phrases are sampled from Wikipedia. Layout is generated by a simple rule-based algorithm that randomly stacks grids. In addition, several image rendering techniques [13,41,67] are applied to mimic real documents. The generated examples are shown in Figure 4. More details of SynthDoG are available in the code 1 and Appendix A.2.",
+          "chunk_text_sha256": "f91eb72b7f4b19e0e2fe23e6a36d35426c287ac2819511192fc52b866dcae46b",
+          "metadata": {
+            "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000039:part_0001",
+            "page_start": 5,
+            "content_type": "paragraph",
+            "section_path": [
+              "2 Method",
+              "2.3 Pre-training"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "SynthDoG generated 0.5 million samples per language for Chinese, Japanese, Korean, and English [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": true,
+          "rationale": "S1 states that 0.5M samples per language were generated for those four languages."
+        },
+        {
+          "id": "A2",
+          "claim": "It uses only real scanned documents and no synthetic backgrounds [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "S1 describes synthetic rendering and sampled backgrounds rather than only real scanned documents."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-09",
+      "scenario": "wrong_method_attribution",
+      "question": "Does the neural ODE gradient method use LoRA-style low-rank weight updates?",
+      "expected_answer": "No. Neural ODE uses the adjoint sensitivity method; low-rank frozen-weight adaptation belongs to LoRA.",
+      "required_concepts": [
+        "adjoint sensitivity for Neural ODE",
+        "low-rank frozen-weight adaptation belongs to LoRA"
+      ],
+      "answer": "Neural ODE freezes pretrained weights and injects trainable low-rank update matrices [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2106.09685_lora.pdf",
+          "chunk_text": "LORA: LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS\n4 OUR METHOD > 4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES\nA neural network contains many dense layers which perform matrix multiplication. The weight matrices in these layers typically have full-rank. When adapting to a specific task, Aghajanyan et al. (2020) shows that the pre-trained language models have a low 'instrisic dimension' and can still learn efficiently despite a random projection to a smaller subspace. Inspired by this, we hypothesize the updates to the weights also have a low 'intrinsic rank' during adaptation. For a pre-trained weight matrix W 0 ∈ R d × k , we constrain its update by representing the latter with a low-rank decomposition W 0 +∆ W = W 0 + BA , where B ∈ R d × r , A ∈ R r × k , and the rank r ≪ min( d, k ) . During training, W 0 is frozen and does not receive gradient updates, while A and B contain trainable parameters. Note both W 0 and ∆ W = BA are multiplied with the same input, and their respective output vectors are summed coordinate-wise. For h = W 0 x , our modified forward pass yields:",
+          "chunk_text_sha256": "263031d2f521389ace055873ff3ed4ed9e62dd1d203da7f3568f2c047b331781",
+          "metadata": {
+            "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000053:part_0001",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "4 OUR METHOD",
+              "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES"
+            ]
+          }
+        },
+        {
+          "source_id": "S2",
+          "filename": "1806.07366_neural-ordinary-differential-equations.pdf",
+          "chunk_text": "Neural Ordinary Differential Equations\n2 Reverse-mode automatic differentiation of ODE solutions\nThe main technical difficulty in training continuous-depth networks is performing reverse-mode differentiation (also known as backpropagation) through the ODE solver. Differentiating through the operations of the forward pass is straightforward, but incurs a high memory cost and introduces additional numerical error.\n\nWe treat the ODE solver as a black box, and compute gradients using the adjoint sensitivity method (Pontryagin et al., 1962). This approach computes gradients by solving a second, augmented ODE backwards in time, and is applicable to all ODE solvers. This approach scales linearly with problem size, has low memory cost, and explicitly controls numerical error.\n\nConsider optimizing a scalar-valued loss function L () , whose input is the result of an ODE solver:",
+          "chunk_text_sha256": "a017069ec0a47fc5193e63624c0721d27efebf22d6df404a687b6b31182ad8d7",
+          "metadata": {
+            "chunk_id": "435299cc42b75f9ad43d9aa246c96d3d7bdcc3297aa57f419bdc571b9c25137c:paragraph:block_000021:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "2 Reverse-mode automatic differentiation of ODE solutions"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Neural ODE freezes pretrained weights and injects trainable low-rank update matrices [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "S1 attributes the mechanism to LoRA, not Neural ODE; S2 describes the Neural ODE adjoint method."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-10",
+      "scenario": "partially_supported_composite_claim",
+      "question": "How does Mamba combine input-dependent selection with efficient computation?",
+      "expected_answer": "It makes SSM parameters input-dependent and computes recurrently with a scan instead of convolution.",
+      "required_concepts": [
+        "input-dependent parameters",
+        "scan instead of convolution"
+      ],
+      "answer": "Mamba makes SSM parameters input-dependent but computes them by convolution rather than a recurrent scan [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2312.00752_mamba.pdf",
+          "chunk_text": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces\n1 Introduction\nWe propose a new class of selective state space models , that improves on prior work on several axes to achieve the modeling power of Transformers while scaling linearly in sequence length.\n\nSelection Mechanism. First, we identify a key limitation of prior models: the ability to efficiently select data in an input-dependent manner (i.e. focus on or ignore particular inputs). Building on intuition based on important synthetic tasks such as selective copy and induction heads, we design a simple selection mechanism by parameterizing the SSM parameters based on the input. This allows the model to filter out irrelevant information and remember relevant information indefinitely.\n\nHardware-aware Algorithm. This simple change poses a technical challenge for the computation of the model; in fact, all prior SSMs models must be time- and input-invariant in order to be computationally efficient. We overcome this with a hardware-aware algorithm that computes the model recurrently with a scan instead of convolution, but does not materialize the expanded state in order to avoid IO access between different levels of the GPU memory hierarchy. The resulting implementation is faster than previous methods both in theory (scaling linearly in sequence length, compared to pseudo-linear for all convolution-based SSMs) and on modern hardware (up to 3 × faster on A100 GPUs).\n\nArchitecture. We simplify prior deep sequence model architectures by combining the design of prior SSM architectures (Dao, Fu, Saab, et al. 2023) with the MLP block of Transformers into a single block, leading to a simple and homogenous architecture design ( Mamba ) incorporating selective state spaces.\n\nSelective SSMs, and by extension the Mamba architecture, are fully recurrent models with key properties that make them suitable as the backbone of general foundation models operating on sequences. (i) High quality: selectivity brings strong performance on dense modalities such as language and genomics. (ii) Fast training and inference: computation and memory scales linearly in sequence length during training, and unrolling the model autoregressively during inference requires only constant time per step since it does not require a cache of previous elements. (iii) Long context: the quality and efficiency together yield performance improvements on real data up to sequence length 1M.\n\nWe empirically validate Mamba's potential as a general sequence FM backbone, in both pretraining quality and domainspecific task performance, on several types of modalities and settings:\n\nSynthetics. On important synthetic tasks such as copying and induction heads that have been proposed as being key to large language models, Mamba not only solves them easily but can extrapolate solutions indefinitely long ( > 1M tokens).\n\nAudio and Genomics. Mamba out-performs prior state-of-the-art models such as SaShiMi, Hyena, and Transformers on modeling audio waveforms and DNA sequences, both in pretraining quality and downstream metrics (e.g. reducing FID on a challenging speech generation dataset by more than half). In both settings, its performance improves with longer context up to million-length sequences .\n\nLanguage Modeling. Mamba is the first linear-time sequence model that truly achieves Transformer-quality performance , both in pretraining perplexity and downstream evaluations. With scaling laws up to 1B parameters, we show that Mamba exceeds the performance of a large range of baselines, including very strong modern Transformer training recipes based on LLaMa (Touvron et al. 2023). Our Mamba language model has 5 × generation throughput compared to Transformers of similar size, and Mamba-3B's quality matches that of Transformers twice its size (e.g. 4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B).",
+          "chunk_text_sha256": "eeebe3d10d30656ce05a41af92c662c9d3241da20d844990c2b0269cfd9feda8",
+          "metadata": {
+            "chunk_id": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e:paragraph:block_000010:part_0001",
+            "page_start": 2,
+            "content_type": "paragraph",
+            "section_path": [
+              "1 Introduction"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Mamba makes SSM parameters input-dependent but computes them by convolution rather than a recurrent scan [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": false,
+          "rationale": "S1 supports input dependence but says recurrent scan instead of convolution, so the full composite claim is not entailed."
+        }
+      ]
+    },
+    {
+      "id": "CCHV5-11",
+      "scenario": "correct_downstream_output_contract",
+      "question": "How does Donut formulate downstream document tasks?",
+      "expected_answer": "It formulates downstream tasks as token generation that is converted to JSON.",
+      "required_concepts": [
+        "token generation",
+        "JSON output"
+      ],
+      "answer": "Donut formulates downstream document tasks as token generation that can be converted into JSON [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "filename": "2111.15664_donut.pdf",
+          "chunk_text": "OCR-free Document Understanding Transformer\n2 Method > 2.4 Fine-tuning\nAfter the model learns how to read , in the application stage (i.e., fine-tuning), we teach the model how to understand the document image. As shown in Figure 3, we interpret all downstream tasks as a JSON prediction problem.\n\nThe decoder is trained to generate a token sequence that can be converted into a JSON that represents the desired output information. For example, in the document classification task, the decoder is trained to generate a token sequence [START class][memo][END class] which is 1-to-1 invertible to a JSON { 'class': 'memo' } . We introduce some special tokens (e.g., [memo] is used for representing the class 'memo'), if such replacement is available in the target task.",
+          "chunk_text_sha256": "daf6d3d9ecba62be8fd01090d4fc76831f54912265023cb3d908d1a81767d44b",
+          "metadata": {
+            "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000046:part_0001",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": [
+              "2 Method",
+              "2.4 Fine-tuning"
+            ]
+          }
+        }
+      ],
+      "expected_claims": [
+        {
+          "id": "A1",
+          "claim": "Donut formulates downstream document tasks as token generation that can be converted into JSON [S1].",
+          "citation_numbers": [
+            1
+          ],
+          "evidence_source_ids": [
+            "S1"
+          ],
+          "supported": true,
+          "rationale": "S1 explicitly describes downstream tasks as JSON prediction via generated token sequences."
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,22 @@
-import { ArrowLeft, Search, Upload, Eye, Trash2, ChevronDown, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronDown,
+  CircleCheckBig,
+  Eye,
+  FileImage,
+  FileText,
+  FileType,
+  LibraryBig,
+  Loader2,
+  Search,
+  Trash2,
+  Upload,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { UploadDialog } from './UploadDialog';
+import { buttonStyles } from './ui/button';
 
 interface KnowledgeBaseDetailProps {
   collectionId: string;
@@ -67,20 +81,20 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
     const ext = filename.split('.').pop()?.toLowerCase();
     switch (ext) {
       case 'pdf':
-        return '📄';
+        return FileText;
       case 'md':
       case 'txt':
-        return '📝';
+        return FileType;
       case 'docx':
       case 'doc':
-        return '📘';
+        return FileText;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
-        return '🖼️';
+        return FileImage;
       default:
-        return '📄';
+        return FileText;
     }
   };
 
@@ -132,7 +146,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 size={48} className="text-[#00d4ff] animate-spin" />
+        <Loader2 size={48} className="text-violet-600 animate-spin" />
       </div>
     );
   }
@@ -140,7 +154,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
   if (!kbInfo) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#94a3b8]">知识库不存在</p>
+        <p className="text-slate-500">知识库不存在</p>
       </div>
     );
   }
@@ -156,15 +170,15 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         <div className="flex items-center gap-4">
           <motion.button
             onClick={onBack}
-            className="text-[#00d4ff] hover:text-[#00ffaa] flex items-center gap-2 transition-colors group"
+            className={buttonStyles({ variant: 'ghost', size: 'sm', className: 'group' })}
             whileHover={{ x: -4 }}
           >
             <ArrowLeft size={18} className="group-hover:animate-pulse" />
             返回
           </motion.button>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0066ff] flex items-center justify-center text-2xl shadow-lg">
-              📘
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800 shadow-sm">
+              <LibraryBig size={23} aria-hidden="true" />
             </div>
             <h2 className="text-gradient">{kbInfo.collection_name}</h2>
           </div>
@@ -172,13 +186,12 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
 
         <motion.button
           onClick={() => setShowUploadDialog(true)}
-          className="px-6 py-3 bg-gradient-to-r from-[#00d4ff] to-[#0066ff] text-[#0a0e27] rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center gap-2 relative overflow-hidden group"
+          className={buttonStyles({ variant: 'primary', size: 'lg' })}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-          <Upload size={18} className="relative z-10" />
-          <span className="relative z-10">上传文档</span>
+          <Upload size={18} aria-hidden="true" />
+          <span>上传文档</span>
         </motion.button>
       </motion.div>
 
@@ -197,13 +210,13 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <span className="px-4 py-2 glass-strong rounded-xl border border-[rgba(0,212,255,0.2)] text-[#e8eaed]">
+        <span className="px-4 py-2 glass-strong rounded-xl border border-slate-200 text-slate-900">
           {kbInfo.total_documents}个文档
         </span>
-        <span className="px-4 py-2 glass-strong rounded-xl border border-[rgba(0,255,136,0.2)] text-[#00ff88]">
+        <span className="px-4 py-2 glass-strong rounded-xl border border-emerald-200 text-emerald-600">
           {kbInfo.total_chunks} chunks
         </span>
-        <span className="px-4 py-2 glass-strong rounded-xl border border-[rgba(0,212,255,0.2)] text-[#94a3b8]">
+        <span className="px-4 py-2 glass-strong rounded-xl border border-slate-200 text-slate-500">
           最后更新: {getRelativeTime(kbInfo.last_updated)}
         </span>
       </motion.div>
@@ -216,30 +229,30 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         transition={{ delay: 0.2 }}
       >
         <div className="relative flex-1 max-w-[320px]">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#00d4ff]" size={18} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-violet-600" size={18} />
           <input
             type="text"
             placeholder="搜索文档..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-11 pr-4 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:border-transparent text-[#e8eaed] placeholder-[#94a3b8] transition-all"
+            className="w-full h-12 pl-11 pr-4 glass-strong border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-transparent text-slate-900 placeholder-slate-400 transition-all"
           />
         </div>
 
         <motion.button
-          className="px-4 py-3 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] transition-all flex items-center gap-2 text-[#e8eaed]"
+          className={buttonStyles({ variant: 'quiet', size: 'md' })}
           whileHover={{ scale: 1.05 }}
         >
           按时间
-          <ChevronDown size={16} className="text-[#00d4ff]" />
+          <ChevronDown size={16} className="text-violet-600" />
         </motion.button>
 
         <motion.button
-          className="px-4 py-3 glass-strong border border-[rgba(0,212,255,0.2)] rounded-xl hover:bg-[rgba(0,212,255,0.05)] transition-all flex items-center gap-2 text-[#e8eaed]"
+          className={buttonStyles({ variant: 'quiet', size: 'md' })}
           whileHover={{ scale: 1.05 }}
         >
           按大小
-          <ChevronDown size={16} className="text-[#00d4ff]" />
+          <ChevronDown size={16} className="text-violet-600" />
         </motion.button>
       </motion.div>
 
@@ -250,13 +263,15 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-12"
         >
-          <p className="text-[#94a3b8]">
+          <p className="text-slate-500">
             {documents.length === 0 ? '暂无文档' : '没有找到匹配的文档'}
           </p>
         </motion.div>
       ) : (
         <div className="space-y-3">
-          {filteredDocuments.map((doc, index) => (
+          {filteredDocuments.map((doc, index) => {
+            const FileIcon = getFileIcon(doc.filename);
+            return (
             <motion.div
               key={doc.file_id}
               initial={{ opacity: 0, y: 20 }}
@@ -272,17 +287,17 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
 
               <div className="flex items-center gap-4 relative z-10">
                 {/* File Icon */}
-                <div className="w-14 h-14 glass-strong rounded-xl flex items-center justify-center text-3xl flex-shrink-0 border border-[rgba(0,212,255,0.2)] group-hover:scale-110 transition-transform">
-                  {getFileIcon(doc.filename)}
+                <div className="glass-strong flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all group-hover:scale-105 group-hover:text-violet-700">
+                  <FileIcon size={24} aria-hidden="true" />
                 </div>
 
                 {/* File Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="text-[#e8eaed] mb-2 group-hover:text-[#00d4ff] transition-colors truncate" title={doc.filename}>
+                  <div className="text-slate-900 mb-2 group-hover:text-violet-600 transition-colors truncate" title={doc.filename}>
                     {doc.filename}
                   </div>
-                  <div className="text-[#94a3b8] text-sm flex items-center gap-3">
-                    <span className="px-2 py-1 glass rounded-lg border border-[rgba(0,212,255,0.1)]">
+                  <div className="text-slate-500 text-sm flex items-center gap-3">
+                    <span className="px-2 py-1 glass rounded-lg border border-slate-100">
                       {doc.chunks} chunks
                     </span>
                     <span>上传于 {formatDate(doc.created_at)}</span>
@@ -291,8 +306,9 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
 
                 {/* Status */}
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1.5 bg-[rgba(0,255,136,0.1)] text-[#00ff88] rounded-lg text-xs border border-[rgba(0,255,136,0.2)] flex items-center gap-1">
-                    ✅ 已索引
+                  <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs border border-emerald-200 flex items-center gap-1">
+                    <CircleCheckBig size={14} aria-hidden="true" />
+                    已索引
                   </span>
                 </div>
 
@@ -302,7 +318,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                     onClick={() => onViewDocument(doc.file_id)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 border border-[#00d4ff] text-[#00d4ff] rounded-xl hover:bg-[rgba(0,212,255,0.1)] transition-all flex items-center gap-2"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                   >
                     <Eye size={16} />
                     查看
@@ -310,14 +326,16 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 border border-[#ff3b5c] text-[#ff3b5c] rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
+                    aria-label={`删除文档 ${doc.filename}`}
+                    className={buttonStyles({ variant: 'danger', size: 'sm', iconOnly: true })}
                   >
                     <Trash2 size={16} />
                   </motion.button>
                 </div>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,0 +1,424 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "scholarlens-target-grounded-retrieval-dev-v1",
+  "dataset_id": "scholarlens-paper-target-resolution-dev-v1",
+  "dataset_split": "development",
+  "collection_id": "kb_1790061860190",
+  "configuration": {
+    "top_k": 6,
+    "candidate_k_per_query": 10,
+    "original_reserve": 2,
+    "per_target_reserve": 2,
+    "rrf_k": 60,
+    "score_threshold": 0.1
+  },
+  "summary": {
+    "case_count": 3,
+    "complete_target_resolution_rate": 1.0,
+    "complete_required_source_rate": 1.0
+  },
+  "acceptance": {
+    "passed": true
+  },
+  "results": [
+    {
+      "case_id": "TGR01",
+      "expected_filenames": [
+        "2408.09869_docling-technical-report.pdf",
+        "PMC2950080_structured-digital-tables.pdf"
+      ],
+      "retrieved_filenames": [
+        "2408.09869_docling-technical-report.pdf",
+        "PMC2950080_structured-digital-tables.pdf"
+      ],
+      "required_source_coverage": 1.0,
+      "latency_seconds": 5.1445,
+      "trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "docling",
+              "target": "Docling",
+              "query": "How does Docling detect page elements and combine layout boxes with PDF text tokens?"
+            },
+            {
+              "id": "structured_tables",
+              "target": "structured-digital-tables",
+              "query": "How are table rows, headers, cells, and provenance represented as RDF in structured digital tables?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "dataset_explicit_subqueries"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare how Docling reconstructs page layout with how structured digital tables encode table semantics and provenance.",
+            "status": "success",
+            "latency_seconds": 2.2606,
+            "result_count": 10
+          },
+          {
+            "id": "docling",
+            "target": "Docling",
+            "query": "How does Docling detect page elements and combine layout boxes with PDF text tokens?",
+            "status": "success",
+            "latency_seconds": 2.4816,
+            "result_count": 10
+          },
+          {
+            "id": "structured_tables",
+            "target": "structured-digital-tables",
+            "query": "How are table rows, headers, cells, and provenance represented as RDF in structured digital tables?",
+            "status": "success",
+            "latency_seconds": 2.9637,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 22,
+        "final_count": 6,
+        "planner_latency_seconds": 0.0,
+        "target_resolution_status": "complete",
+        "target_resolutions": {
+          "docling": {
+            "target": "Docling",
+            "status": "resolved",
+            "filename": "2408.09869_docling-technical-report.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          },
+          "structured_tables": {
+            "target": "structured-digital-tables",
+            "status": "resolved",
+            "filename": "PMC2950080_structured-digital-tables.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          }
+        }
+      },
+      "hits": [
+        {
+          "rank": 1,
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000025:part_0001",
+          "matched_query_ids": [
+            "original",
+            "docling"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000038:part_0001",
+          "matched_query_ids": [
+            "original",
+            "docling"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:paragraph:block_000035:part_0001",
+          "matched_query_ids": [
+            "original",
+            "docling"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "PMC2950080_structured-digital-tables.pdf",
+          "chunk_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2:paragraph:block_000081:part_0001",
+          "matched_query_ids": [
+            "structured_tables"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "PMC2950080_structured-digital-tables.pdf",
+          "chunk_id": "536c1941249b4913f347088c4ee4590eb4789c80e9590eef284de5b6f6576fa2:paragraph:block_000065:part_0002",
+          "matched_query_ids": [
+            "structured_tables"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2408.09869_docling-technical-report.pdf",
+          "chunk_id": "82dd470712ce8389f19f20eb9330475e2166a281f8c7990a9f1d0763d73b4d22:figure:figure_0003_000087:part_0001",
+          "matched_query_ids": [
+            "original"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "TGR02",
+      "expected_filenames": [
+        "2111.15664_donut.pdf",
+        "2308.13418_nougat.pdf"
+      ],
+      "retrieved_filenames": [
+        "2111.15664_donut.pdf",
+        "2308.13418_nougat.pdf"
+      ],
+      "required_source_coverage": 1.0,
+      "latency_seconds": 5.9179,
+      "trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "donut",
+              "target": "Donut",
+              "query": "What image encoder, text decoder, and structured output does Donut use without OCR?"
+            },
+            {
+              "id": "nougat",
+              "target": "Nougat",
+              "query": "How does Nougat convert rasterized scientific pages into machine-readable markup?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "dataset_explicit_subqueries"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare the OCR-free document conversion inputs and outputs of Donut and Nougat.",
+            "status": "success",
+            "latency_seconds": 3.7595,
+            "result_count": 10
+          },
+          {
+            "id": "donut",
+            "target": "Donut",
+            "query": "What image encoder, text decoder, and structured output does Donut use without OCR?",
+            "status": "success",
+            "latency_seconds": 3.5772,
+            "result_count": 10
+          },
+          {
+            "id": "nougat",
+            "target": "Nougat",
+            "query": "How does Nougat convert rasterized scientific pages into machine-readable markup?",
+            "status": "success",
+            "latency_seconds": 3.2017,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 21,
+        "final_count": 6,
+        "planner_latency_seconds": 0.0,
+        "target_resolution_status": "complete",
+        "target_resolutions": {
+          "donut": {
+            "target": "Donut",
+            "status": "resolved",
+            "filename": "2111.15664_donut.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          },
+          "nougat": {
+            "target": "Nougat",
+            "status": "resolved",
+            "filename": "2308.13418_nougat.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          }
+        }
+      },
+      "hits": [
+        {
+          "rank": 1,
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0003_000029:part_0001",
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2308.13418_nougat.pdf",
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000007:part_0001",
+          "matched_query_ids": [
+            "original",
+            "nougat"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000033:part_0001",
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "2308.13418_nougat.pdf",
+          "chunk_id": "679be336ce8010d3dc86b9530f0a30d4d5ea2a13153c6f274601b40f4382745b:paragraph:block_000115:part_0001",
+          "matched_query_ids": [
+            "original",
+            "nougat"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:figure:figure_0002_000015:part_0001",
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2111.15664_donut.pdf",
+          "chunk_id": "ad9c20523c37f53fc6d31ccb4c63dcc7b916c7340d6bb16033c9924ce70c7668:paragraph:block_000017:part_0001",
+          "matched_query_ids": [
+            "original",
+            "donut"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "TGR03",
+      "expected_filenames": [
+        "1810.04805_bert.pdf",
+        "2106.09685_lora.pdf"
+      ],
+      "retrieved_filenames": [
+        "1810.04805_bert.pdf",
+        "2106.09685_lora.pdf"
+      ],
+      "required_source_coverage": 1.0,
+      "latency_seconds": 4.7419,
+      "trace": {
+        "mode": "multi_query",
+        "fallback_reason": null,
+        "plan": {
+          "mode": "comparison",
+          "subqueries": [
+            {
+              "id": "bert",
+              "target": "BERT",
+              "query": "What masked-token and sentence-level objectives are used to pre-train BERT?"
+            },
+            {
+              "id": "lora",
+              "target": "LoRA",
+              "query": "How does LoRA adapt a pretrained model with frozen weights and low-rank updates?"
+            }
+          ],
+          "fallback_reason": null,
+          "planner_source": "dataset_explicit_subqueries"
+        },
+        "queries": [
+          {
+            "id": "original",
+            "target": null,
+            "query": "Compare BERT pre-training with LoRA adaptation of a pretrained model.",
+            "status": "success",
+            "latency_seconds": 2.4104,
+            "result_count": 10
+          },
+          {
+            "id": "bert",
+            "target": "BERT",
+            "query": "What masked-token and sentence-level objectives are used to pre-train BERT?",
+            "status": "success",
+            "latency_seconds": 2.2267,
+            "result_count": 10
+          },
+          {
+            "id": "lora",
+            "target": "LoRA",
+            "query": "How does LoRA adapt a pretrained model with frozen weights and low-rank updates?",
+            "status": "success",
+            "latency_seconds": 2.569,
+            "result_count": 10
+          }
+        ],
+        "unique_candidate_count": 27,
+        "final_count": 6,
+        "planner_latency_seconds": 0.0,
+        "target_resolution_status": "complete",
+        "target_resolutions": {
+          "bert": {
+            "target": "BERT",
+            "status": "resolved",
+            "filename": "1810.04805_bert.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          },
+          "lora": {
+            "target": "LoRA",
+            "status": "resolved",
+            "filename": "2106.09685_lora.pdf",
+            "score": 1.0,
+            "reason": "unique_lexical_match"
+          }
+        }
+      },
+      "hits": [
+        {
+          "rank": 1,
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001",
+          "matched_query_ids": [
+            "bert"
+          ]
+        },
+        {
+          "rank": 2,
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000026:part_0001",
+          "matched_query_ids": [
+            "lora"
+          ]
+        },
+        {
+          "rank": 3,
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000081:part_0001",
+          "matched_query_ids": [
+            "original"
+          ]
+        },
+        {
+          "rank": 4,
+          "filename": "1810.04805_bert.pdf",
+          "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000250:part_0001",
+          "matched_query_ids": [
+            "bert"
+          ]
+        },
+        {
+          "rank": 5,
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:figure:figure_0001_000016:part_0001",
+          "matched_query_ids": [
+            "lora"
+          ]
+        },
+        {
+          "rank": 6,
+          "filename": "2106.09685_lora.pdf",
+          "chunk_id": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a:paragraph:block_000217:part_0001",
+          "matched_query_ids": [
+            "original"
+          ]
+        }
+      ]
+    }
+  ]
+}
