@@ -221,7 +221,7 @@ export function Chat() {
           collection_name: selectedKB.collection_id,
           llm_config: llmConfig,
           top_k: 10,
-          score_threshold: 0.3,
+          score_threshold: 0.1,
           use_reranker: false,
           stream: true,
           return_source: true,

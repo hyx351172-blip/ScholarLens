@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Upload, FileText, Settings, AlertCircle, CheckCircle, Loader2, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
+import { config as appConfig } from '../src/config';
 import { buttonStyles } from './ui/button';
 
 interface UploadDialogProps {
@@ -12,7 +13,8 @@ interface UploadDialogProps {
 }
 
 interface UploadConfig {
-  extractionMode: 'fast' | 'vlm';
+  extractionMode: 'docling' | 'fast' | 'vlm';
+  enableVlmRepair: boolean;
   chunkSize: number;
   overlap: number;
   maxPageSpan: number;
@@ -38,7 +40,8 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
   const [showCreateKB, setShowCreateKB] = useState(false);
   const [newKBName, setNewKBName] = useState('');
   const [config, setConfig] = useState<UploadConfig>({
-    extractionMode: 'fast',
+    extractionMode: 'docling',
+    enableVlmRepair: false,
     chunkSize: 1500,
     overlap: 200,
     maxPageSpan: 3,
@@ -63,7 +66,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
   const fetchKnowledgeBases = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/stats/all');
+      const response = await fetch(`${appConfig.milvusApiUrl}/stats/all`);
       const result = await response.json();
 
       if (result.status === 'success') {
@@ -85,7 +88,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
 
     try {
       const response = await fetch(
-        `http://localhost:8000/knowledge_base/create?display_name=${encodeURIComponent(newKBName)}`,
+        `${appConfig.milvusApiUrl}/knowledge_base/create?display_name=${encodeURIComponent(newKBName)}`,
         { method: 'POST' }
       );
       const result = await response.json();
@@ -123,7 +126,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
     if (!selectedKB || files.length === 0) return;
 
     setUploading(true);
-    const API_BASE_URL = 'http://localhost:8006';
+    const API_BASE_URL = appConfig.extractionApiUrl;
     let successfulUploads = 0;
 
     try {
@@ -137,6 +140,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
         formData.append('auto_extract', 'true');
         formData.append('extraction_mode', config.extractionMode);
         formData.append('auto_chunk', 'true');
+        formData.append('enable_vlm_repair', config.enableVlmRepair.toString());
         formData.append('chunking_method', config.chunkingMethod);
         formData.append('chunk_size', config.chunkSize.toString());
         formData.append('chunk_overlap', config.overlap.toString());
@@ -361,7 +365,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                     onChange={handleFileSelect}
                     className="hidden"
                     id="file-upload"
-                    accept=".pdf,.md,.docx,.jpg,.jpeg,.png"
+                    accept=".pdf,application/pdf"
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
                     <Upload size={48} className="mx-auto mb-4 text-violet-600" />
@@ -433,7 +437,23 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                     {/* Extraction Mode */}
                     <div className="space-y-3">
                       <label className="text-slate-900">提取模式</label>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <button
+                          onClick={() => setConfig({ ...config, extractionMode: 'docling' })}
+                          className={`p-4 rounded-xl border-2 transition-all text-left ${
+                            config.extractionMode === 'docling'
+                              ? 'border-violet-500 bg-violet-50'
+                              : 'border-slate-200 glass'
+                          }`}
+                        >
+                          <div className={config.extractionMode === 'docling' ? 'text-violet-600' : 'text-slate-900'}>
+                            学术结构模式（推荐）
+                          </div>
+                          <div className="text-xs text-slate-500 mt-1">
+                            Docling + 章节、表格、公式感知切分
+                          </div>
+                        </button>
+
                         <button
                           onClick={() => setConfig({ ...config, extractionMode: 'fast' })}
                           className={`p-4 rounded-xl border-2 transition-all text-left ${
@@ -466,11 +486,30 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                           </div>
                         </button>
                       </div>
+                      {config.extractionMode === 'docling' && (
+                        <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-600">
+                          <input
+                            type="checkbox"
+                            checked={config.enableVlmRepair}
+                            onChange={(event) => setConfig({ ...config, enableVlmRepair: event.target.checked })}
+                            className="mt-0.5 h-4 w-4 accent-violet-600"
+                          />
+                          <span>
+                            对 Docling 判断困难的候选页启用 VLM 修复
+                            <span className="mt-1 block text-xs text-slate-400">默认关闭，复杂扫描件或图表密集论文再开启。</span>
+                          </span>
+                        </label>
+                      )}
                     </div>
 
                     {/* Chunking Parameters */}
                     <div className="space-y-3">
                       <label className="text-slate-900">切分参数</label>
+                      {config.extractionMode === 'docling' && (
+                        <p className="rounded-xl bg-violet-50 px-3 py-2 text-xs leading-5 text-violet-700">
+                          学术结构模式会自动使用 StructureAwareChunker；以下传统 Markdown 参数仅对快速和精确模式生效。
+                        </p>
+                      )}
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <label className="text-slate-500 text-sm">Chunk Size</label>

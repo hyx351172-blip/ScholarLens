@@ -403,17 +403,18 @@ def _query_rrf(
             if chunk_id in seen_in_query:
                 raise ValueError(f"{query_id} contains duplicate chunk id: {chunk_id}")
             seen_in_query.add(chunk_id)
+            dense_score = float(hit.get("retrieval_score", hit.get("score", 0.0)))
 
             if chunk_id not in fused_by_id:
                 item = dict(hit)
-                item["retrieval_score"] = float(hit.get("score", 0.0))
+                item["retrieval_score"] = dense_score
                 item["matched_query_ids"] = []
                 item["query_ranks"] = {}
                 item["query_rrf_score"] = 0.0
                 fused_by_id[chunk_id] = item
             item = fused_by_id[chunk_id]
             item["retrieval_score"] = max(
-                float(item["retrieval_score"]), float(hit.get("score", 0.0))
+                float(item["retrieval_score"]), dense_score
             )
             item["matched_query_ids"].append(query_id)
             item["query_ranks"][query_id] = rank

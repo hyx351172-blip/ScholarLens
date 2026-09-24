@@ -30,6 +30,7 @@ try:
         resolve_target_filename,
         single_query_plan,
     )
+    from backend.chat.section_intent_retrieval import rerank_section_intent
 except ModuleNotFoundError:  # Direct execution from backend/chat.
     from multi_query_retrieval import (
         RetrievalExecution,
@@ -39,6 +40,7 @@ except ModuleNotFoundError:  # Direct execution from backend/chat.
         resolve_target_filename,
         single_query_plan,
     )
+    from section_intent_retrieval import rerank_section_intent
 
 # 加载仓库根目录 .env 文件
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -98,6 +100,8 @@ class SourceDocument(BaseModel):
     query_rrf_score: Optional[float] = None
     matched_query_ids: Optional[List[str]] = None
     query_ranks: Optional[Dict[str, int]] = None
+    section_intent: Optional[str] = None
+    section_boost: Optional[float] = None
     metadata: Dict[str, Any] = {}
 
 class ChatRequest(BaseModel):
@@ -184,10 +188,14 @@ class ChatService:
         """
         try:
             url = f"{milvus_api_url}/search"
+            # Broad cross-language questions can rank the correct scientific
+            # section below the final Top-K. Pull a bounded candidate pool,
+            # apply deterministic section-intent scoring, then truncate.
+            candidate_top_k = min(50, max(top_k, top_k * 5))
             payload = {
                 "collection_name": collection_name,
                 "query_text": query,
-                "top_k": top_k,
+                "top_k": candidate_top_k,
                 "filter_expr": filter_expr,
             }
 
@@ -220,9 +228,20 @@ class ChatService:
                 doc for doc in documents
                 if doc["score"] >= score_threshold
             ]
+            ranked_docs = rerank_section_intent(query, filtered_docs)
+            section_matches = [
+                doc for doc in ranked_docs
+                if doc.get("section_intent") and float(doc.get("section_boost", 0.0)) > 0
+            ]
+            if section_matches:
+                ranked_docs = section_matches
+            ranked_docs = ranked_docs[:top_k]
 
-            print(f"✓ 召回 {len(documents)} 个文档，过滤后保留 {len(filtered_docs)} 个")
-            return filtered_docs
+            print(
+                f"✓ 候选 {len(documents)} 个，阈值后 {len(filtered_docs)} 个，"
+                f"章节排序后返回 {len(ranked_docs)} 个"
+            )
+            return ranked_docs
 
         except requests.exceptions.RequestException as e:
             raise HTTPException(
@@ -861,6 +880,8 @@ class ChatService:
                         "query_rrf_score": doc.get("query_rrf_score"),
                         "matched_query_ids": doc.get("matched_query_ids"),
                         "query_ranks": doc.get("query_ranks"),
+                        "section_intent": doc.get("section_intent"),
+                        "section_boost": doc.get("section_boost"),
                         "metadata": doc.get("metadata", {})
                     })
 
@@ -1011,6 +1032,8 @@ class ChatService:
                         query_rrf_score=doc.get("query_rrf_score"),
                         matched_query_ids=doc.get("matched_query_ids"),
                         query_ranks=doc.get("query_ranks"),
+                        section_intent=doc.get("section_intent"),
+                        section_boost=doc.get("section_boost"),
                         metadata=doc.get("metadata", {})
                     )
                     sources.append(source_doc)
