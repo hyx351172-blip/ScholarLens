@@ -14,6 +14,7 @@ import {
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Slider } from './ui/slider';
+import { buttonStyles } from './ui/button';
 
 export function RetrievalTest() {
   const [query, setQuery] = useState('');
@@ -79,13 +80,12 @@ export function RetrievalTest() {
             />
           </div>
           <motion.button
-            className="w-40 h-12 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center justify-center gap-2 self-end relative overflow-hidden group"
+            className={buttonStyles({ variant: 'primary', size: 'lg', className: 'w-40 self-end' })}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-            <Search size={20} className="relative z-10" />
-            <span className="relative z-10">检索</span>
+            <Search size={18} aria-hidden="true" />
+            <span>检索</span>
           </motion.button>
         </div>
       </motion.div>
@@ -277,7 +277,7 @@ export function RetrievalTest() {
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   <motion.button
-                    className="px-4 py-2 border border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all flex items-center gap-2"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -285,7 +285,7 @@ export function RetrievalTest() {
                     查看完整Chunk
                   </motion.button>
                   <motion.button
-                    className="px-4 py-2 border border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -306,7 +306,7 @@ export function RetrievalTest() {
         transition={{ delay: 0.6 }}
       >
         <motion.button
-          className="flex-1 px-6 py-4 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 hover:border-violet-300 transition-all flex items-center justify-center gap-2 text-slate-900 group"
+          className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -314,7 +314,7 @@ export function RetrievalTest() {
           <span>导出结果</span>
         </motion.button>
         <motion.button
-          className="flex-1 px-6 py-4 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 hover:border-violet-300 transition-all flex items-center justify-center gap-2 text-slate-900 group"
+          className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -322,13 +322,12 @@ export function RetrievalTest() {
           <span>保存测试案例</span>
         </motion.button>
         <motion.button
-          className="flex-1 px-6 py-4 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center justify-center gap-2 relative overflow-hidden group"
+          className={buttonStyles({ variant: 'primary', size: 'lg', className: 'flex-1 group' })}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-          <GitCompare size={18} className="relative z-10" />
-          <span className="relative z-10">对比不同参数</span>
+          <GitCompare size={18} aria-hidden="true" />
+          <span>对比不同参数</span>
         </motion.button>
       </motion.div>
     </div>

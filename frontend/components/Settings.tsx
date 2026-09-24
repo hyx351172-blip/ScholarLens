@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Slider } from './ui/slider';
 import { Switch } from './ui/switch';
+import { buttonStyles } from './ui/button';
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('model');
@@ -140,7 +141,7 @@ export function Settings() {
                       <button
                         onClick={() => setShowApiKey(!showApiKey)}
                         aria-label={showApiKey ? '隐藏 API Key' : '显示 API Key'}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-violet-600 transition-colors"
+                      className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true, className: 'absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-500' })}
                       >
                         {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -149,7 +150,7 @@ export function Settings() {
                       onClick={() => setConnectionStatus('success')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 border border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all"
+                      className={buttonStyles({ variant: 'secondary', size: 'lg' })}
                     >
                       测试连接
                     </motion.button>
@@ -561,7 +562,7 @@ export function Settings() {
                       key={type}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-violet-50 text-violet-600 rounded-xl hover:bg-violet-100 transition-all border border-slate-200"
+                      className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                     >
                       {type}
                     </motion.button>
@@ -578,7 +579,7 @@ export function Settings() {
                     className="flex-1 px-4 py-3 glass-strong border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 text-slate-900"
                   />
                   <motion.button
-                    className="px-6 py-3 glass border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all text-slate-900"
+                    className={buttonStyles({ variant: 'quiet', size: 'lg' })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -599,7 +600,7 @@ export function Settings() {
         transition={{ delay: 0.3 }}
       >
         <motion.button
-          className="text-violet-600 hover:underline"
+          className={buttonStyles({ variant: 'ghost', size: 'sm' })}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -608,19 +609,18 @@ export function Settings() {
 
         <div className="flex gap-3">
           <motion.button
-            className="px-6 py-3 glass border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all text-slate-900"
+            className={buttonStyles({ variant: 'quiet', size: 'lg' })}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             重置
           </motion.button>
           <motion.button
-            className="px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all relative overflow-hidden group"
+            className={buttonStyles({ variant: 'primary', size: 'lg' })}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-            <span className="relative z-10">保存设置</span>
+            <span>保存设置</span>
           </motion.button>
         </div>
       </motion.div>

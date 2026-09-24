@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import { buttonStyles } from './ui/button';
 
 interface DocumentViewerProps {
   fileId: string;
@@ -132,7 +133,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
       >
         <motion.button
           onClick={onBack}
-          className="text-violet-600 hover:text-emerald-600 flex items-center gap-2 transition-colors group"
+          className={buttonStyles({ variant: 'ghost', size: 'sm', className: 'group' })}
           whileHover={{ x: -4 }}
         >
           <ArrowLeft size={18} className="group-hover:animate-pulse" />
@@ -214,7 +215,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                   onClick={handleCopyMarkdown}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-3 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all flex items-center gap-2 text-slate-900"
+                  className={buttonStyles({ variant: 'quiet', size: 'sm' })}
                 >
                   <Copy size={16} className="text-violet-600" />
                   复制
@@ -374,7 +375,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                 disabled={currentPage === 1}
                 whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
                 whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
-                className="px-4 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-slate-900"
+                className={buttonStyles({ variant: 'quiet', size: 'md' })}
               >
                 <ChevronLeft size={16} />
                 上一页
@@ -389,7 +390,7 @@ export function DocumentViewer({ fileId, onBack }: DocumentViewerProps) {
                 disabled={currentPage === docData.total_pages}
                 whileHover={{ scale: currentPage === docData.total_pages ? 1 : 1.05 }}
                 whileTap={{ scale: currentPage === docData.total_pages ? 1 : 0.95 }}
-                className="px-4 py-2 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-slate-900"
+                className={buttonStyles({ variant: 'quiet', size: 'md' })}
               >
                 下一页
                 <ChevronRight size={16} />

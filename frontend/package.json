@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "node --test src/citations.test.ts src/iconSystem.test.ts",
+    "test": "node --test src/buttonSystem.test.ts src/citations.test.ts src/iconSystem.test.ts",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },

@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { UploadDialog } from './UploadDialog';
+import { buttonStyles } from './ui/button';
 
 interface KnowledgeBaseDetailProps {
   collectionId: string;
@@ -169,7 +170,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         <div className="flex items-center gap-4">
           <motion.button
             onClick={onBack}
-            className="text-violet-600 hover:text-emerald-600 flex items-center gap-2 transition-colors group"
+            className={buttonStyles({ variant: 'ghost', size: 'sm', className: 'group' })}
             whileHover={{ x: -4 }}
           >
             <ArrowLeft size={18} className="group-hover:animate-pulse" />
@@ -185,13 +186,12 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
 
         <motion.button
           onClick={() => setShowUploadDialog(true)}
-          className="px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center gap-2 relative overflow-hidden group"
+          className={buttonStyles({ variant: 'primary', size: 'lg' })}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-          <Upload size={18} className="relative z-10" />
-          <span className="relative z-10">上传文档</span>
+          <Upload size={18} aria-hidden="true" />
+          <span>上传文档</span>
         </motion.button>
       </motion.div>
 
@@ -240,7 +240,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         </div>
 
         <motion.button
-          className="px-4 py-3 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all flex items-center gap-2 text-slate-900"
+          className={buttonStyles({ variant: 'quiet', size: 'md' })}
           whileHover={{ scale: 1.05 }}
         >
           按时间
@@ -248,7 +248,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
         </motion.button>
 
         <motion.button
-          className="px-4 py-3 glass-strong border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all flex items-center gap-2 text-slate-900"
+          className={buttonStyles({ variant: 'quiet', size: 'md' })}
           whileHover={{ scale: 1.05 }}
         >
           按大小
@@ -318,7 +318,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                     onClick={() => onViewDocument(doc.file_id)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 border border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all flex items-center gap-2"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                   >
                     <Eye size={16} />
                     查看
@@ -327,7 +327,7 @@ export function KnowledgeBaseDetail({ collectionId, onBack, onViewDocument }: Kn
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label={`删除文档 ${doc.filename}`}
-                    className="px-4 py-2 border border-rose-500 text-rose-600 rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
+                    className={buttonStyles({ variant: 'danger', size: 'sm', iconOnly: true })}
                   >
                     <Trash2 size={16} />
                   </motion.button>

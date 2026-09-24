@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
+import { buttonStyles } from './ui/button';
 import { AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
 
 interface ConfirmDialogProps {
@@ -90,7 +91,7 @@ export function ConfirmDialog({
                 onClick={onClose}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 px-6 py-3 border-2 border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all relative overflow-hidden group"
+                className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1' })}
               >
                 <span className="relative z-10">{cancelText}</span>
               </motion.button>
@@ -101,10 +102,9 @@ export function ConfirmDialog({
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`flex-1 px-6 py-3 bg-gradient-to-r ${getGradient()} text-white rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all relative overflow-hidden group`}
+                className={buttonStyles({ variant: type === 'warning' || type === 'error' ? 'danger' : 'primary', size: 'lg', className: 'flex-1' })}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-                <span className="relative z-10">{confirmText}</span>
+                <span>{confirmText}</span>
               </motion.button>
             </div>
           </div>

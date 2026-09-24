@@ -18,6 +18,7 @@ import { config } from '../src/config';
 import { sourceIdFor, type CitationSource } from '../src/citations';
 import { CitationMarkdown } from './CitationMarkdown';
 import { EvidenceDrawer } from './EvidenceDrawer';
+import { buttonStyles } from './ui/button';
 
 interface Message {
   id: string;
@@ -327,7 +328,7 @@ export function Chat() {
           <button
             type="button"
             onClick={handleNewChat}
-            className="rounded-xl border border-violet-200 bg-violet-50 p-2 text-violet-700 transition hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-300"
+            className={buttonStyles({ variant: 'secondary', size: 'sm', iconOnly: true })}
             aria-label="新建对话"
           >
             <Plus size={17} />
@@ -373,7 +374,7 @@ export function Chat() {
               <button
                 type="button"
                 onClick={(event) => deleteSession(session.id, event)}
-                className="mr-2 mt-3 rounded-md p-1 text-slate-300 opacity-0 transition hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                className={buttonStyles({ variant: 'danger', size: 'sm', iconOnly: true, className: 'mr-2 mt-2 opacity-0 group-hover:opacity-100' })}
                 aria-label={`删除对话 ${session.title}`}
               >
                 <Trash2 size={14} />
@@ -417,11 +418,7 @@ export function Chat() {
             <button
               type="button"
               onClick={() => setShowSettings((visible) => !visible)}
-              className={`rounded-xl border p-2.5 transition focus:outline-none focus:ring-2 focus:ring-violet-200 ${
-                showSettings
-                  ? 'border-violet-200 bg-violet-50 text-violet-700'
-                  : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
-              }`}
+              className={buttonStyles({ variant: showSettings ? 'secondary' : 'quiet', iconOnly: true })}
               aria-label="模型设置"
             >
               <Settings size={17} />
@@ -552,7 +549,7 @@ export function Chat() {
                                   type="button"
                                   key={`${item.id}-${sourceId}`}
                                   onClick={() => selectSource(sourceId, source)}
-                                  className="inline-flex max-w-full items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-left text-xs text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
+                                  className={buttonStyles({ variant: 'quiet', size: 'sm', className: 'max-w-full px-2.5 text-left' })}
                                   title={`${source.filename} · 查看证据`}
                                 >
                                   <span className="rounded bg-white px-1.5 py-0.5 font-semibold text-violet-700 shadow-sm">{sourceId}</span>
@@ -593,7 +590,7 @@ export function Chat() {
                 type="button"
                 onClick={() => void handleSendMessage()}
                 disabled={!message.trim() || isLoading || !selectedKB}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                className={buttonStyles({ variant: 'primary', size: 'lg', iconOnly: true, className: 'shrink-0' })}
                 aria-label="发送问题"
               >
                 {isLoading ? <Loader2 size={19} className="animate-spin" /> : <Send size={18} />}

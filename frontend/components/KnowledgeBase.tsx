@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ConfirmDialog } from './ConfirmDialog';
 import { Toast } from './Toast';
+import { buttonStyles } from './ui/button';
 
 interface KnowledgeBaseProps {
   onViewDetail: (collectionId: string) => void;
@@ -170,13 +171,12 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
         </div>
         <motion.button
           onClick={() => setShowCreateDialog(true)}
-          className="px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all flex items-center gap-2 relative overflow-hidden group"
+          className={buttonStyles({ variant: 'primary', size: 'lg' })}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-          <Plus size={18} className="relative z-10" />
-          <span className="relative z-10">新建知识库</span>
+          <Plus size={18} aria-hidden="true" />
+          <span>新建知识库</span>
         </motion.button>
       </motion.div>
 
@@ -303,7 +303,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   onClick={() => onViewDetail(kb.collection_id)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all"
+                  className={buttonStyles({ variant: 'primary', size: 'md' })}
                 >
                   进入
                 </motion.button>
@@ -315,7 +315,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   aria-label={`删除知识库 ${kb.name}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2.5 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-[rgba(255,59,92,0.1)] transition-all"
+                  className={buttonStyles({ variant: 'danger', size: 'md', iconOnly: true })}
                 >
                   <Trash2 size={18} />
                 </motion.button>
@@ -360,10 +360,9 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   onClick={handleCreateKB}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all relative overflow-hidden group"
+                  className={buttonStyles({ variant: 'primary', size: 'lg', className: 'flex-1' })}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-                  <span className="relative z-10">创建</span>
+                  <span>创建</span>
                 </motion.button>
                 <motion.button
                   onClick={() => {
@@ -372,7 +371,7 @@ export function KnowledgeBase({ onViewDetail }: KnowledgeBaseProps) {
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-6 py-3 border-2 border-violet-500 text-violet-600 rounded-xl hover:bg-violet-50 transition-all"
+                  className={buttonStyles({ variant: 'quiet', size: 'lg', className: 'flex-1' })}
                 >
                   取消
                 </motion.button>

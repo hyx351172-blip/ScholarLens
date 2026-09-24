@@ -14,6 +14,7 @@ import {
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { UploadDialog } from './UploadDialog';
+import { buttonStyles } from './ui/button';
 import { config } from '../src/config';
 
 interface DashboardProps {
@@ -165,7 +166,7 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
           <h3 className="text-slate-900">最近对话</h3>
           <motion.button
             onClick={() => onNavigate && onNavigate('chat')}
-            className="text-violet-600 flex items-center gap-1 hover:gap-2 transition-all duration-300 group"
+            className={buttonStyles({ variant: 'ghost', size: 'sm', className: 'group' })}
             whileHover={{ scale: 1.05 }}
           >
             查看全部
@@ -180,7 +181,7 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
               <p>暂无对话记录</p>
               <motion.button
                 onClick={() => onNavigate && onNavigate('chat')}
-                className="mt-4 px-4 py-2 border border-violet-500 text-violet-600 rounded-lg hover:bg-violet-50 transition-all"
+                className={buttonStyles({ variant: 'secondary', size: 'md', className: 'mt-4' })}
                 whileHover={{ scale: 1.05 }}
               >
                 开始第一次对话
@@ -244,19 +245,14 @@ export function Dashboard({ onNavigate }: DashboardProps = {}) {
               transition={{ duration: 0.3, delay: 0.9 + index * 0.1 }}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex-1 h-16 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden group ${
-                action.variant === 'primary'
-                  ? 'bg-gradient-to-r from-violet-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(0,212,255,0.4)] hover:shadow-[0_0_30px_rgba(0,212,255,0.6)]'
-                  : action.variant === 'outline'
-                  ? 'border-2 border-violet-500 text-violet-600 hover:bg-violet-50'
-                  : 'bg-violet-50 text-violet-600 border border-slate-200 hover:bg-violet-100'
-              }`}
+              className={buttonStyles({
+                variant: action.variant === 'primary' ? 'primary' : action.variant === 'outline' ? 'secondary' : 'quiet',
+                size: 'lg',
+                className: 'w-full sm:flex-1',
+              })}
             >
-              {action.variant === 'primary' && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-              )}
-              <ActionIcon size={20} className="relative z-10" aria-hidden="true" />
-              <span className="relative z-10">{action.label}</span>
+              <ActionIcon size={18} aria-hidden="true" />
+              <span>{action.label}</span>
             </motion.button>
             );
           })}

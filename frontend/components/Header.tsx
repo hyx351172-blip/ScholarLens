@@ -1,4 +1,5 @@
 import { Activity, Bell, Menu, User } from 'lucide-react';
+import { buttonStyles } from './ui/button';
 
 interface HeaderProps {
   title: string;
@@ -10,7 +11,7 @@ export function Header({ title, onOpenNavigation }: HeaderProps) {
     <header className="app-shell-header fixed right-0 top-0 z-40 h-16 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="flex h-full items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
-          <button type="button" onClick={onOpenNavigation} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 md:hidden" aria-label="打开导航">
+          <button type="button" onClick={onOpenNavigation} className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true, className: 'md:hidden' })} aria-label="打开导航">
             <Menu size={19} />
           </button>
           <div>
@@ -24,11 +25,11 @@ export function Header({ title, onOpenNavigation }: HeaderProps) {
             <Activity size={13} className="text-emerald-600" />
             <span className="text-xs font-medium text-emerald-700">本地工作区</span>
           </div>
-          <button type="button" className="relative rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:bg-slate-50" aria-label="通知">
+          <button type="button" className={buttonStyles({ variant: 'quiet', iconOnly: true, className: 'relative text-slate-500' })} aria-label="通知">
             <Bell size={17} />
             <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500" />
           </button>
-          <button type="button" className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white" aria-label="用户账户">
+          <button type="button" className={buttonStyles({ variant: 'primary', size: 'sm', iconOnly: true })} aria-label="用户账户">
             <User size={16} />
           </button>
         </div>

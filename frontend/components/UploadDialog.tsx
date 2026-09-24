@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Upload, FileText, Settings, AlertCircle, CheckCircle, Loader2, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
+import { buttonStyles } from './ui/button';
 
 interface UploadDialogProps {
   isOpen: boolean;
@@ -246,7 +247,8 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg hover:bg-violet-50 transition-colors flex items-center justify-center text-slate-500 hover:text-slate-900"
+              className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true })}
+              aria-label="关闭上传窗口"
             >
               <X size={20} />
             </button>
@@ -266,7 +268,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                     onClick={() => setShowCreateKB(!showCreateKB)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm border border-violet-500 text-violet-600 rounded-lg hover:bg-violet-50 transition-all"
+                    className={buttonStyles({ variant: 'secondary', size: 'sm' })}
                   >
                     <Plus size={14} />
                     新建知识库
@@ -296,7 +298,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                           onClick={handleCreateKB}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2 bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-lg hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all"
+                          className={buttonStyles({ variant: 'primary', size: 'sm' })}
                         >
                           创建
                         </motion.button>
@@ -397,7 +399,8 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
                           {!uploading && (
                             <button
                               onClick={() => setFiles(files.filter((_, i) => i !== index))}
-                              className="text-slate-500 hover:text-rose-600 transition-colors"
+                              className={buttonStyles({ variant: 'danger', size: 'sm', iconOnly: true })}
+                              aria-label={`移除文件 ${file.name}`}
                             >
                               <X size={16} />
                             </button>
@@ -412,7 +415,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
               {/* Advanced Settings Toggle */}
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-2 text-violet-600 hover:text-slate-900 transition-colors"
+                className={buttonStyles({ variant: 'ghost', size: 'sm' })}
               >
                 <Settings size={16} />
                 {showAdvanced ? '隐藏' : '显示'}高级配置
@@ -554,7 +557,7 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
               onClick={onClose}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 glass border border-slate-200 rounded-xl hover:bg-violet-50/50 transition-all text-slate-900"
+              className={buttonStyles({ variant: 'quiet', size: 'lg' })}
             >
               取消
             </motion.button>
@@ -563,17 +566,10 @@ export function UploadDialog({ isOpen, onClose, onUpload, preselectedKB }: Uploa
               disabled={!selectedKB || files.length === 0 || uploading}
               whileHover={selectedKB && files.length > 0 && !uploading ? { scale: 1.05 } : {}}
               whileTap={selectedKB && files.length > 0 && !uploading ? { scale: 0.95 } : {}}
-              className={`px-6 py-3 rounded-xl transition-all relative overflow-hidden group flex items-center gap-2 ${
-                selectedKB && files.length > 0 && !uploading
-                  ? 'bg-gradient-to-r from-violet-500 to-indigo-600 text-white hover:shadow-[0_0_30px_rgba(0,212,255,0.6)]'
-                  : 'bg-violet-100 text-slate-500 cursor-not-allowed'
-              }`}
+              className={buttonStyles({ variant: 'primary', size: 'lg' })}
             >
-              {selectedKB && files.length > 0 && !uploading && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 shimmer" />
-              )}
               {uploading && <Loader2 size={16} className="animate-spin" />}
-              <span className="relative z-10">
+              <span>
                 {uploading ? '上传中...' : `上传 (${files.length})`}
               </span>
             </motion.button>

@@ -1,5 +1,6 @@
 import { BookOpen, Copy, ExternalLink, FileText, Hash, MapPin, X } from 'lucide-react';
 import { motion } from 'motion/react';
+import { buttonStyles } from './ui/button';
 
 import { config } from '../src/config';
 import {
@@ -46,7 +47,7 @@ export function EvidenceDrawer({ sourceId, source, onClose }: EvidenceDrawerProp
         <button
           type="button"
           onClick={onClose}
-          className="ml-3 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-300"
+          className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true, className: 'ml-3 text-slate-400' })}
           aria-label="关闭证据面板"
         >
           <X size={18} />
@@ -100,7 +101,7 @@ export function EvidenceDrawer({ sourceId, source, onClose }: EvidenceDrawerProp
               <button
                 type="button"
                 onClick={() => navigator.clipboard?.writeText(chunkId)}
-                className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                className={buttonStyles({ variant: 'ghost', size: 'sm', iconOnly: true, className: 'text-slate-400' })}
                 aria-label="复制 Chunk ID"
               >
                 <Copy size={15} />
@@ -116,7 +117,7 @@ export function EvidenceDrawer({ sourceId, source, onClose }: EvidenceDrawerProp
             href={pdfUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-300"
+            className={buttonStyles({ variant: 'primary', size: 'lg', className: 'w-full' })}
           >
             打开原文 PDF
             <ExternalLink size={16} />
