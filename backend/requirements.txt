@@ -17,4 +17,6 @@ pypinyin==0.55.0
 python-dotenv==1.1.1
 # PDF parsing only: deliberately excludes Docling's chunking extra.
 docling-slim[format-pdf,models-local,extract-core]==2.117.0
+# Explicit OCR engine for scanned/image-only PDFs.
+easyocr==1.7.2
 opencv-python-headless==4.11.0.86

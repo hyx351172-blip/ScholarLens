@@ -30,6 +30,7 @@ from llm_extraction import PAGES_PER_REQUEST, CONCURRENT_REQUESTS # type: ignore
 from dotenv import load_dotenv # type: ignore
 from chunkers.structure_aware_chunker import StructureAwareChunker
 from parsers.docling_parser import DoclingParser
+from parsers.markdown_renderer import render_document_markdown
 from parsers.vlm_page_repairer import (
     OpenAICompatibleVLMClient,
     VLMPageRepairConfig,
@@ -173,7 +174,13 @@ class PDFExtractionService:
     def docling_parser(self) -> DoclingParser:
         """Lazy initialization avoids loading local layout models at startup."""
         if self._docling_parser is None:
-            self._docling_parser = DoclingParser(table_mode="accurate", do_ocr=False)
+            self._docling_parser = DoclingParser(
+                table_mode="accurate",
+                do_ocr=os.getenv("DOCLING_OCR_ENABLED", "true").lower() == "true",
+                do_formula_enrichment=os.getenv(
+                    "DOCLING_FORMULA_ENRICHMENT", "true"
+                ).lower() == "true",
+            )
         return self._docling_parser
 
     @property
@@ -450,6 +457,10 @@ class PDFExtractionService:
             )
             parse_result = vlm_repair_result.parse_result
         document = parse_result.document
+        # Keep the existing raw-HTML-disabled UI/API view compatible. Both
+        # representations use the same final blocks; structured export preserves spans.
+        structured_markdown = render_document_markdown(document.blocks)
+        parse_result.markdown = render_document_markdown(document.blocks, table_format="markdown")
         quality = asdict(document.quality)
         chunking_result = None
         if perform_chunking:
@@ -480,6 +491,7 @@ class PDFExtractionService:
         return {
             "filename": document.filename,
             "markdown": parse_result.markdown,
+            "structured_markdown": structured_markdown,
             "images": [],
             "metadata": {
                 "total_pages": quality["total_pages"],
@@ -647,6 +659,11 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
         f.write(result_data.get('markdown', ''))
     saved_paths['markdown'] = str(markdown_path)
 
+    if result_data.get('structured_markdown') is not None:
+        structured_path = result_dir / f"{Path(filename).stem}.structured.md"
+        structured_path.write_text(result_data['structured_markdown'], encoding='utf-8')
+        saved_paths['structured_markdown'] = str(structured_path)
+
     # 2. 保存图片
     images = result_data.get('images', [])
     if images:
@@ -681,6 +698,7 @@ def save_extraction_results(file_id: str, filename: str, result_data: Dict[str, 
         'metadata': result_data.get('metadata', {}),
         'saved_paths': {
             'markdown': str(markdown_path),
+            'structured_markdown': saved_paths.get('structured_markdown'),
             'images_dir': str(result_dir / "images") if images else None
         }
     }

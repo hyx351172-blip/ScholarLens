@@ -1,0 +1,75 @@
+{
+  "experiment": "table-header-reconstruction-v11",
+  "artifact_type": "summary_of_full_local_results",
+  "full_results": "output/benchmarks/omnidocbench-table-header-v11-scored/results.json",
+  "full_results_sha256": "e0ef645638a285858e4032d3c0469a4c592247c1b5218a305bb0e22ba5249ddc",
+  "production_applied": false,
+  "gold_access_in_inference": false,
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "aggregate": {
+    "cases": 3,
+    "candidates_scored": 2,
+    "gate_passed": 2,
+    "baseline_teds": 0.6890469428104301,
+    "effective_offline_teds": 0.7330727233652029
+  },
+  "results": [
+    {
+      "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+      "baseline_teds": 0.21116466993212246,
+      "candidate_teds": null,
+      "gate_passed": false,
+      "reason": "invalid_v8_structure"
+    },
+    {
+      "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+      "baseline_teds": 0.9596622889305816,
+      "candidate_teds": 0.9971857410881801,
+      "gate_passed": true,
+      "unchanged_from_v10": true
+    },
+    {
+      "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+      "baseline_teds": 0.8963138695685865,
+      "candidate_teds": 0.9908677590753062,
+      "candidate_structure_teds": 1.0,
+      "gate_passed": true,
+      "header_rows_before": 2,
+      "header_rows_after": 3,
+      "logical_cells": 488,
+      "header_span_cells": {"exact": 20, "total": 20},
+      "header_text_cells": {"exact": 17, "total": 20},
+      "all_gold_cells": {"exact": 456, "total": 488},
+      "nonempty_gold_cells": {"exact": 441, "total": 472},
+      "numeric_regex_cells": {"exact": 461, "total": 461},
+      "ocr_count": 475,
+      "unassigned_ocr": 0,
+      "body_topology_preserved": true,
+      "strict_text_differences": {
+        "internal_whitespace": 27,
+        "header_ocr_or_hyphenation": 3,
+        "math_representation": 1,
+        "gold_empty_prediction_nonempty": 1
+      }
+    }
+  ],
+  "validation": {
+    "new_tests": 17,
+    "total_tests": 306,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 24.894,
+    "isolated_environment_tests": 10,
+    "traceability_passed": true,
+    "protected_files_unchanged": 37
+  },
+  "limitations": [
+    "Three selected development cases, not held-out.",
+    "Requires stable parent groups, visible rulings, corroborating branches and regular body.",
+    "Standalone rowspan anchors supported; arbitrary internal rowspan not inferred.",
+    "OCR/text/annotation differences remain, including one nonempty value in a gold-empty cell.",
+    "No production parsing, indexing or downstream RAG change."
+  ]
+}

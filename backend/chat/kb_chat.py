@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 try:
+    from backend.chat.answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
     from backend.chat.multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
@@ -32,6 +33,7 @@ try:
     )
     from backend.chat.section_intent_retrieval import rerank_section_intent
 except ModuleNotFoundError:  # Direct execution from backend/chat.
+    from answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
     from multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
@@ -781,8 +783,8 @@ class ChatService:
             retrieve_time = time.time() - retrieve_start
 
             if not documents:
-                # 没有找到相关文档，直接用LLM回答
-                print("⚠️ 未找到相关文档，使用LLM直接回答")
+                # Knowledge-base mode must not fall back to model memory.
+                print("⚠️ 未找到相关文档，返回证据不足提示")
                 messages = []
 
                 # 添加历史对话
@@ -799,7 +801,7 @@ class ChatService:
                 })
 
                 # 流式返回
-                async for token in self.call_llm_stream(messages, request.llm_config):
+                for token in (INSUFFICIENT_EVIDENCE,):
                     yield json.dumps({
                         "type": "content",
                         "data": token
@@ -812,6 +814,7 @@ class ChatService:
                         "retrieve_time": retrieve_time,
                         "total_time": time.time() - start_time,
                         "documents_count": 0,
+                        "answer_guard": "no_evidence",
                         "retrieval_trace": retrieval_trace,
                     }
                 }, ensure_ascii=False) + "\n"
@@ -857,8 +860,15 @@ class ChatService:
             })
 
             # 6. 调用LLM（流式）
+            messages = [message for message in messages if message['role'] != 'system']
+            messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
             llm_start = time.time()
+            pending_answer = []
             async for token in self.call_llm_stream(messages, request.llm_config):
+                pending_answer.append(token)
+            answer, guard_status = guard_answer(''.join(pending_answer), len(documents))
+            # Validate before emitting any text; token fragments can split citations.
+            for token in (answer,):
                 yield json.dumps({
                     "type": "content",
                     "data": token
@@ -898,6 +908,7 @@ class ChatService:
                     "retrieve_time": retrieve_time,
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
+                    "answer_guard": guard_status,
                     "total_time": total_time,
                     "documents_count": len(documents),
                     "retrieval_trace": retrieval_trace,
@@ -947,8 +958,8 @@ class ChatService:
             retrieve_time = time.time() - retrieve_start
 
             if not documents:
-                # 没有找到相关文档，直接用LLM回答
-                print("⚠️ 未找到相关文档，使用LLM直接回答")
+                # Knowledge-base mode must not fall back to model memory.
+                print("⚠️ 未找到相关文档，返回证据不足提示")
                 messages = []
 
                 for msg in request.history:
@@ -962,7 +973,7 @@ class ChatService:
                     "content": request.query
                 })
 
-                answer = await self.call_llm_non_stream(messages, request.llm_config)
+                answer = INSUFFICIENT_EVIDENCE
 
                 return ChatResponse(
                     success=True,
@@ -973,6 +984,7 @@ class ChatService:
                         "retrieve_time": retrieve_time,
                         "total_time": time.time() - start_time,
                         "documents_count": 0,
+                        "answer_guard": "no_evidence",
                         "retrieval_trace": retrieval_trace,
                     }
                 )
@@ -1012,8 +1024,11 @@ class ChatService:
             })
 
             # 6. 调用LLM（非流式）
+            messages = [message for message in messages if message['role'] != 'system']
+            messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
             llm_start = time.time()
             answer = await self.call_llm_non_stream(messages, request.llm_config)
+            answer, guard_status = guard_answer(answer, len(documents))
             llm_time = time.time() - llm_start
 
             # 7. 构建来源文档
@@ -1059,6 +1074,7 @@ class ChatService:
                     "retrieve_time": retrieve_time,
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
+                    "answer_guard": guard_status,
                     "total_time": total_time,
                     "documents_count": len(documents),
                     "retrieval_trace": retrieval_trace,

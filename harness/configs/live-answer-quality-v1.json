@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0",
+  "id": "live-answer-quality-v1",
+  "description": "Paid live evaluation of target-grounded retrieval and evidence-cited answers.",
+  "preflight": {
+    "required_env": [
+      "SCHOLARLENS_COLLECTION"
+    ],
+    "services": [
+      {
+        "name": "milvus-api",
+        "url": "http://localhost:8000/health",
+        "timeout_seconds": 5
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "target_grounding",
+      "label": "Live target-grounded retrieval",
+      "source": {
+        "kind": "command",
+        "argv": [
+          "{python}",
+          "scripts/evaluate_target_grounded_retrieval.py",
+          "docs/evaluation/paper-target-resolution-dev-v1.json",
+          "--collection",
+          "${SCHOLARLENS_COLLECTION}",
+          "--output",
+          "{artifact}"
+        ],
+        "allowed_exit_codes": [0, 1],
+        "timeout_seconds": 600
+      },
+      "metrics": [
+        {
+          "id": "target_resolution_rate",
+          "label": "Complete target resolution",
+          "path": "summary.complete_target_resolution_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "required_source_rate",
+          "label": "Complete required-source coverage",
+          "path": "summary.complete_required_source_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        }
+      ],
+      "gates": [
+        {
+          "id": "all_targets_resolved",
+          "metric": "target_resolution_rate",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "all_required_sources_retrieved",
+          "metric": "required_source_rate",
+          "operator": ">=",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "id": "answer_citations",
+      "label": "Live answer citation quality",
+      "source": {
+        "kind": "command",
+        "argv": [
+          "{python}",
+          "scripts/evaluate_answer_citations.py",
+          "docs/evaluation/evidence-gold-v4-answer-citations-heldout.json",
+          "--collection",
+          "${SCHOLARLENS_COLLECTION}",
+          "--score-threshold",
+          "0.1",
+          "--output",
+          "{artifact}"
+        ],
+        "allowed_exit_codes": [0, 2],
+        "timeout_seconds": 1800
+      },
+      "metrics": [
+        {
+          "id": "citation_syntax_rate",
+          "label": "Citation syntax valid",
+          "path": "summary.citation_syntax_valid_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "required_source_rate",
+          "label": "Complete required-source coverage",
+          "path": "summary.complete_required_source_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "gold_evidence_hit_rate",
+          "label": "Gold-evidence citation hit rate",
+          "path": "summary.gold_evidence_citation_hit_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "claim_citation_completeness",
+          "label": "Claim citation completeness",
+          "path": "summary.mean_claim_citation_completeness",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "concept_coverage",
+          "label": "Concept coverage",
+          "path": "summary.mean_concept_coverage",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "claim_entailment_rate",
+          "label": "Claim entailment rate",
+          "path": "summary.mean_claim_entailment_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "unsupported_claim_case_rate",
+          "label": "Unsupported-claim case rate",
+          "path": "summary.unsupported_claim_case_rate",
+          "unit": "ratio",
+          "direction": "lower"
+        },
+        {
+          "id": "answer_latency",
+          "label": "Mean answer pipeline latency",
+          "path": "summary.mean_answer_pipeline_latency_seconds",
+          "unit": "seconds",
+          "direction": "lower"
+        }
+      ],
+      "gates": [
+        {
+          "id": "valid_citation_syntax",
+          "metric": "citation_syntax_rate",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "all_required_sources_cited",
+          "metric": "required_source_rate",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "minimum_gold_evidence_hits",
+          "metric": "gold_evidence_hit_rate",
+          "operator": ">=",
+          "value": 0.8333333333333334
+        },
+        {
+          "id": "minimum_claim_citation_completeness",
+          "metric": "claim_citation_completeness",
+          "operator": ">=",
+          "value": 0.9
+        },
+        {
+          "id": "minimum_concept_coverage",
+          "metric": "concept_coverage",
+          "operator": ">=",
+          "value": 0.9
+        },
+        {
+          "id": "minimum_claim_entailment",
+          "metric": "claim_entailment_rate",
+          "operator": ">=",
+          "value": 0.9
+        },
+        {
+          "id": "maximum_unsupported_claim_cases",
+          "metric": "unsupported_claim_case_rate",
+          "operator": "<=",
+          "value": 0.16666666666666666
+        }
+      ]
+    }
+  ]
+}
+

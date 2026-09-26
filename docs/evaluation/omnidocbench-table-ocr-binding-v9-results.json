@@ -1,0 +1,57 @@
+{
+  "experiment": "table-ocr-binding-v9",
+  "production_applied": false,
+  "paid_api_calls": 0,
+  "cases": 3,
+  "actual_binding_runs": 2,
+  "raw_html_structure_valid": 2,
+  "binding_integrity_gate_passed": 0,
+  "baseline_teds": 0.6890469428104301,
+  "effective_teds": 0.6890469428104301,
+  "results": [
+    {
+      "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+      "status": "skipped_v8_invalid_baseline_retained",
+      "baseline_teds": 0.21116466993212246,
+      "raw_candidate_teds": null
+    },
+    {
+      "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+      "baseline_teds": 0.9596622889305816,
+      "raw_candidate_teds": 0.6300813008130082,
+      "raw_candidate_structure_teds": 1.0,
+      "logical_cells": 492,
+      "physical_boxes": 355,
+      "ocr_count": 280,
+      "unassigned_ocr_count": 33,
+      "trace_missing_geometry_cells": 180,
+      "coordinate_numeric_exact": {"baseline": 249, "raw_candidate": 65, "gold_total": 254},
+      "binding_gate_passed": false
+    },
+    {
+      "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+      "baseline_teds": 0.8963138695685865,
+      "raw_candidate_teds": 0.9398719519474237,
+      "raw_candidate_structure_teds": 0.9792452830188679,
+      "logical_cells": 482,
+      "physical_boxes": 474,
+      "ocr_count": 475,
+      "unassigned_ocr_count": 0,
+      "trace_missing_geometry_cells": 8,
+      "gold_rows": 42,
+      "candidate_rows": 41,
+      "binding_gate_passed": false
+    }
+  ],
+  "ocr_text_and_boxes_unchanged_from_v7_cache": true,
+  "protected_files_unchanged": 38,
+  "frozen_source_files_unchanged": 15,
+  "tests": {"total": 270, "new": 25, "failures": 0, "errors": 0, "skipped": 0},
+  "limitations": [
+    "Rejected candidates are scored for diagnosis, not automatically applied.",
+    "Two datasheets and one paper benchmark: three selected development cases, not held-out.",
+    "Header-row shifts strongly affect exact-coordinate scores; label-anchor coverage is incomplete.",
+    "No explicit header gold or unit-bearing numeric cells in the two processed cases; those validations remain unavailable.",
+    "Cached OCR reuse was verified; no new OCR-recognition accuracy benefit is claimed."
+  ]
+}

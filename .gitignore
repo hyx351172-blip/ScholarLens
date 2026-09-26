@@ -38,6 +38,7 @@ pnpm-debug.log*
 logs/
 log/
 pids/
+harness/runs/
 
 # Generated uploads and extraction artifacts
 output/

@@ -1,0 +1,5589 @@
+{
+  "experiment": "table-safety-v13",
+  "aggregate": {
+    "cases": 20,
+    "accepted_candidates": 1,
+    "rotated": 1,
+    "improved_vs_v12": 2,
+    "regressed_vs_v12": 0,
+    "unchanged_vs_v12": 18,
+    "baseline_v12_teds": 0.5331771113536968,
+    "baseline_v12_structure_teds": 0.7296551608831403,
+    "effective_v12_teds": 0.5356397698646264,
+    "effective_v12_structure_teds": 0.7296551608831403,
+    "effective_v13_teds": 0.5843320362941054,
+    "effective_v13_structure_teds": 0.7402801608831403
+  },
+  "results": [
+    {
+      "id": "case-01",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.9349206349206349,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 35,
+            "exact": 30,
+            "accuracy": 0.8571428571428571
+          },
+          "nonempty_gold_cells": {
+            "total": 35,
+            "exact": 30,
+            "accuracy": 0.8571428571428571
+          },
+          "numeric_cells": {
+            "total": 30,
+            "exact": 30,
+            "accuracy": 1.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 6,
+            "accuracy": 0.8571428571428571
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 35,
+          "gold_cells": 35,
+          "prediction_cells": 35,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 5,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Dimension $(D)$",
+              "prediction": "Dimension (D)",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{w}$",
+              "prediction": "dw",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{a}$",
+              "prediction": "da",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{ν}$",
+              "prediction": "dv",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{g}$",
+              "prediction": "dg",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 5,
+          "gold_header_cells": 5,
+          "matched_span_cells": 5,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 0,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "gold": "Dimension $(D)$",
+              "prediction": "Dimension (D)"
+            },
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$d_{w}$",
+              "prediction": "dw"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "$d_{a}$",
+              "prediction": "da"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$d_{ν}$",
+              "prediction": "dv"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "$d_{g}$",
+              "prediction": "dg"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.9349206349206349,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 35,
+            "exact": 30,
+            "accuracy": 0.8571428571428571
+          },
+          "nonempty_gold_cells": {
+            "total": 35,
+            "exact": 30,
+            "accuracy": 0.8571428571428571
+          },
+          "numeric_cells": {
+            "total": 30,
+            "exact": 30,
+            "accuracy": 1.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 6,
+            "accuracy": 0.8571428571428571
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 35,
+          "gold_cells": 35,
+          "prediction_cells": 35,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 5,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Dimension $(D)$",
+              "prediction": "Dimension (D)",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{w}$",
+              "prediction": "dw",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{a}$",
+              "prediction": "da",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{ν}$",
+              "prediction": "dv",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$d_{g}$",
+              "prediction": "dg",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 5,
+          "gold_header_cells": 5,
+          "matched_span_cells": 5,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 0,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "gold": "Dimension $(D)$",
+              "prediction": "Dimension (D)"
+            },
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$d_{w}$",
+              "prediction": "dw"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "$d_{a}$",
+              "prediction": "da"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$d_{ν}$",
+              "prediction": "dv"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "$d_{g}$",
+              "prediction": "dg"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.9349206349206349,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-02",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Paddle worker failed: timeout"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.46913935515779337,
+        "structure_teds": 0.8757763975155279,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 737,
+            "exact": 171,
+            "accuracy": 0.23202170963364993
+          },
+          "nonempty_gold_cells": {
+            "total": 736,
+            "exact": 170,
+            "accuracy": 0.23097826086956522
+          },
+          "numeric_cells": {
+            "total": 267,
+            "exact": 59,
+            "accuracy": 0.2209737827715356
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 67,
+            "exact": 15,
+            "accuracy": 0.22388059701492538
+          },
+          "unit_bearing_cells": {
+            "total": 100,
+            "exact": 13,
+            "accuracy": 0.13
+          },
+          "matched_span_cells": 670,
+          "gold_cells": 737,
+          "prediction_cells": 700,
+          "missing_span_cells": 67,
+          "extra_span_cells": 30,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 4,
+          "error_count": 566,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\text{tRNA}^{\\text{Asn}}$1-72",
+              "prediction": "Asn tRNA 1-72",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "D1",
+              "prediction": "Dl",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\mathrm {tRNA}^{\\mathrm {Asp}}$1-72",
+              "prediction": "tRNA 1-72 Asp",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "D1",
+              "prediction": "DI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\text{tRNA}^{\\text{GIn}}$1-72",
+              "prediction": "Gln tRNA 1-72",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 10,
+          "gold_header_cells": 11,
+          "matched_span_cells": 10,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "exact_text_cells": 1,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{Asn}}$1-72",
+              "prediction": "Asn tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "Dl"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$\\mathrm {tRNA}^{\\mathrm {Asp}}$1-72",
+              "prediction": "tRNA 1-72 Asp"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "DI"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{GIn}}$1-72",
+              "prediction": "Gln tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                6,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{Glu}}$1-72",
+              "prediction": "Glu tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "AdT Asp"
+            },
+            {
+              "coordinates": [
+                0,
+                9,
+                1,
+                1
+              ],
+              "gold": "AdT Asp",
+              "prediction": "Glu"
+            },
+            {
+              "coordinates": [
+                0,
+                10,
+                1,
+                1
+              ],
+              "gold": "Glu",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.46913935515779337,
+        "structure_teds": 0.8757763975155279,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 737,
+            "exact": 171,
+            "accuracy": 0.23202170963364993
+          },
+          "nonempty_gold_cells": {
+            "total": 736,
+            "exact": 170,
+            "accuracy": 0.23097826086956522
+          },
+          "numeric_cells": {
+            "total": 267,
+            "exact": 59,
+            "accuracy": 0.2209737827715356
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 67,
+            "exact": 15,
+            "accuracy": 0.22388059701492538
+          },
+          "unit_bearing_cells": {
+            "total": 100,
+            "exact": 13,
+            "accuracy": 0.13
+          },
+          "matched_span_cells": 670,
+          "gold_cells": 737,
+          "prediction_cells": 700,
+          "missing_span_cells": 67,
+          "extra_span_cells": 30,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 4,
+          "error_count": 566,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\text{tRNA}^{\\text{Asn}}$1-72",
+              "prediction": "Asn tRNA 1-72",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "D1",
+              "prediction": "Dl",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\mathrm {tRNA}^{\\mathrm {Asp}}$1-72",
+              "prediction": "tRNA 1-72 Asp",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "D1",
+              "prediction": "DI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\text{tRNA}^{\\text{GIn}}$1-72",
+              "prediction": "Gln tRNA 1-72",
+              "numeric_gold": [
+                "1",
+                "72"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 10,
+          "gold_header_cells": 11,
+          "matched_span_cells": 10,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "exact_text_cells": 1,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{Asn}}$1-72",
+              "prediction": "Asn tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "Dl"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$\\mathrm {tRNA}^{\\mathrm {Asp}}$1-72",
+              "prediction": "tRNA 1-72 Asp"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "DI"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{GIn}}$1-72",
+              "prediction": "Gln tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                6,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "$\\text{tRNA}^{\\text{Glu}}$1-72",
+              "prediction": "Glu tRNA 1-72"
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "D1",
+              "prediction": "AdT Asp"
+            },
+            {
+              "coordinates": [
+                0,
+                9,
+                1,
+                1
+              ],
+              "gold": "AdT Asp",
+              "prediction": "Glu"
+            },
+            {
+              "coordinates": [
+                0,
+                10,
+                1,
+                1
+              ],
+              "gold": "Glu",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.46913935515779337,
+        "structure_teds": 0.8757763975155279,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-03",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.7883303230902166,
+        "structure_teds": 0.8528528528528528,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 249,
+            "exact": 207,
+            "accuracy": 0.8313253012048193
+          },
+          "nonempty_gold_cells": {
+            "total": 247,
+            "exact": 205,
+            "accuracy": 0.8299595141700404
+          },
+          "numeric_cells": {
+            "total": 196,
+            "exact": 193,
+            "accuracy": 0.9846938775510204
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 40,
+            "exact": 26,
+            "accuracy": 0.65
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 242,
+          "gold_cells": 249,
+          "prediction_cells": 291,
+          "missing_span_cells": 7,
+          "extra_span_cells": 49,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 7,
+          "error_count": 42,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy 'only' user",
+              "prediction": "Ecstasy",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy/cannabis user",
+              "prediction": "only user Ecstasy/cannabis user",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Processing speed",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Ecstasy, total number of tablets consumed",
+              "prediction": "Ecstasy; total number of tablets consumed",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "-",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 12,
+          "matched_span_cells": 4,
+          "missing_span_cells": 8,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                2
+              ],
+              "gold": "Ecstasy 'only' user",
+              "prediction": "Ecstasy"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                2
+              ],
+              "gold": "Ecstasy/cannabis user",
+              "prediction": "only user Ecstasy/cannabis user"
+            },
+            {
+              "coordinates": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                2,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                4,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                6,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                2,
+                0,
+                1,
+                7
+              ],
+              "gold": "Processing speed",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.7883303230902166,
+        "structure_teds": 0.8528528528528528,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 249,
+            "exact": 207,
+            "accuracy": 0.8313253012048193
+          },
+          "nonempty_gold_cells": {
+            "total": 247,
+            "exact": 205,
+            "accuracy": 0.8299595141700404
+          },
+          "numeric_cells": {
+            "total": 196,
+            "exact": 193,
+            "accuracy": 0.9846938775510204
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 40,
+            "exact": 26,
+            "accuracy": 0.65
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 242,
+          "gold_cells": 249,
+          "prediction_cells": 291,
+          "missing_span_cells": 7,
+          "extra_span_cells": 49,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 7,
+          "error_count": 42,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy 'only' user",
+              "prediction": "Ecstasy",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy/cannabis user",
+              "prediction": "only user Ecstasy/cannabis user",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Processing speed",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Ecstasy, total number of tablets consumed",
+              "prediction": "Ecstasy; total number of tablets consumed",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "-",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 12,
+          "matched_span_cells": 4,
+          "missing_span_cells": 8,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                2
+              ],
+              "gold": "Ecstasy 'only' user",
+              "prediction": "Ecstasy"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                2
+              ],
+              "gold": "Ecstasy/cannabis user",
+              "prediction": "only user Ecstasy/cannabis user"
+            },
+            {
+              "coordinates": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                2,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                4,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                6,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                2,
+                0,
+                1,
+                7
+              ],
+              "gold": "Processing speed",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.7883303230902166,
+        "structure_teds": 0.8528528528528528,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-04",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Span extends outside declared rows or safe column limit"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.7584807613709348,
+        "structure_teds": 0.9248554913294798,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 295,
+            "exact": 49,
+            "accuracy": 0.16610169491525423
+          },
+          "nonempty_gold_cells": {
+            "total": 295,
+            "exact": 49,
+            "accuracy": 0.16610169491525423
+          },
+          "numeric_cells": {
+            "total": 236,
+            "exact": 216,
+            "accuracy": 0.9152542372881356
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 3,
+            "exact": 1,
+            "accuracy": 0.3333333333333333
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 293,
+          "gold_cells": 295,
+          "prediction_cells": 319,
+          "missing_span_cells": 2,
+          "extra_span_cells": 26,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 2,
+          "error_count": 246,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Datasets",
+              "prediction": "Dalasels",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "ASSITment12",
+              "prediction": "ASSITmenl12",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Slepemapy.cz",
+              "prediction": "Slepemapycz",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 10,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "EdNet-KT1",
+              "prediction": "EdNet-KTI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 13,
+              "col_span": 1,
+              "gold": "Trans",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v12": {
+        "teds": 0.7584807613709348,
+        "structure_teds": 0.9248554913294798,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 295,
+            "exact": 49,
+            "accuracy": 0.16610169491525423
+          },
+          "nonempty_gold_cells": {
+            "total": 295,
+            "exact": 49,
+            "accuracy": 0.16610169491525423
+          },
+          "numeric_cells": {
+            "total": 236,
+            "exact": 216,
+            "accuracy": 0.9152542372881356
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 3,
+            "exact": 1,
+            "accuracy": 0.3333333333333333
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 293,
+          "gold_cells": 295,
+          "prediction_cells": 319,
+          "missing_span_cells": 2,
+          "extra_span_cells": 26,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 2,
+          "error_count": 246,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Datasets",
+              "prediction": "Dalasels",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "ASSITment12",
+              "prediction": "ASSITmenl12",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Slepemapy.cz",
+              "prediction": "Slepemapycz",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 10,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "EdNet-KT1",
+              "prediction": "EdNet-KTI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 13,
+              "col_span": 1,
+              "gold": "Trans",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v13": {
+        "teds": 0.7584807613709348,
+        "structure_teds": 0.9248554913294798,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-05",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-06",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Paddle worker failed: timeout"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.4215329817046859,
+        "structure_teds": 0.766977363515313,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 666,
+            "exact": 15,
+            "accuracy": 0.02252252252252252
+          },
+          "nonempty_gold_cells": {
+            "total": 664,
+            "exact": 13,
+            "accuracy": 0.01957831325301205
+          },
+          "numeric_cells": {
+            "total": 567,
+            "exact": 20,
+            "accuracy": 0.03527336860670194
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 9,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 324,
+            "exact": 3,
+            "accuracy": 0.009259259259259259
+          },
+          "matched_span_cells": 561,
+          "gold_cells": 666,
+          "prediction_cells": 628,
+          "missing_span_cells": 105,
+          "extra_span_cells": 67,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 5,
+          "error_count": 651,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "#tested\nstatements",
+              "prediction": "#tested",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# candidate",
+              "prediction": "candidate",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# tested\nvariants",
+              "prediction": "4 tested",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# compilable",
+              "prediction": "compilable",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# sosies",
+              "prediction": "sosies",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v12": {
+        "teds": 0.4215329817046859,
+        "structure_teds": 0.766977363515313,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 666,
+            "exact": 15,
+            "accuracy": 0.02252252252252252
+          },
+          "nonempty_gold_cells": {
+            "total": 664,
+            "exact": 13,
+            "accuracy": 0.01957831325301205
+          },
+          "numeric_cells": {
+            "total": 567,
+            "exact": 20,
+            "accuracy": 0.03527336860670194
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 9,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 324,
+            "exact": 3,
+            "accuracy": 0.009259259259259259
+          },
+          "matched_span_cells": 561,
+          "gold_cells": 666,
+          "prediction_cells": 628,
+          "missing_span_cells": 105,
+          "extra_span_cells": 67,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 5,
+          "error_count": 651,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "#tested\nstatements",
+              "prediction": "#tested",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# candidate",
+              "prediction": "candidate",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# tested\nvariants",
+              "prediction": "4 tested",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# compilable",
+              "prediction": "compilable",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "# sosies",
+              "prediction": "sosies",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v13": {
+        "teds": 0.4215329817046859,
+        "structure_teds": 0.766977363515313,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-07",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "body_row_count_conflict"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.9624589665951337,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 76,
+            "exact": 67,
+            "accuracy": 0.881578947368421
+          },
+          "nonempty_gold_cells": {
+            "total": 76,
+            "exact": 67,
+            "accuracy": 0.881578947368421
+          },
+          "numeric_cells": {
+            "total": 67,
+            "exact": 65,
+            "accuracy": 0.9701492537313433
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 9,
+            "exact": 8,
+            "accuracy": 0.8888888888888888
+          },
+          "unit_bearing_cells": {
+            "total": 3,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "matched_span_cells": 76,
+          "gold_cells": 76,
+          "prediction_cells": 76,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 9,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Time consumed(s)",
+              "prediction": "Time consumed (s)",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "PCs=8(60% variance)",
+              "prediction": "PCs = 8 (60 % variance)",
+              "numeric_gold": [
+                "8",
+                "60"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "PCs=15(95% variance)",
+              "prediction": "PCs = 15 (95 % variance)",
+              "numeric_gold": [
+                "15",
+                "95"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 3,
+              "gold": "PCs=19(99% variance)",
+              "prediction": "PCs = 19 (99 % variance)",
+              "numeric_gold": [
+                "19",
+                "99"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 3,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 12,
+          "gold_header_cells": 12,
+          "matched_span_cells": 12,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 5,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                7
+              ],
+              "gold": "Time consumed(s)",
+              "prediction": "Time consumed (s)"
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                2
+              ],
+              "gold": "PCs=8(60% variance)",
+              "prediction": "PCs = 8 (60 % variance)"
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                2
+              ],
+              "gold": "PCs=15(95% variance)",
+              "prediction": "PCs = 15 (95 % variance)"
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                3
+              ],
+              "gold": "PCs=19(99% variance)",
+              "prediction": "PCs = 19 (99 % variance)"
+            },
+            {
+              "coordinates": [
+                2,
+                2,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA"
+            },
+            {
+              "coordinates": [
+                2,
+                4,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA"
+            },
+            {
+              "coordinates": [
+                2,
+                6,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA 4 KFDA"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.9624589665951337,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 76,
+            "exact": 67,
+            "accuracy": 0.881578947368421
+          },
+          "nonempty_gold_cells": {
+            "total": 76,
+            "exact": 67,
+            "accuracy": 0.881578947368421
+          },
+          "numeric_cells": {
+            "total": 67,
+            "exact": 65,
+            "accuracy": 0.9701492537313433
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 9,
+            "exact": 8,
+            "accuracy": 0.8888888888888888
+          },
+          "unit_bearing_cells": {
+            "total": 3,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "matched_span_cells": 76,
+          "gold_cells": 76,
+          "prediction_cells": 76,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 9,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Time consumed(s)",
+              "prediction": "Time consumed (s)",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "PCs=8(60% variance)",
+              "prediction": "PCs = 8 (60 % variance)",
+              "numeric_gold": [
+                "8",
+                "60"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "PCs=15(95% variance)",
+              "prediction": "PCs = 15 (95 % variance)",
+              "numeric_gold": [
+                "15",
+                "95"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 3,
+              "gold": "PCs=19(99% variance)",
+              "prediction": "PCs = 19 (99 % variance)",
+              "numeric_gold": [
+                "19",
+                "99"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 3,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 12,
+          "gold_header_cells": 12,
+          "matched_span_cells": 12,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 5,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                7
+              ],
+              "gold": "Time consumed(s)",
+              "prediction": "Time consumed (s)"
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                2
+              ],
+              "gold": "PCs=8(60% variance)",
+              "prediction": "PCs = 8 (60 % variance)"
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                2
+              ],
+              "gold": "PCs=15(95% variance)",
+              "prediction": "PCs = 15 (95 % variance)"
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                3
+              ],
+              "gold": "PCs=19(99% variance)",
+              "prediction": "PCs = 19 (99 % variance)"
+            },
+            {
+              "coordinates": [
+                2,
+                2,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA"
+            },
+            {
+              "coordinates": [
+                2,
+                4,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA + KFDA"
+            },
+            {
+              "coordinates": [
+                2,
+                6,
+                1,
+                1
+              ],
+              "gold": "PCA+KFDA",
+              "prediction": "PCA 4 KFDA"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.9624589665951337,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-08",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.839612955287994,
+        "structure_teds": 0.8571428571428572,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 14,
+            "exact": 8,
+            "accuracy": 0.5714285714285714
+          },
+          "nonempty_gold_cells": {
+            "total": 14,
+            "exact": 8,
+            "accuracy": 0.5714285714285714
+          },
+          "numeric_cells": {
+            "total": 1,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 2,
+            "exact": 1,
+            "accuracy": 0.5
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 9,
+          "gold_cells": 14,
+          "prediction_cells": 10,
+          "missing_span_cells": 5,
+          "extra_span_cells": 1,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 1,
+          "error_count": 6,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 2,
+              "col_span": 1,
+              "gold": "Anomalies of Origin",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "left main coronary artery from the\npulmonary arteryright coronary artery from the\npulmonary arterycircumflex coronary artery from the pulmonary arteryboth coronary arteries from the\npulmonary artery",
+              "prediction": "left main coronary from the pulmonary right coronary artery from the pulmonary artery circumflex coronary from the pulmonary both coronary arteries the pulmonary left main coronary from the right aortic sinus of Valsalva right coronary artery from the left artery artery artery artery from artery artery",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Anomalous aortic origin of the\ncoronaries",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "left main coronary artery from the\nright aortic sinus of Valsalvaright coronary artery from the left\naortic sinus of Valsalvaleft anterior descending coronary artery from the right aortic sinus of Valsalvaleft anterior descending coronary artery from the right coronary arterycircumflex coronary artery from the right aortic sinus of Valsalvacircumflex coronary artery from the right coronary artery",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Surgical\nrevascularization or reimplantation if symptomatic",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v12": {
+        "teds": 0.839612955287994,
+        "structure_teds": 0.8571428571428572,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 14,
+            "exact": 8,
+            "accuracy": 0.5714285714285714
+          },
+          "nonempty_gold_cells": {
+            "total": 14,
+            "exact": 8,
+            "accuracy": 0.5714285714285714
+          },
+          "numeric_cells": {
+            "total": 1,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 2,
+            "exact": 1,
+            "accuracy": 0.5
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 9,
+          "gold_cells": 14,
+          "prediction_cells": 10,
+          "missing_span_cells": 5,
+          "extra_span_cells": 1,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 1,
+          "error_count": 6,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 2,
+              "col_span": 1,
+              "gold": "Anomalies of Origin",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "left main coronary artery from the\npulmonary arteryright coronary artery from the\npulmonary arterycircumflex coronary artery from the pulmonary arteryboth coronary arteries from the\npulmonary artery",
+              "prediction": "left main coronary from the pulmonary right coronary artery from the pulmonary artery circumflex coronary from the pulmonary both coronary arteries the pulmonary left main coronary from the right aortic sinus of Valsalva right coronary artery from the left artery artery artery artery from artery artery",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Anomalous aortic origin of the\ncoronaries",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "left main coronary artery from the\nright aortic sinus of Valsalvaright coronary artery from the left\naortic sinus of Valsalvaleft anterior descending coronary artery from the right aortic sinus of Valsalvaleft anterior descending coronary artery from the right coronary arterycircumflex coronary artery from the right aortic sinus of Valsalvacircumflex coronary artery from the right coronary artery",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Surgical\nrevascularization or reimplantation if symptomatic",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v13": {
+        "teds": 0.839612955287994,
+        "structure_teds": 0.8571428571428572,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-09",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": true,
+        "reasons": [],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "effective_source": "v13_candidate",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.5869328082110037,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 30,
+            "exact": 9,
+            "accuracy": 0.3
+          },
+          "nonempty_gold_cells": {
+            "total": 25,
+            "exact": 4,
+            "accuracy": 0.16
+          },
+          "numeric_cells": {
+            "total": 21,
+            "exact": 10,
+            "accuracy": 0.47619047619047616
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 3,
+            "exact": 3,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 30,
+          "gold_cells": 30,
+          "prediction_cells": 30,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 21,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$0 \\leq r \\leq R$",
+              "prediction": "0< r< R",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "z = 0",
+              "prediction": "0",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "\\( Y = Y_{\\text{in}} \\) or \\( u_{0}(Y_{\\text{in}} - Y) = -D_{\\text{ax}} \\frac{\\partial Y}{\\partial z} \\)",
+              "prediction": "Y = Yin 1x 9Y",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "T = $T_{\\text{in}}$",
+              "prediction": "T = Tin",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "\\( \\frac{\\partial X}{\\partial z} = 0 \\)",
+              "prediction": "",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 6,
+          "gold_header_cells": 6,
+          "matched_span_cells": 6,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$0 \\leq r \\leq R$",
+              "prediction": "0< r< R"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "z = 0",
+              "prediction": "0"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "\\( Y = Y_{\\text{in}} \\) or \\( u_{0}(Y_{\\text{in}} - Y) = -D_{\\text{ax}} \\frac{\\partial Y}{\\partial z} \\)",
+              "prediction": "Y = Yin 1x 9Y"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "T = $T_{\\text{in}}$",
+              "prediction": "T = Tin"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.6379126387397064,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 30,
+            "exact": 10,
+            "accuracy": 0.3333333333333333
+          },
+          "nonempty_gold_cells": {
+            "total": 25,
+            "exact": 5,
+            "accuracy": 0.2
+          },
+          "numeric_cells": {
+            "total": 21,
+            "exact": 17,
+            "accuracy": 0.8095238095238095
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 3,
+            "exact": 3,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 30,
+          "gold_cells": 30,
+          "prediction_cells": 30,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 20,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$0 \\leq r \\leq R$",
+              "prediction": "0≤r≤R",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "z = 0",
+              "prediction": "= 0",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "\\( Y = Y_{\\text{in}} \\) or \\( u_{0}(Y_{\\text{in}} - Y) = -D_{\\text{ax}} \\frac{\\partial Y}{\\partial z} \\)",
+              "prediction": "Y = Yin or u0(Yin − Y) = −Dax ∂Y ∂Y",
+              "numeric_gold": [
+                "0"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "T = $T_{\\text{in}}$",
+              "prediction": "T = Tin",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "z = L",
+              "prediction": "= L",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 6,
+          "gold_header_cells": 6,
+          "matched_span_cells": 6,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "$0 \\leq r \\leq R$",
+              "prediction": "0≤r≤R"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "z = 0",
+              "prediction": "= 0"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "\\( Y = Y_{\\text{in}} \\) or \\( u_{0}(Y_{\\text{in}} - Y) = -D_{\\text{ax}} \\frac{\\partial Y}{\\partial z} \\)",
+              "prediction": "Y = Yin or u0(Yin − Y) = −Dax ∂Y ∂Y"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "T = $T_{\\text{in}}$",
+              "prediction": "T = Tin"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.6379126387397064,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-10",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-11",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.6903528528528529,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 137,
+            "exact": 19,
+            "accuracy": 0.1386861313868613
+          },
+          "nonempty_gold_cells": {
+            "total": 137,
+            "exact": 19,
+            "accuracy": 0.1386861313868613
+          },
+          "numeric_cells": {
+            "total": 112,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 11,
+            "exact": 11,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 137,
+          "gold_cells": 137,
+          "prediction_cells": 137,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 118,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM1",
+              "prediction": "UMI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM5",
+              "prediction": "UMS",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 10,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM10",
+              "prediction": "UMIO",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 11,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM11",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 12,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM12",
+              "prediction": "UMI2",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 2,
+          "gold_header_rows": 2,
+          "prediction_header_cells": 16,
+          "gold_header_cells": 16,
+          "matched_span_cells": 16,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 10,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "UM1",
+              "prediction": "UMI"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "UM5",
+              "prediction": "UMS"
+            },
+            {
+              "coordinates": [
+                0,
+                10,
+                1,
+                1
+              ],
+              "gold": "UM10",
+              "prediction": "UMIO"
+            },
+            {
+              "coordinates": [
+                0,
+                11,
+                1,
+                1
+              ],
+              "gold": "UM11",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                12,
+                1,
+                1
+              ],
+              "gold": "UM12",
+              "prediction": "UMI2"
+            },
+            {
+              "coordinates": [
+                0,
+                14,
+                1,
+                1
+              ],
+              "gold": "AR1",
+              "prediction": "ARI"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.6903528528528529,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 137,
+            "exact": 19,
+            "accuracy": 0.1386861313868613
+          },
+          "nonempty_gold_cells": {
+            "total": 137,
+            "exact": 19,
+            "accuracy": 0.1386861313868613
+          },
+          "numeric_cells": {
+            "total": 112,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 11,
+            "exact": 11,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 137,
+          "gold_cells": 137,
+          "prediction_cells": 137,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 118,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM1",
+              "prediction": "UMI",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM5",
+              "prediction": "UMS",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 10,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM10",
+              "prediction": "UMIO",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 11,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM11",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 12,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "UM12",
+              "prediction": "UMI2",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 2,
+          "gold_header_rows": 2,
+          "prediction_header_cells": 16,
+          "gold_header_cells": 16,
+          "matched_span_cells": 16,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 10,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "UM1",
+              "prediction": "UMI"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "UM5",
+              "prediction": "UMS"
+            },
+            {
+              "coordinates": [
+                0,
+                10,
+                1,
+                1
+              ],
+              "gold": "UM10",
+              "prediction": "UMIO"
+            },
+            {
+              "coordinates": [
+                0,
+                11,
+                1,
+                1
+              ],
+              "gold": "UM11",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                12,
+                1,
+                1
+              ],
+              "gold": "UM12",
+              "prediction": "UMI2"
+            },
+            {
+              "coordinates": [
+                0,
+                14,
+                1,
+                1
+              ],
+              "gold": "AR1",
+              "prediction": "ARI"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.6903528528528529,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-12",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.3558839998620792,
+        "structure_teds": 0.624,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 100,
+            "exact": 8,
+            "accuracy": 0.08
+          },
+          "nonempty_gold_cells": {
+            "total": 70,
+            "exact": 4,
+            "accuracy": 0.05714285714285714
+          },
+          "numeric_cells": {
+            "total": 38,
+            "exact": 2,
+            "accuracy": 0.05263157894736842
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 6,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "matched_span_cells": 53,
+          "gold_cells": 100,
+          "prediction_cells": 61,
+          "missing_span_cells": 47,
+          "extra_span_cells": 8,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 9,
+          "extra_nonempty_coordinates": 7,
+          "error_count": 92,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Potential",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Half Reaction (0.5 M $\\left.\\mathrm {Na}_{2}\\mathrm {SO}4\\right)$",
+              "prediction": "Half Reaction (0.5 M NazSO4)",
+              "numeric_gold": [
+                "0.5",
+                "2",
+                "4"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 3,
+              "col_span": 1,
+              "gold": "A",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$<-0.5\\mathrm { V}$",
+              "prediction": "-0.5 V",
+              "numeric_gold": [
+                "-0.5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\mathrm {H}_{2}/\\mathrm {O}_{2}$",
+              "prediction": "H2/02",
+              "numeric_gold": [
+                "2",
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v12": {
+        "teds": 0.3558839998620792,
+        "structure_teds": 0.624,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 100,
+            "exact": 8,
+            "accuracy": 0.08
+          },
+          "nonempty_gold_cells": {
+            "total": 70,
+            "exact": 4,
+            "accuracy": 0.05714285714285714
+          },
+          "numeric_cells": {
+            "total": 38,
+            "exact": 2,
+            "accuracy": 0.05263157894736842
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 6,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "matched_span_cells": 53,
+          "gold_cells": 100,
+          "prediction_cells": 61,
+          "missing_span_cells": 47,
+          "extra_span_cells": 8,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 9,
+          "extra_nonempty_coordinates": 7,
+          "error_count": 92,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Potential",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Half Reaction (0.5 M $\\left.\\mathrm {Na}_{2}\\mathrm {SO}4\\right)$",
+              "prediction": "Half Reaction (0.5 M NazSO4)",
+              "numeric_gold": [
+                "0.5",
+                "2",
+                "4"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 3,
+              "col_span": 1,
+              "gold": "A",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$<-0.5\\mathrm { V}$",
+              "prediction": "-0.5 V",
+              "numeric_gold": [
+                "-0.5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$\\mathrm {H}_{2}/\\mathrm {O}_{2}$",
+              "prediction": "H2/02",
+              "numeric_gold": [
+                "2",
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v13": {
+        "teds": 0.3558839998620792,
+        "structure_teds": 0.624,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-13",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "aligned_multiline_row_ambiguity"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": false,
+      "baseline_v12": {
+        "teds": 0.2885109864422628,
+        "structure_teds": 0.4,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 15,
+            "exact": 3,
+            "accuracy": 0.2
+          },
+          "nonempty_gold_cells": {
+            "total": 15,
+            "exact": 3,
+            "accuracy": 0.2
+          },
+          "numeric_cells": {
+            "total": 12,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 5,
+            "exact": 1,
+            "accuracy": 0.2
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 6,
+          "gold_cells": 15,
+          "prediction_cells": 6,
+          "missing_span_cells": 9,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 12,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 2 Friday .....",
+              "prediction": "June 2 Friday June 5 Monday June 6 Tuesday June 7 Wednes- day.",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "5 Day",
+              "prediction": "5 4 4 3 Day Day Day Day",
+              "numeric_gold": [
+                "5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 9 Friday.",
+              "prediction": "June 9 Friday . June 9 Friday . June 12 Mon- June 12 Mon- day - day .",
+              "numeric_gold": [
+                "9"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 5 Monday ..",
+              "prediction": null,
+              "numeric_gold": [
+                "5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "4 Day",
+              "prediction": null,
+              "numeric_gold": [
+                "4"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v12": {
+        "teds": 0.2867843261321522,
+        "structure_teds": 0.4,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 15,
+            "exact": 3,
+            "accuracy": 0.2
+          },
+          "nonempty_gold_cells": {
+            "total": 15,
+            "exact": 3,
+            "accuracy": 0.2
+          },
+          "numeric_cells": {
+            "total": 12,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 5,
+            "exact": 1,
+            "accuracy": 0.2
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 6,
+          "gold_cells": 15,
+          "prediction_cells": 6,
+          "missing_span_cells": 9,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 12,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 2 Friday .....",
+              "prediction": "June 2 Friday …… June 5 Monday .. June 6 Tuesday . June 7 Wednes- day.",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "5 Day",
+              "prediction": "5 Day 4 Day 4 Day 3 Day",
+              "numeric_gold": [
+                "5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 9 Friday.",
+              "prediction": "June 9 Friday. June 9 Friday. June 12 Mon- day. June 12 Mon- day.",
+              "numeric_gold": [
+                "9"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "June 5 Monday ..",
+              "prediction": null,
+              "numeric_gold": [
+                "5"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "4 Day",
+              "prediction": null,
+              "numeric_gold": [
+                "4"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": false,
+          "reason": "No unambiguous regular-body prefix"
+        }
+      },
+      "effective_v13": {
+        "teds": 0.2885109864422628,
+        "structure_teds": 0.4,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0017266603101105948
+    },
+    {
+      "id": "case-14",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Incomplete grid coverage: 1 uncovered slots in 8x8; explicit empty cells required"
+        ],
+        "error_type": "ValueError"
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.1325108298134613,
+        "structure_teds": 0.75,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 108,
+            "exact": 4,
+            "accuracy": 0.037037037037037035
+          },
+          "nonempty_gold_cells": {
+            "total": 101,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "numeric_cells": {
+            "total": 88,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 10,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 80,
+          "gold_cells": 108,
+          "prediction_cells": 80,
+          "missing_span_cells": 28,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 2,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 104,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Slow event rate",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "",
+              "prediction": "4",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Fast event rate",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "",
+              "prediction": "4",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 7,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Slow vs.Fast",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 8,
+          "gold_header_cells": 9,
+          "matched_span_cells": 8,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "exact_text_cells": 3,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "Slow event rate",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": "4"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "Fast event rate",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": "4"
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "Slow vs.Fast",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.1325108298134613,
+        "structure_teds": 0.75,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 108,
+            "exact": 4,
+            "accuracy": 0.037037037037037035
+          },
+          "nonempty_gold_cells": {
+            "total": 101,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "numeric_cells": {
+            "total": 88,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 10,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 80,
+          "gold_cells": 108,
+          "prediction_cells": 80,
+          "missing_span_cells": 28,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 2,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 104,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Slow event rate",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "",
+              "prediction": "4",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Fast event rate",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "",
+              "prediction": "4",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 7,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Slow vs.Fast",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 8,
+          "gold_header_cells": 9,
+          "matched_span_cells": 8,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "exact_text_cells": 3,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "Slow event rate",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": "4"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "Fast event rate",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": "4"
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "Slow vs.Fast",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.1325108298134613,
+        "structure_teds": 0.75,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-15",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.7473590393095038,
+        "structure_teds": 0.9473684210526316,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 31,
+            "exact": 12,
+            "accuracy": 0.3870967741935484
+          },
+          "nonempty_gold_cells": {
+            "total": 31,
+            "exact": 12,
+            "accuracy": 0.3870967741935484
+          },
+          "numeric_cells": {
+            "total": 22,
+            "exact": 15,
+            "accuracy": 0.6818181818181818
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 5,
+            "accuracy": 0.7142857142857143
+          },
+          "unit_bearing_cells": {
+            "total": 7,
+            "exact": 6,
+            "accuracy": 0.8571428571428571
+          },
+          "matched_span_cells": 30,
+          "gold_cells": 31,
+          "prediction_cells": 30,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 19,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{CI}]^{-}$",
+              "prediction": "[CI]",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{Ace}]^{-}$",
+              "prediction": "[Ace]",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{NTf}_{2}]^{-}$",
+              "prediction": "[NTfz]",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$N({CH}_{3})_{2}$",
+              "prediction": "N(CH3)2",
+              "numeric_gold": [
+                "3",
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$CH_{2}$",
+              "prediction": "CHz",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 5,
+          "gold_header_cells": 5,
+          "matched_span_cells": 5,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "$[{CI}]^{-}$",
+              "prediction": "[CI]"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$[{Ace}]^{-}$",
+              "prediction": "[Ace]"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "$[{NTf}_{2}]^{-}$",
+              "prediction": "[NTfz]"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.7473590393095038,
+        "structure_teds": 0.9473684210526316,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 31,
+            "exact": 12,
+            "accuracy": 0.3870967741935484
+          },
+          "nonempty_gold_cells": {
+            "total": 31,
+            "exact": 12,
+            "accuracy": 0.3870967741935484
+          },
+          "numeric_cells": {
+            "total": 22,
+            "exact": 15,
+            "accuracy": 0.6818181818181818
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 7,
+            "exact": 5,
+            "accuracy": 0.7142857142857143
+          },
+          "unit_bearing_cells": {
+            "total": 7,
+            "exact": 6,
+            "accuracy": 0.8571428571428571
+          },
+          "matched_span_cells": 30,
+          "gold_cells": 31,
+          "prediction_cells": 30,
+          "missing_span_cells": 1,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 19,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{CI}]^{-}$",
+              "prediction": "[CI]",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{Ace}]^{-}$",
+              "prediction": "[Ace]",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$[{NTf}_{2}]^{-}$",
+              "prediction": "[NTfz]",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$N({CH}_{3})_{2}$",
+              "prediction": "N(CH3)2",
+              "numeric_gold": [
+                "3",
+                "2"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$CH_{2}$",
+              "prediction": "CHz",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 5,
+          "gold_header_cells": 5,
+          "matched_span_cells": 5,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "$[{CI}]^{-}$",
+              "prediction": "[CI]"
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "$[{Ace}]^{-}$",
+              "prediction": "[Ace]"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "$[{NTf}_{2}]^{-}$",
+              "prediction": "[NTfz]"
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.7473590393095038,
+        "structure_teds": 0.9473684210526316,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-16",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v12": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-17",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.756900058980007,
+        "structure_teds": 0.8066298342541436,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 128,
+            "exact": 101,
+            "accuracy": 0.7890625
+          },
+          "nonempty_gold_cells": {
+            "total": 126,
+            "exact": 99,
+            "accuracy": 0.7857142857142857
+          },
+          "numeric_cells": {
+            "total": 96,
+            "exact": 84,
+            "accuracy": 0.875
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 21,
+            "exact": 15,
+            "accuracy": 0.7142857142857143
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 123,
+          "gold_cells": 128,
+          "prediction_cells": 158,
+          "missing_span_cells": 5,
+          "extra_span_cells": 35,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 5,
+          "error_count": 27,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy‘only’user",
+              "prediction": "Ecstasy only",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Processing speed",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "1.51",
+              "prediction": "151",
+              "numeric_gold": [
+                "1.51"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$1.00^{*}$",
+              "prediction": "1.00*",
+              "numeric_gold": [
+                "1.00"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 6,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Random generation (standardised scores)",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 12,
+          "matched_span_cells": 4,
+          "missing_span_cells": 8,
+          "extra_span_cells": 0,
+          "exact_text_cells": 3,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                2
+              ],
+              "gold": "Ecstasy‘only’user",
+              "prediction": "Ecstasy only"
+            },
+            {
+              "coordinates": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                2,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                4,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                6,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                2,
+                0,
+                1,
+                7
+              ],
+              "gold": "Processing speed",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.756900058980007,
+        "structure_teds": 0.8066298342541436,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 128,
+            "exact": 101,
+            "accuracy": 0.7890625
+          },
+          "nonempty_gold_cells": {
+            "total": 126,
+            "exact": 99,
+            "accuracy": 0.7857142857142857
+          },
+          "numeric_cells": {
+            "total": 96,
+            "exact": 84,
+            "accuracy": 0.875
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 21,
+            "exact": 15,
+            "accuracy": 0.7142857142857143
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 123,
+          "gold_cells": 128,
+          "prediction_cells": 158,
+          "missing_span_cells": 5,
+          "extra_span_cells": 35,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 5,
+          "error_count": 27,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 2,
+              "gold": "Ecstasy‘only’user",
+              "prediction": "Ecstasy only",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Processing speed",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 5,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "1.51",
+              "prediction": "151",
+              "numeric_gold": [
+                "1.51"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 6,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "$1.00^{*}$",
+              "prediction": "1.00*",
+              "numeric_gold": [
+                "1.00"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 6,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 7,
+              "gold": "Random generation (standardised scores)",
+              "prediction": null,
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 3,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 12,
+          "matched_span_cells": 4,
+          "missing_span_cells": 8,
+          "extra_span_cells": 0,
+          "exact_text_cells": 3,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                2
+              ],
+              "gold": "Ecstasy‘only’user",
+              "prediction": "Ecstasy only"
+            },
+            {
+              "coordinates": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "gold": "",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                2,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                3,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                4,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                5,
+                1,
+                1
+              ],
+              "gold": "Mean",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                1,
+                6,
+                1,
+                1
+              ],
+              "gold": "SD",
+              "prediction": null
+            },
+            {
+              "coordinates": [
+                2,
+                0,
+                1,
+                7
+              ],
+              "gold": "Processing speed",
+              "prediction": null
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.756900058980007,
+        "structure_teds": 0.8066298342541436,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-18",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.9676033829595025,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 56,
+            "exact": 37,
+            "accuracy": 0.6607142857142857
+          },
+          "nonempty_gold_cells": {
+            "total": 55,
+            "exact": 36,
+            "accuracy": 0.6545454545454545
+          },
+          "numeric_cells": {
+            "total": 6,
+            "exact": 4,
+            "accuracy": 0.6666666666666666
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 14,
+            "exact": 12,
+            "accuracy": 0.8571428571428571
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 56,
+          "gold_cells": 56,
+          "prediction_cells": 56,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 19,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "F1",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "The implementation of persistent IDs at the start of\nprojects for all the materials and/or substances used\nand their batches is recommended, for example, in\nline with the current efforts to establish an ERM${}^{48}$;\npersistent IDs should also be implemented for\nmetadata (for example, protocols, methods, model\nsystems and so on)${}^{28}$",
+              "prediction": "The implementation of persistent IDs at the start of projects for all the materials and/or substances used and their batches is recommended; for example; in line with the current efforts to establish an ERM 8 persistent IDs should also be implemented for metadata (for example; protocols, methods, model systems and so on)28",
+              "numeric_gold": [
+                "48",
+                "28"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Incentives for data generators to include rich\nmetadata are needed; for example, increased citation rates when data are reused through the use of\npersistent IDs, which efficiently and consistently link\nto the original publication of the data",
+              "prediction": "Incentives for data generators to include rich metadata are needed; for example; increased citation rates when data are reused through the use of persistent IDs, which efficiently and consistently link to the original publication of the data",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Efficient use and implementation of\nontologies (for example, the eNanoMapper ontology) greatly supports findability and\ndecreases the need for expert knowledge",
+              "prediction": "Efficient use and implementation of ontologies (for example; the eNanoMapper ontology) greatly supports findability and decreases the need for expert knowledge",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Efficient semantic characterization using the available ontologies for both raw and linked (meta)data\nshould be implemented, for example, by harmonized\ndata-entry templates and electronic lab notebooks",
+              "prediction": "Efficient semantic characterization using the available ontologies for both raw and linked (meta)data should be implemented; for example; by harmonized data-entry templates and electronic lab notebooks",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 4,
+          "matched_span_cells": 4,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 4,
+          "text_errors": [],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.9676033829595025,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 56,
+            "exact": 37,
+            "accuracy": 0.6607142857142857
+          },
+          "nonempty_gold_cells": {
+            "total": 55,
+            "exact": 36,
+            "accuracy": 0.6545454545454545
+          },
+          "numeric_cells": {
+            "total": 6,
+            "exact": 4,
+            "accuracy": 0.6666666666666666
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 14,
+            "exact": 12,
+            "accuracy": 0.8571428571428571
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 56,
+          "gold_cells": 56,
+          "prediction_cells": 56,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 19,
+          "error_preview": [
+            {
+              "row": 1,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "F1",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "The implementation of persistent IDs at the start of\nprojects for all the materials and/or substances used\nand their batches is recommended, for example, in\nline with the current efforts to establish an ERM${}^{48}$;\npersistent IDs should also be implemented for\nmetadata (for example, protocols, methods, model\nsystems and so on)${}^{28}$",
+              "prediction": "The implementation of persistent IDs at the start of projects for all the materials and/or substances used and their batches is recommended; for example; in line with the current efforts to establish an ERM 8 persistent IDs should also be implemented for metadata (for example; protocols, methods, model systems and so on)28",
+              "numeric_gold": [
+                "48",
+                "28"
+              ],
+              "explicit_header": false
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Incentives for data generators to include rich\nmetadata are needed; for example, increased citation rates when data are reused through the use of\npersistent IDs, which efficiently and consistently link\nto the original publication of the data",
+              "prediction": "Incentives for data generators to include rich metadata are needed; for example; increased citation rates when data are reused through the use of persistent IDs, which efficiently and consistently link to the original publication of the data",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Efficient use and implementation of\nontologies (for example, the eNanoMapper ontology) greatly supports findability and\ndecreases the need for expert knowledge",
+              "prediction": "Efficient use and implementation of ontologies (for example; the eNanoMapper ontology) greatly supports findability and decreases the need for expert knowledge",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 3,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Efficient semantic characterization using the available ontologies for both raw and linked (meta)data\nshould be implemented, for example, by harmonized\ndata-entry templates and electronic lab notebooks",
+              "prediction": "Efficient semantic characterization using the available ontologies for both raw and linked (meta)data should be implemented; for example; by harmonized data-entry templates and electronic lab notebooks",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 4,
+          "gold_header_cells": 4,
+          "matched_span_cells": 4,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 4,
+          "text_errors": [],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.9676033829595025,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-19",
+      "angle_ccw": 0,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_source": "v12_baseline",
+      "score_reused_byte_identical": true,
+      "baseline_v12": {
+        "teds": 0.9952485380116959,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 48,
+            "exact": 47,
+            "accuracy": 0.9791666666666666
+          },
+          "nonempty_gold_cells": {
+            "total": 48,
+            "exact": 47,
+            "accuracy": 0.9791666666666666
+          },
+          "numeric_cells": {
+            "total": 24,
+            "exact": 23,
+            "accuracy": 0.9583333333333334
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 24,
+            "exact": 24,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 48,
+          "gold_cells": 48,
+          "prediction_cells": 48,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 1,
+          "error_preview": [
+            {
+              "row": 21,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Stack gas $\\text{O}_{2}$ concentration",
+              "prediction": "Stack gas 02 concentration",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 2,
+          "gold_header_cells": 2,
+          "matched_span_cells": 2,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": 0.9952485380116959,
+        "structure_teds": 1.0,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 48,
+            "exact": 47,
+            "accuracy": 0.9791666666666666
+          },
+          "nonempty_gold_cells": {
+            "total": 48,
+            "exact": 47,
+            "accuracy": 0.9791666666666666
+          },
+          "numeric_cells": {
+            "total": 24,
+            "exact": 23,
+            "accuracy": 0.9583333333333334
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 24,
+            "exact": 24,
+            "accuracy": 1.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 48,
+          "gold_cells": 48,
+          "prediction_cells": 48,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 0,
+          "error_count": 1,
+          "error_preview": [
+            {
+              "row": 21,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Stack gas $\\text{O}_{2}$ concentration",
+              "prediction": "Stack gas 02 concentration",
+              "numeric_gold": [
+                "2"
+              ],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 2,
+          "gold_header_cells": 2,
+          "matched_span_cells": 2,
+          "missing_span_cells": 0,
+          "extra_span_cells": 0,
+          "exact_text_cells": 2,
+          "text_errors": [],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.9952485380116959,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.0
+    },
+    {
+      "id": "case-20",
+      "angle_ccw": 270,
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ]
+      },
+      "effective_source": "oriented_docling",
+      "score_reused_byte_identical": false,
+      "baseline_v12": {
+        "teds": -0.03223624749582643,
+        "structure_teds": 0.7875,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 144,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "nonempty_gold_cells": {
+            "total": 144,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "numeric_cells": {
+            "total": 17,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 16,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 81,
+          "gold_cells": 144,
+          "prediction_cells": 135,
+          "missing_span_cells": 63,
+          "extra_span_cells": 54,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 31,
+          "error_count": 144,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Conversion pathway",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Label",
+              "prediction": "8",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Description",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Feedstock feasibility",
+              "prediction": "8",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Energy input",
+              "prediction": "8 9",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 15,
+          "gold_header_cells": 9,
+          "matched_span_cells": 9,
+          "missing_span_cells": 0,
+          "extra_span_cells": 6,
+          "exact_text_cells": 0,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "gold": "Conversion pathway",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "Label",
+              "prediction": "8"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "Description",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "Feedstock feasibility",
+              "prediction": "8"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "Energy input",
+              "prediction": "8 9"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "Energy output (main)",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                6,
+                1,
+                1
+              ],
+              "gold": "Energy output (coproducts)",
+              "prediction": "8 %"
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "Displaced products",
+              "prediction": "4 8"
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "Refs.",
+              "prediction": ""
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v12": {
+        "teds": -0.03223624749582643,
+        "structure_teds": 0.7875,
+        "missing_output": false,
+        "raw_cell_diagnostic": {
+          "available": true,
+          "all_gold_cells": {
+            "total": 144,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "nonempty_gold_cells": {
+            "total": 144,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "numeric_cells": {
+            "total": 17,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "explicit_header_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "first_column_cells": {
+            "total": 16,
+            "exact": 0,
+            "accuracy": 0.0
+          },
+          "unit_bearing_cells": {
+            "total": 0,
+            "exact": 0,
+            "accuracy": null
+          },
+          "matched_span_cells": 81,
+          "gold_cells": 144,
+          "prediction_cells": 135,
+          "missing_span_cells": 63,
+          "extra_span_cells": 54,
+          "interpretation": "Exact (row,column,rowspan,colspan), no row-shift rescue. NFKC and whitespace only; numeric regex and finite unit vocabulary are diagnostics, not general scientific validation.",
+          "nonempty_in_gold_empty": 0,
+          "extra_nonempty_coordinates": 31,
+          "error_count": 144,
+          "error_preview": [
+            {
+              "row": 0,
+              "col": 0,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Conversion pathway",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 1,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Label",
+              "prediction": "8",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Description",
+              "prediction": "",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Feedstock feasibility",
+              "prediction": "8",
+              "numeric_gold": [],
+              "explicit_header": false
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "row_span": 1,
+              "col_span": 1,
+              "gold": "Energy input",
+              "prediction": "8 9",
+              "numeric_gold": [],
+              "explicit_header": false
+            }
+          ]
+        },
+        "header_prefix": {
+          "available": true,
+          "prediction_header_rows": 1,
+          "gold_header_rows": 1,
+          "prediction_header_cells": 15,
+          "gold_header_cells": 9,
+          "matched_span_cells": 9,
+          "missing_span_cells": 0,
+          "extra_span_cells": 6,
+          "exact_text_cells": 0,
+          "text_errors": [
+            {
+              "coordinates": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "gold": "Conversion pathway",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "gold": "Label",
+              "prediction": "8"
+            },
+            {
+              "coordinates": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "gold": "Description",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                3,
+                1,
+                1
+              ],
+              "gold": "Feedstock feasibility",
+              "prediction": "8"
+            },
+            {
+              "coordinates": [
+                0,
+                4,
+                1,
+                1
+              ],
+              "gold": "Energy input",
+              "prediction": "8 9"
+            },
+            {
+              "coordinates": [
+                0,
+                5,
+                1,
+                1
+              ],
+              "gold": "Energy output (main)",
+              "prediction": ""
+            },
+            {
+              "coordinates": [
+                0,
+                6,
+                1,
+                1
+              ],
+              "gold": "Energy output (coproducts)",
+              "prediction": "8 %"
+            },
+            {
+              "coordinates": [
+                0,
+                7,
+                1,
+                1
+              ],
+              "gold": "Displaced products",
+              "prediction": "4 8"
+            },
+            {
+              "coordinates": [
+                0,
+                8,
+                1,
+                1
+              ],
+              "gold": "Refs.",
+              "prediction": ""
+            }
+          ],
+          "limitation": "Header prefix inferred from spans and regular-body onset; not explicit semantic-header annotation."
+        }
+      },
+      "effective_v13": {
+        "teds": 0.939882420783643,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "oriented_paddle_raw_diagnostic": {
+        "teds": 0.671306107610233,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v12": 0.9721186682794695
+    }
+  ],
+  "cohort": "development-regression",
+  "gold_access_in_inference": false,
+  "production_applied": false,
+  "protected_inputs_unchanged": true,
+  "scoring_code_sha256": "a00c402331c499bf69585d7b5158472ff052687b8af5acb68e863216c7cde66f",
+  "notes": [
+    "Scores reused only after exact effective HTML hash equality and frozen input verification.",
+    "Raw official TEDS retained, no negative-score clipping.",
+    "No new held-out or RAG-quality claim."
+  ]
+}

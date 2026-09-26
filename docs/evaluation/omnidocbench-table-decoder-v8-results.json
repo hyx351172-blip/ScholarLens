@@ -1,0 +1,55 @@
+{
+  "experiment": "table-decoder-v8-structure-only",
+  "production_applied": false,
+  "paid_api_calls": 0,
+  "content_accuracy_evaluated": false,
+  "actual_models": ["SLANeXt_wired"],
+  "manifest_sha256": "ec607623012941880f473966b1ddbe4e345919a886561044d6604175054411de",
+  "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+  "graph_sha256_original": "5b872f08e74f628ca1db8405db147e82e6e0c7cb358e101fd01cdafc946632d8",
+  "graph_sha256_extended": "f1ec593a33056ac052a50c6740ec07a55e55327eff1657b397e2317d9f043882",
+  "changed_constants": 4,
+  "max_text_length": {"original": 500, "extended": 1000},
+  "original_valid_count": 0,
+  "extended_valid_count": 2,
+  "table_count": 3,
+  "fallback_structure_teds": {"original": 0.7693082734960323, "extended": 0.7793251472496756},
+  "results": [
+    {
+      "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+      "steps": {"original": 350, "extended": 350},
+      "termination": {"original": "eos", "extended": "eos"},
+      "prefix_identical": true,
+      "extended_valid": false,
+      "baseline_structure_teds": 0.3587301587301587,
+      "candidate_structure_teds": null
+    },
+    {
+      "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+      "steps": {"original": 501, "extended": 576},
+      "termination": {"original": "length_limit", "extended": "eos"},
+      "prefix_identical": true,
+      "extended_valid": true,
+      "baseline_structure_teds": 0.975609756097561,
+      "candidate_structure_teds": 1.0
+    },
+    {
+      "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+      "steps": {"original": 501, "extended": 588},
+      "termination": {"original": "length_limit", "extended": "eos"},
+      "prefix_identical": true,
+      "extended_valid": true,
+      "baseline_structure_teds": 0.9735849056603774,
+      "candidate_structure_teds": 0.9792452830188679
+    }
+  ],
+  "tests": {"total": 245, "new": 18, "failures": 0, "errors": 0, "skipped": 0},
+  "original_models_unchanged": true,
+  "all_15_frozen_files_unchanged": true,
+  "limitations": [
+    "Three selected development tables: two datasheets and one scientific benchmark table.",
+    "Structure-only inference; no OCR content, full TEDS or downstream RAG evaluation.",
+    "Cloned static graph is an experimental variant, not an officially re-exported model.",
+    "First table has natural EOS but remains structurally invalid; extending length does not repair it."
+  ]
+}

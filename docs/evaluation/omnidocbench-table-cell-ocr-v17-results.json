@@ -1,0 +1,26 @@
+{
+  "experiment": "cell-ocr-v17",
+  "cohort": "diagnosed development cases; not held-out",
+  "cases": 12,
+  "selected_tables": 1,
+  "reread_cells": 9,
+  "completed_run_local_calls": 9,
+  "all_attempts_local_calls": 10,
+  "paid_api_calls": 0,
+  "completed_run_seconds": 48.437,
+  "case_10": {
+    "previous_effective": {"teds": 0.9743742718615739, "numeric_exact": 15, "numeric_total": 22},
+    "old_rejected_partial_grid": {"teds": 0.9358559035216744, "numeric_exact": 11, "numeric_total": 22},
+    "reread_diagnostic_only": {"teds": 0.9665405166646475, "numeric_exact": 13, "numeric_total": 22},
+    "admitted": false,
+    "blocking_evidence": {"cell_id": 34, "text": "一", "score": 0.3028622269630432}
+  },
+  "effective_mean_teds": 0.6814400873308595,
+  "effective_mean_structure_teds": 0.8468214737826085,
+  "effective_changed": 0,
+  "tests_passed": 133,
+  "new_tests": 8,
+  "gold_used_in_inference_or_admission": false,
+  "production_applied": false,
+  "decision": "retain fallback; freeze parser work and proceed to end-to-end evaluation"
+}

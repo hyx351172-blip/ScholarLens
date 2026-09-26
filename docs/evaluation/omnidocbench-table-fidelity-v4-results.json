@@ -1,0 +1,449 @@
+{
+  "schema_version": "1.0",
+  "evaluated_at": "2026-09-25",
+  "scope": "Frozen 10-page development smoke comparison; all v4 scores use the same locally patched evaluator",
+  "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+  "evaluator": {
+    "upstream_commit": "f133a71e9e91c3621c7ce8994200a7b394a06eb3",
+    "patch": "scripts/patches/omnidocbench-zero-pred-index.patch",
+    "patch_sha256": "94227ac045fa51f08f10e0845f7c5bb295b6eda9c87b67eb7ecd8dd1f6d1952d",
+    "source_sha256_before": "48d5c7a62c3b8e47e993b6f0d2a8ca15b0f33129cb7fb57247c78d5097bca670",
+    "source_sha256_after": "be1afe29b67bc6a9b312eb5dd88e5b7cb7cbe4665435c61ab0d0575d741e4782",
+    "change": "Two truthiness checks in match_gt2pred_simple now explicitly distinguish an empty-string index from zero. No gold, matching assignment or metric formula edits.",
+    "score_label": "local-patched-zero-pred-index-v1",
+    "match_method": "quick_match",
+    "page_workers": 2,
+    "teds_workers": 2
+  },
+  "original_unpatched_reading_edit": {
+    "baseline": 0.4841912118382707,
+    "export_only": 0.3749325184619302,
+    "formula_fixed": 0.23900560224089634
+  },
+  "denominators": {
+    "text_pages": 9,
+    "formula_pages": 4,
+    "isolated_formulas": 30,
+    "tables": 3,
+    "reading_order_pages": 10
+  },
+  "metrics": [
+    {
+      "variant": "baseline",
+      "text_edit": 0.23328591482786207,
+      "formula_edit": 1,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.2770483546954135,
+      "per_table": [
+        {
+          "img_id": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "pred_position": 29,
+          "metric": {
+            "TEDS": 0.20875133380880506,
+            "TEDS_structure_only": 0.3682539682539683,
+            "Edit_dist": 0.5027124773960217
+          }
+        },
+        {
+          "img_id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "pred_position": 57,
+          "metric": {
+            "TEDS": 0.9596622889305816,
+            "TEDS_structure_only": 0.975609756097561,
+            "Edit_dist": 0.6746853965466784
+          }
+        },
+        {
+          "img_id": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "pred_position": 199,
+          "metric": {
+            "TEDS": 0.8884546920663243,
+            "TEDS_structure_only": 0.9718574108818011,
+            "Edit_dist": 0.6638060741153524
+          }
+        }
+      ],
+      "match_fallbacks": {
+        "quick_match_timeout": 0,
+        "page_timeout": 0
+      },
+      "teds_debug": {
+        "stage": "TEDS",
+        "workers": 2,
+        "timeout_sec": 120,
+        "sample_count": 3,
+        "timeout_case_count": 0,
+        "timeout_cases": [],
+        "error_case_count": 0,
+        "error_cases": []
+      },
+      "result_directory": "output/benchmarks/omnidocbench-table-fidelity-v4/scores/baseline/result",
+      "metric_file_sha256": "f0dfc78ec641a650059978df78f41fce59a1215968e1eaf655d2d1489bf96857"
+    },
+    {
+      "variant": "export_only",
+      "text_edit": 0.20570630793008504,
+      "formula_edit": 0.86670200622572,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.16778966131907308,
+      "per_table": [
+        {
+          "img_id": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "pred_position": 28,
+          "metric": {
+            "TEDS": 0.20875133380880506,
+            "TEDS_structure_only": 0.3682539682539683,
+            "Edit_dist": 0.5027124773960217
+          }
+        },
+        {
+          "img_id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "pred_position": 57,
+          "metric": {
+            "TEDS": 0.9596622889305816,
+            "TEDS_structure_only": 0.975609756097561,
+            "Edit_dist": 0.6746853965466784
+          }
+        },
+        {
+          "img_id": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "pred_position": 199,
+          "metric": {
+            "TEDS": 0.8884546920663243,
+            "TEDS_structure_only": 0.9718574108818011,
+            "Edit_dist": 0.6638060741153524
+          }
+        }
+      ],
+      "match_fallbacks": {
+        "quick_match_timeout": 0,
+        "page_timeout": 0
+      },
+      "teds_debug": {
+        "stage": "TEDS",
+        "workers": 2,
+        "timeout_sec": 120,
+        "sample_count": 3,
+        "timeout_case_count": 0,
+        "timeout_cases": [],
+        "error_case_count": 0,
+        "error_cases": []
+      },
+      "result_directory": "output/benchmarks/omnidocbench-table-fidelity-v4/scores/export_only/result",
+      "metric_file_sha256": "c6fcf1afa4589caa72ea218cc1f79d88ca9d4beb0e4799d956381eb87e3a8d98"
+    },
+    {
+      "variant": "formula_fixed",
+      "text_edit": 0.20802621024998735,
+      "formula_edit": 0.25472516904375386,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.031862745098039214,
+      "per_table": [
+        {
+          "img_id": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "pred_position": 28,
+          "metric": {
+            "TEDS": 0.20875133380880506,
+            "TEDS_structure_only": 0.3682539682539683,
+            "Edit_dist": 0.5027124773960217
+          }
+        },
+        {
+          "img_id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "pred_position": 57,
+          "metric": {
+            "TEDS": 0.9596622889305816,
+            "TEDS_structure_only": 0.975609756097561,
+            "Edit_dist": 0.6746853965466784
+          }
+        },
+        {
+          "img_id": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "pred_position": 199,
+          "metric": {
+            "TEDS": 0.8884546920663243,
+            "TEDS_structure_only": 0.9718574108818011,
+            "Edit_dist": 0.6638060741153524
+          }
+        }
+      ],
+      "match_fallbacks": {
+        "quick_match_timeout": 0,
+        "page_timeout": 0
+      },
+      "teds_debug": {
+        "stage": "TEDS",
+        "workers": 2,
+        "timeout_sec": 120,
+        "sample_count": 3,
+        "timeout_case_count": 0,
+        "timeout_cases": [],
+        "error_case_count": 0,
+        "error_cases": []
+      },
+      "result_directory": "output/benchmarks/omnidocbench-table-fidelity-v4/scores/formula_fixed/result",
+      "metric_file_sha256": "efb7c6817d68a552f5c266da597bea1e5374bdaf046f765c1ee4dae0e96e2215"
+    },
+    {
+      "variant": "table_structure",
+      "text_edit": 0.20802621024998735,
+      "formula_edit": 0.25472516904375386,
+      "table_teds": 0.6890469428104301,
+      "table_structure": 0.7693082734960323,
+      "table_edit": 0.20676305367698378,
+      "reading_edit": 0.031862745098039214,
+      "per_table": [
+        {
+          "img_id": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "pred_position": 26,
+          "metric": {
+            "TEDS": 0.21116466993212246,
+            "TEDS_structure_only": 0.3587301587301587,
+            "Edit_dist": 0.5532411005751593
+          }
+        },
+        {
+          "img_id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "pred_position": 55,
+          "metric": {
+            "TEDS": 0.9596622889305816,
+            "TEDS_structure_only": 0.975609756097561,
+            "Edit_dist": 0.023174157303370788
+          }
+        },
+        {
+          "img_id": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "pred_position": 197,
+          "metric": {
+            "TEDS": 0.8963138695685865,
+            "TEDS_structure_only": 0.9735849056603774,
+            "Edit_dist": 0.04387390315242119
+          }
+        }
+      ],
+      "match_fallbacks": {
+        "quick_match_timeout": 0,
+        "page_timeout": 0
+      },
+      "teds_debug": {
+        "stage": "TEDS",
+        "workers": 2,
+        "timeout_sec": 120,
+        "sample_count": 3,
+        "timeout_case_count": 0,
+        "timeout_cases": [],
+        "error_case_count": 0,
+        "error_cases": []
+      },
+      "result_directory": "output/benchmarks/omnidocbench-table-fidelity-v4/scores/table_structure/result",
+      "metric_file_sha256": "e88ce53067afd705c72a1d814a6b0d13103f26917c42d7f6483ac341521331e0"
+    }
+  ],
+  "replay": {
+    "schema_version": "1.0",
+    "mode": "saved_native_docling_replay_no_inference",
+    "model_calls": 0,
+    "api_calls": 0,
+    "source_directory": "output/benchmarks/omnidocbench-scholar-lens-fixed-v3",
+    "selected_pages": 10,
+    "successful_pages": 10,
+    "failed_pages": 0,
+    "compatibility_pass": true,
+    "results": [
+      {
+        "page": "docstructbench_llm-raw-scihub-o.O-ajhb.10190.pdf_5.jpg",
+        "source_document_sha256": "08fcaba6896e3ea84f93e10b8b5c76ee8350e6eed8f84c768e7d49093cbc705a",
+        "native_docling_sha256": "3fa242c41c6040f486b046c18680a28c53906b196747310155fdc82d6d58f3d0",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 3,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.057,
+        "original_parse_seconds": 93.409
+      },
+      {
+        "page": "docstructbench_llm-raw-scihub-o.O-ana.20363.pdf_5.jpg",
+        "source_document_sha256": "34452850886c8d163f4e50bd6b284e8d4ea65425b2ebaae0fe670ec02dbbc940",
+        "native_docling_sha256": "7e5e268e29c166e2baa086cdea6b73bf59915f16b80ec2f1f7579250d9b662ac",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 1,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.014,
+        "original_parse_seconds": 70.621
+      },
+      {
+        "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+        "source_document_sha256": "0e9f084b5ddeb5838c1d938068ced18757a11567a760cdedd504309430bfa5c0",
+        "native_docling_sha256": "d0c43b2d08b9de8129c278dc93e12891d7a03734ba287b3275eb05e6ecc3c6cb",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 2,
+        "table_count": 1,
+        "valid_tables": 1,
+        "cell_count": 142,
+        "spanning_cells": 8,
+        "structure_warnings": [
+          "34 unrecognized grid slots exported as empty cells"
+        ],
+        "replay_seconds": 0.046,
+        "original_parse_seconds": 58.364
+      },
+      {
+        "page": "page-05746fc5-2045-4dea-94e7-4bbab648d702.png",
+        "source_document_sha256": "5fe89b9f99245951c3015a306ae35483a322c50f68417032a2df22ca270c0bdc",
+        "native_docling_sha256": "f1356f3f10c8e16e16622f299e1a28e1c2554da7483115097eb9a4c4e4d52649",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 8,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.021,
+        "original_parse_seconds": 149.332
+      },
+      {
+        "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+        "source_document_sha256": "bce37d992c63d5603d6cd6d5a6e03f9090ffb3d2bd0e62e1938a31ce529d1980",
+        "native_docling_sha256": "bcdf5671e23af652f041303b939b0daae915a5ac93e46812c7a894d89c7d28cb",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 3,
+        "table_count": 1,
+        "valid_tables": 1,
+        "cell_count": 270,
+        "spanning_cells": 0,
+        "structure_warnings": [
+          "210 unrecognized grid slots exported as empty cells"
+        ],
+        "replay_seconds": 0.061,
+        "original_parse_seconds": 82.431
+      },
+      {
+        "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+        "source_document_sha256": "33cd0460cb83440240645f848200a64287bdb835c453a86607d072a49747edd0",
+        "native_docling_sha256": "8599682b95120cbe207122e8f5dfb2552f20f3e9b5c40fc22a4c9f7f10875f33",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 7,
+        "table_count": 1,
+        "valid_tables": 1,
+        "cell_count": 441,
+        "spanning_cells": 6,
+        "structure_warnings": [
+          "41 unrecognized grid slots exported as empty cells"
+        ],
+        "replay_seconds": 0.094,
+        "original_parse_seconds": 155.643
+      },
+      {
+        "page": "page-175b8afd-8077-4f65-bdbf-40682e0a9a4b.png",
+        "source_document_sha256": "d098ce5a3842a1eda3c01e98c92125f05daeca97b6b12b46a81b301b50ca9d12",
+        "native_docling_sha256": "61dcb889b10b55d30db8e218d49b063d176a9876fb5577e7335b03809fd4bbd3",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 11,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.026,
+        "original_parse_seconds": 186.141
+      },
+      {
+        "page": "page-1ce383cc-63a3-43c9-b6f2-7498a952b65c.png",
+        "source_document_sha256": "56f47e65aee048899ff687a7e019de50b38b19f04e0dc57c6b13dd34c21406bd",
+        "native_docling_sha256": "e7a17abc3330a5843a897ff4ee059cd494942282610569c354c970b5926785e3",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 9,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.023,
+        "original_parse_seconds": 352.604
+      },
+      {
+        "page": "page-268266af-56c0-4b3b-9d07-73c6e50feb58.png",
+        "source_document_sha256": "aa002d48831ef2a4f51f8f10e7c7268456077900605c78c1f80cb44cdc7a3fe2",
+        "native_docling_sha256": "8b59f6ad464b48f0351014011ac122300b5852eb79959c3692bfa0c75366cea3",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 3,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.025,
+        "original_parse_seconds": 182.539
+      },
+      {
+        "page": "page-2861127b-41a4-44d5-b026-2de9cb408347.png",
+        "source_document_sha256": "f2599aaac17e02c7508c017e64169367719c48b825033b4be6993fb65ab5e5de",
+        "native_docling_sha256": "ba92210aef73b2f6b2b41fb83e86db632ff09d81d484d36b12dcbb682e835ec8",
+        "legacy_blocks_unchanged": true,
+        "logical_tables_unchanged": true,
+        "chunks_unchanged": true,
+        "chunk_count": 2,
+        "table_count": 0,
+        "valid_tables": 0,
+        "cell_count": 0,
+        "spanning_cells": 0,
+        "structure_warnings": [],
+        "replay_seconds": 0.018,
+        "original_parse_seconds": 71.079
+      }
+    ],
+    "failures": []
+  },
+  "patch_sha256": "94227ac045fa51f08f10e0845f7c5bb295b6eda9c87b67eb7ecd8dd1f6d1952d",
+  "tests": {
+    "command": "python -m unittest discover -s tests",
+    "passed": 185,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 15.25
+  },
+  "contract": {
+    "table_structure": "Additive optional payload on ContentBlock",
+    "legacy_text": "Unchanged",
+    "service_markdown": "Markdown-only compatibility view",
+    "structured_markdown": "HTML tables with escaped cell text and row/column spans; saved as <stem>.structured.md"
+  },
+  "limitations": [
+    "No new model inference; changes measure preservation/export, not OCR improvement.",
+    "TEDS slightly improves but structure-only slightly declines on this 3-table sample.",
+    "The large table Edit distance change is representation-sensitive, not a transcription accuracy gain.",
+    "Old and patched scorer reading-order values must not be compared as model gains.",
+    "No live upload, reindexing or end-to-end QA run; existing knowledge bases unchanged."
+  ]
+}

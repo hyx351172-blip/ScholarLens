@@ -32,6 +32,8 @@ from .evidence_context_postprocessor import (
 from .reading_order_postprocessor import ReadingOrderPostProcessor
 from .section_hierarchy_postprocessor import SectionHierarchyPostProcessor
 from .table_postprocessor import LogicalTable, TablePostProcessor
+from .markdown_renderer import render_document_markdown
+from .table_structure import extract_table_structure
 
 
 LABEL_MAP = {
@@ -73,6 +75,7 @@ class DoclingParser:
         *,
         table_mode: str = "accurate",
         do_ocr: bool = False,
+        do_formula_enrichment: bool = True,
         evidence_context_postprocessor: Optional[
             EvidenceContextPostProcessor
         ] = None,
@@ -84,6 +87,7 @@ class DoclingParser:
     ) -> None:
         self.table_mode = table_mode.lower()
         self.do_ocr = do_ocr
+        self.do_formula_enrichment = do_formula_enrichment
         self._converter = converter
         self.evidence_context_postprocessor = (
             evidence_context_postprocessor or EvidenceContextPostProcessor()
@@ -100,6 +104,7 @@ class DoclingParser:
         try:
             from docling.datamodel.base_models import InputFormat
             from docling.datamodel.pipeline_options import (
+                EasyOcrOptions,
                 PdfPipelineOptions,
                 TableFormerMode,
             )
@@ -112,6 +117,11 @@ class DoclingParser:
 
         options = PdfPipelineOptions()
         options.do_ocr = self.do_ocr
+        if self.do_ocr:
+            # Explicit engine: auto mode can silently produce an empty scan
+            # when no OCR package is installed.
+            options.ocr_options = EasyOcrOptions()
+        options.do_formula_enrichment = self.do_formula_enrichment
         options.do_table_structure = True
         options.table_structure_options.mode = (
             TableFormerMode.ACCURATE
@@ -191,6 +201,7 @@ class DoclingParser:
                 version=parser_version,
                 table_mode=self.table_mode,
                 ocr_enabled=self.do_ocr,
+                formula_enrichment_enabled=self.do_formula_enrichment,
             ),
             metadata=metadata,
             sections=sections,
@@ -199,7 +210,7 @@ class DoclingParser:
         )
         return DoclingParseResult(
             document=document,
-            markdown=markdown,
+            markdown=render_document_markdown(blocks),
             raw_document=raw_document,
             logical_tables=table_result.tables,
             logical_figures=evidence_result.figures,
@@ -212,7 +223,7 @@ class DoclingParser:
         for order, (item, traversal_level) in enumerate(_iterate_items(document)):
             source_label = _label_value(getattr(item, "label", None))
             block_type = LABEL_MAP.get(source_label, source_label or "unknown")
-            page, bbox = _provenance(item)
+            page, bbox = _provenance(item, document)
             heading_level = _heading_level(item, traversal_level)
             relations: Dict[str, Any] = {}
             if block_type == "heading":
@@ -238,6 +249,7 @@ class DoclingParser:
                     confidence=_confidence(item),
                     source_label=source_label or None,
                     relations=relations,
+                    table_structure=extract_table_structure(item) if block_type == "table" else None,
                 )
             )
 
@@ -347,7 +359,7 @@ def _heading_level(item: Any, traversal_level: int) -> int:
     return max(1, traversal_level)
 
 
-def _provenance(item: Any) -> Tuple[Optional[int], Optional[List[float]]]:
+def _provenance(item: Any, document: Any = None) -> Tuple[Optional[int], Optional[List[float]]]:
     provenance = getattr(item, "prov", None) or []
     if not provenance:
         return None, None
@@ -370,6 +382,15 @@ def _provenance(item: Any) -> Tuple[Optional[int], Optional[List[float]]]:
         if value is None:
             return page, None
         coordinates.append(float(value))
+    origin = _label_value(_get(bbox_obj, "coord_origin"))
+    if origin in {"topleft", "top_left"}:
+        pages = getattr(document, "pages", {})
+        page_info = pages.get(page) or pages.get(str(page))
+        height = _get(_get(page_info, "size"), "height")
+        if height is None:
+            return page, None  # Unknown geometry must not silently invert order.
+        coordinates[1] = float(height) - coordinates[1]
+        coordinates[3] = float(height) - coordinates[3]
     return page, coordinates
 
 
@@ -577,6 +598,12 @@ def _build_quality_report(
         block for block in eligible if block.page is not None and block.bbox is not None
     ]
     warnings = []
+    for block in blocks:
+        if block.table_structure:
+            warnings.extend(
+                f"{block.block_id}: table structure: {warning}"
+                for warning in block.table_structure.get("warnings", [])
+            )
     if not metadata.title:
         warnings.append("未识别论文标题")
     if not metadata.abstract:
@@ -588,6 +615,13 @@ def _build_quality_report(
     )
     if empty_formula_count:
         warnings.append(f"{empty_formula_count} 个公式没有可用文本")
+    fallback_formulas = sum(
+        block.type == "formula"
+        and block.relations.get("formula_text_source") == "orig_fallback"
+        for block in blocks
+    )
+    if fallback_formulas:
+        warnings.append(f"{fallback_formulas} 个公式仅有原始 OCR 文本，尚未验证 LaTeX")
 
     return ParseQualityReport(
         total_pages=total_pages,

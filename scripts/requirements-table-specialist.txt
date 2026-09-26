@@ -1,0 +1,7 @@
+# Independent CPU experiment only; never install into the ScholarLens app environment.
+paddlepaddle==3.3.1
+paddleocr==3.7.0
+paddlex[ocr]==3.7.2
+numpy==1.26.4
+httpx==0.28.1
+python-dotenv==1.1.1

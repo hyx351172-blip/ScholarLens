@@ -15,7 +15,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { toast } from 'sonner';
 
 import { config } from '../src/config';
-import { sourceIdFor, type CitationSource } from '../src/citations';
+import { type CitationSource } from '../src/citations';
+import { AnswerSources } from './AnswerSources';
 import { CitationMarkdown } from './CitationMarkdown';
 import { EvidenceDrawer } from './EvidenceDrawer';
 import { buttonStyles } from './ui/button';
@@ -534,32 +535,13 @@ export function Chat() {
                         sources={item.sources}
                         onSelectSource={selectSource}
                       />
-                      {item.isStreaming && <span className="mt-1 inline-block h-4 w-1.5 animate-pulse rounded-full bg-violet-500" />}
-                      {item.sources && item.sources.length > 0 && (
-                        <div className="mt-5 border-t border-slate-100 pt-4">
-                          <div className="mb-2 flex items-center justify-between">
-                            <p className="text-xs font-medium text-slate-500">本回答引用的证据</p>
-                            <span className="text-[11px] text-slate-400">{item.sources.length} 个片段</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {item.sources.map((source, index) => {
-                              const sourceId = sourceIdFor(source, index);
-                              return (
-                                <button
-                                  type="button"
-                                  key={`${item.id}-${sourceId}`}
-                                  onClick={() => selectSource(sourceId, source)}
-                                  className={buttonStyles({ variant: 'quiet', size: 'sm', className: 'max-w-full px-2.5 text-left' })}
-                                  title={`${source.filename} · 查看证据`}
-                                >
-                                  <span className="rounded bg-white px-1.5 py-0.5 font-semibold text-violet-700 shadow-sm">{sourceId}</span>
-                                  <span className="max-w-[220px] truncate">{source.filename}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
+                      {item.isStreaming && (
+                        <div role="status" aria-live="polite" className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                          <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+                          {item.content ? '正在整理来源，请稍候…' : '正在检索证据并生成、检查回答，请稍候…'}
                         </div>
                       )}
+                      <AnswerSources content={item.content} sources={item.sources} onSelectSource={selectSource} />
                     </div>
                   )}
                 </motion.article>

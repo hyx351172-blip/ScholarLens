@@ -125,6 +125,79 @@ Query → Dense Embedding → Milvus Top-K → Score Threshold → LLM Answer
 答案引用契约、确定性检查、语义判分边界和开发集实验结果见
 [`docs/technical/ANSWER_CITATION_EVALUATION.md`](docs/technical/ANSWER_CITATION_EVALUATION.md)。
 
+## 统一评测 Harness
+
+项目提供配置化 Evaluation Harness，用同一入口编排已有检索、回答引用和
+Claim–Citation Entailment 评测，保存不可覆盖的运行快照、执行质量门并比较
+两次实验。先运行不调用外部模型的冻结结果回放：
+
+```powershell
+python -m harness validate --config harness/configs/validated-replay-v1.json
+python -m harness run --config harness/configs/validated-replay-v1.json
+```
+
+完整命令、产物结构和可能产生模型费用的 Live 配置见
+[`harness/README.md`](harness/README.md)。
+
+局部表格 VLM 重识别为独立离线实验，不改变正式解析或知识库。裁图依据预测框，
+Gold 仅用于单独评分；保存原始响应、失败记录及可视化对照，最多 3 次调用且不自动重试。
+设计与验收见 [`docs/specs/table_vlm_experiment/implementation.md`](docs/specs/table_vlm_experiment/implementation.md)，
+实测结果见 [`docs/evaluation/omnidocbench-table-vlm-v5.md`](docs/evaluation/omnidocbench-table-vlm-v5.md)。
+
+后续 HTML 转录对照实现了流式计时、独立总超时、HTML → cells 校验及双模型实验，
+最多 6 次请求且不重试。当前仅一张对照表改进，复杂表仍未通过，不接入生产；
+见 [`表格 HTML A/B v6 报告`](docs/evaluation/omnidocbench-table-html-v6.md)。
+
+表格专用方案 v7 增加独立 CPU PP-TableMagic 与 Qwen 原生 `table_parsing` 实验，
+沿用固定裁图与严格结构准入。两组新候选均未通过，已保留失败结构、识别长度线索和回归记录；
+未替换生产解析。见 [`表格专用解析 v7 报告`](docs/evaluation/omnidocbench-table-specialist-v7.md)。
+
+解码上限审计 v8 通过真实概率张量及独立静态图副本，确认两张长表受长度上限截断。
+延长后结构有效率从 0/3 提升至 2/3；尚未验证 OCR 内容，未接入生产。
+见 [`表格解码上限 v8 报告`](docs/evaluation/omnidocbench-table-decoder-v8.md)。
+
+OCR 绑定 v9 补充逐单元格追踪、完整 TEDS 与坐标内容诊断。科研表有提升，但另一张表
+暴露空单元格错位；两者均未通过保守绑定门，继续保留生产基线。
+见 [`表格 OCR 绑定 v9 报告`](docs/evaluation/omnidocbench-table-ocr-binding-v9.md)。
+
+几何网格绑定 v10 修复了 EEPROM 样本的空格错列：保留空格并按坐标绑定，
+完整 TEDS 达 0.9972（Docling 基线 0.9597），仍有 2 处 OCR 字符错误。
+复杂表头继续拒绝并保留基线；只完成离线实验，未接入生产。
+见 [`表格几何网格 v10 报告`](docs/evaluation/omnidocbench-table-grid-binding-v10.md)。
+
+多层表头 v11 结合局部分隔线与 OCR 层次，恢复科研表的三层表头、跨行/跨列及
+列标题路径。该样本结构 TEDS 为 1.0，完整 TEDS 为 0.9909；v10 已通过输出不变。
+仍有 OCR/格式差异，规则适用范围有限，暂不接入生产。
+见 [`多层表头修复 v11 报告`](docs/evaluation/omnidocbench-table-header-v11.md)。
+
+冻结规则后的 v12 新页面扩测覆盖 20 张表，只有 2 张候选通过几何门，1 张改善、
+1 张轻微退步；发现多记录被合并仍可能通过校验，以及旋转表、表内公式等缺口。
+尚未通过泛化验收，仍不接入生产。官方分数、单例负值审计及 320 项测试记录见
+[`20 张表扩测 v12 报告`](docs/evaluation/omnidocbench-table-unseen-v12.md)。
+
+v13 增加多记录合并的保守拦截和有界四方向探测。开发回归集 20 张表完整
+TEDS 均值从 0.5356 到 0.5843，2 张改善、0 张退步；其中旋转样本通过
+校正方向后重新运行 Docling 达到 0.9399。尚未接入生产，仍需独立测试。
+351 项回归/评分器测试及首次超时记录见
+[`表格可靠性修复 v13 报告`](docs/evaluation/omnidocbench-table-safety-v13.md)。
+
+v14 对有独立记录锚点的合并行进行受控重建，保留续行与 OCR 来源。
+目标样本 TEDS 从 0.2885 到 0.9975；20 张表开发集均值从 0.5843 到 0.6198，
+其余 19 张有效输出不变。真实正例仍只有 1 张，未接入生产。
+见 [`合并行重建 v14 报告`](docs/evaluation/omnidocbench-table-records-v14.md)。
+
+v15 固定选取 12 个未使用页面做离线验收：全部被上游网格或 HTML 检查拦截，
+没有样本进入 v14 重建，两组 TEDS 同为 0.6814。因此尚未验证重建的泛化或
+条件误拆率，仍不接入生产。见 [`新页面验收 v15 报告`](docs/evaluation/omnidocbench-table-records-validation-v15.md)。
+
+v16 用缓存结果完成网格/OCR 叠加诊断：确认 4 张表触及检测模型 300 框上限，
+修复 1 例孤立 HTML 包装标签，但其 5 条跨列 OCR 仍被拦截，最终输出及指标不变。
+见 [`上游网格诊断 v16 报告`](docs/evaluation/omnidocbench-table-geometry-audit-v16.md)。
+
+单元格 OCR 重读 v17 已完成：9 格局部重读改善跨列粘连，但未超过现有回退，
+且低置信度结果触发拒绝；12 例有效输出保持不变。当前暂停追加表格解析优化，
+转向端到端验证。见 [v17 实验报告](docs/evaluation/omnidocbench-table-cell-ocr-v17.md)。
+
 ## 路线图
 
 - [ ] 为每个 Chunk 增加论文标题、章节、页码、DOI/arXiv ID 等科研元数据。

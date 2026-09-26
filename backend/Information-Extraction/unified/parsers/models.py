@@ -41,6 +41,8 @@ class ContentBlock:
     confidence: Optional[float] = None
     source_label: Optional[str] = None
     relations: Dict[str, Any] = field(default_factory=dict)
+    # Optional additive payload; text stays Markdown for existing chunk consumers.
+    table_structure: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -49,6 +51,7 @@ class ParserInfo:
     version: str = "unknown"
     table_mode: str = "accurate"
     ocr_enabled: bool = False
+    formula_enrichment_enabled: bool = False
 
 
 @dataclass

@@ -1,0 +1,24 @@
+{
+  "source_results_sha256": "1b5de827fc50a8bc13d31a5d98ebd03d63600fcfb5fae32b425fea595122292b",
+  "audit_code_sha256": "5dc4142e1e8a7cae632ecb4c7ea53be0df09ce8b843e08e416b9a810c0d8b2ed",
+  "official_metric_sha256": "e506ed341c89a24b03adba75e8ea3247a1d2eece10a9e09f4a81aee7f1b4f060",
+  "original_scores_unchanged": true,
+  "out_of_range": [
+    {
+      "id": "case-20",
+      "arm": "baseline",
+      "raw_teds": -0.03223624749582643,
+      "prediction_descendant_nodes": 144,
+      "gold_descendant_nodes": 160,
+      "edit_distance": 165.15779959933224,
+      "normalization_denominator": 160,
+      "reproduced_teds": -0.03223624749582643,
+      "prediction_sha256": "d3a407b50bc63c1b67a5806e98a520c6e392879089deadc760ef179676b8242a"
+    }
+  ],
+  "diagnostic_only_clipped_means": {
+    "baseline": 0.5347889237284881,
+    "effective": 0.5372515822394177
+  },
+  "note": "Official formula is 1 - edit_distance / max(descendant_node_counts), without clipping. Clipped means are explicitly post-hoc sensitivity diagnostics, never replacements for the frozen official scores."
+}

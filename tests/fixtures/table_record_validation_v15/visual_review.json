@@ -1,0 +1,19 @@
+{
+  "reviewer": "assistant visual inspection of prepared source crops",
+  "human_reviewed": false,
+  "purpose": "Source-layout risk tags; NOT gold row labels or proof of repair correctness",
+  "cases": [
+    {"id":"case-01","tags":["wrapped_lists","section_rows"],"note":"Gains/Losses contain multi-line chromosome lists belonging to one case; line count is not case count."},
+    {"id":"case-02","tags":["wrapped_labels","multi_level_header","superscripts"],"note":"Bodyweight labels wrap into Mean/SD notes; Diet group is a parent header."},
+    {"id":"case-03","tags":["wrapped_labels","coefficient_standard_error"],"note":"Several coefficient/standard-error pairs wrap; also multi-line row labels."},
+    {"id":"case-04","tags":["sparse_grid","blank_cells"],"note":"Many intentional blank cells; ordinary physical rows must remain separate."},
+    {"id":"case-05","tags":["multi_level_header","within_cell_numeric_alternatives"],"note":"Some colored capacitance rows contain two aligned size/impedance/current alternatives; author-intended subrecord semantics need human review."},
+    {"id":"case-06","tags":["coefficient_standard_error","multi_level_header","wrapped_labels"],"note":"Each variable has coefficient and parenthesized statistic lines; do not infer two variables from two lines."},
+    {"id":"case-07","tags":["multi_column_paragraphs","hyphenation","formula_text"],"note":"Catalyst rows have several long wrapped descriptions; aligned text baselines alone do not establish new records."},
+    {"id":"case-08","tags":["rotated_table","binary_matrix"],"note":"Sideways binary-character matrix; no orientation correction included in this marginal experiment."},
+    {"id":"case-09","tags":["formula_cells","subscripts_superscripts"],"note":"Scenario columns contain stacked variable assignments with rich formula layout."},
+    {"id":"case-10","tags":["within_cell_lists","multi_column_paragraphs"],"note":"One study row contains sample subgroups and bullet results; these are not automatically separate studies."},
+    {"id":"case-11","tags":["multi_panel","section_rows","multi_level_header"],"note":"Two benchmark panels and method-section labels separate numerical records."},
+    {"id":"case-12","tags":["grouped_rows","unit_header"],"note":"Formation labels span Mean/Min/Max/SD records; preserve grouping and unit header."}
+  ]
+}

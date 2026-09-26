@@ -100,6 +100,17 @@ The method follows Li et al. (2018) and preserves one sentence [S2].
             ],
         )
 
+    def test_claim_units_ignore_chinese_structural_lead_in(self):
+        answer = """论文《Attention Is All You Need》的结论如下：
+- 首个结论有证据 [S1]。
+- 第二个结论也有证据 [S1]。
+"""
+
+        self.assertEqual(
+            _claim_units(answer),
+            ["首个结论有证据 [S1]。", "第二个结论也有证据 [S1]。"],
+        )
+
     def test_extracts_single_adjacent_and_grouped_citations(self):
         answer = "One [S1]. Two [S2][S3]. Grouped [S1, S3]."
 

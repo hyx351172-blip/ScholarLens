@@ -44,6 +44,16 @@ export function collectCitationIds(markdown: string): string[] {
   return [...seen];
 }
 
+export function partitionSources(markdown: string, sources: CitationSource[] = []) {
+  const sourceMap = buildSourceMap(sources);
+  const ids = new Set(collectCitationIds(markdown));
+  return {
+    cited: [...sourceMap].filter(([id]) => ids.has(id)),
+    uncited: [...sourceMap].filter(([id]) => !ids.has(id)),
+    unknown: [...ids].filter((id) => !sourceMap.has(id)),
+  };
+}
+
 export function linkifyCitationMarkers(markdown: string): string {
   return markdown.replace(
     UNLINKED_CITATION_MARKER,
