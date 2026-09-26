@@ -1,5 +1,9 @@
 # Development checkpoint — 2026-09-26
 
+Historical checkpoint: the NO-GO below was the decision before answer repairs.
+For the subsequent bounded development merge decision, see
+`merge-acceptance-20260926.md`. Do not interpret this as the current gate status.
+
 Scope: accumulated parser/export improvements, bounded table experiments,
 evaluation harness, and live journey reports. This is not a production release.
 
