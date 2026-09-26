@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "scholarlens-attention-section-smoke-v1",
+  "split": "development",
+  "annotation_status": "assistant_draft_pending_human_review",
+  "description": "Two live smoke cases for the section-aware retrieval regression fixed on Attention Is All You Need.",
+  "cases": [
+    {
+      "id": "ASSV1-01",
+      "category": "single_paper_method",
+      "question": "《Attention Is All You Need》这篇论文的方法是什么？请概括 Transformer 的编码器、解码器和核心注意力机制。",
+      "answerable": true,
+      "expected_answer": "Transformer removes recurrence and convolution from sequence transduction. It uses a six-layer encoder whose layers contain multi-head self-attention and position-wise feed-forward sublayers, and a six-layer decoder that adds masked self-attention and encoder-decoder attention. Sublayers use residual connections followed by layer normalization. Its core attention is scaled dot-product attention applied through multiple learned projection heads, and sequence order is supplied by positional encodings.",
+      "required_concepts": [
+        "attention-only encoder-decoder without recurrence or convolution",
+        "six-layer encoder with self-attention and position-wise feed-forward sublayers",
+        "six-layer decoder with masked self-attention and encoder-decoder attention",
+        "residual connections and layer normalization around sublayers",
+        "scaled dot-product multi-head attention and positional encodings"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:paragraph:block_000026:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 3,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.1 Encoder and Decoder Stacks"
+            ]
+          },
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:paragraph:block_000042:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 4,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.2 Attention",
+              "3.2.2 Multi-Head Attention"
+            ]
+          }
+        ],
+        [
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:paragraph:block_000026:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 3,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.1 Encoder and Decoder Stacks"
+            ]
+          },
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:formula:formula_000038:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 4,
+            "content_type": "formula",
+            "section_path": [
+              "3 Model Architecture",
+              "3.2 Attention",
+              "3.2.1 Scaled Dot-Product Attention"
+            ]
+          },
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:figure:figure_0002_000032:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 4,
+            "content_type": "figure",
+            "section_path": [
+              "3 Model Architecture",
+              "3.2 Attention",
+              "Scaled Dot-Product Attention"
+            ]
+          },
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:paragraph:block_000062:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 6,
+            "content_type": "paragraph",
+            "section_path": [
+              "3 Model Architecture",
+              "3.5 Positional Encoding"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ASSV1-02",
+      "category": "single_paper_conclusion",
+      "question": "《Attention Is All You Need》这篇论文的结论是什么？",
+      "answerable": true,
+      "expected_answer": "The paper concludes that Transformer is the first sequence transduction model based entirely on attention, replacing recurrent encoder-decoder layers with multi-headed self-attention. It trains faster than recurrent or convolutional alternatives and achieved new state-of-the-art results on WMT 2014 English-to-German and English-to-French translation. The authors planned to extend it beyond text, study local restricted attention for large inputs such as images, audio and video, and make generation less sequential.",
+      "required_concepts": [
+        "first sequence transduction model based entirely on attention",
+        "replaces recurrent layers with multi-headed self-attention",
+        "faster training than recurrent or convolutional architectures",
+        "new state of the art on WMT 2014 English-German and English-French translation",
+        "future work on other modalities, local attention and less sequential generation"
+      ],
+      "gold_evidence_sets": [
+        [
+          {
+            "chunk_id": "2f4e58b8b96b998c022b841e6391a02f732bad62226b0e5d0187593fb21ffd41:paragraph:block_000112:part_0001",
+            "filename": "1706.03762_attention-is-all-you-need.pdf",
+            "page_start": 10,
+            "content_type": "paragraph",
+            "section_path": [
+              "7 Conclusion"
+            ]
+          }
+        ]
+      ]
+    }
+  ]
+}

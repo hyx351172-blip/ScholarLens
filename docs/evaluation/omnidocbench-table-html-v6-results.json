@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "experiment": "omnidocbench-table-html-v6",
+  "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+  "manifest_sha256": "ec607623012941880f473966b1ddbe4e345919a886561044d6604175054411de",
+  "evaluator_sha256": {
+    "src/core/preprocess/data_preprocess.py": "8589bf60feab06f52a23238fed33e0b3215dfa121b06ae8e82388fae2f0ef08d",
+    "src/metrics/table_metric.py": "e506ed341c89a24b03adba75e8ea3247a1d2eece10a9e09f4a81aee7f1b4f060"
+  },
+  "gold_access_in_model_stage": false,
+  "production_applied": false,
+  "table_count": 3,
+  "arms": {
+    "generic_html": {
+      "table_count": 3,
+      "candidate_valid_count": 1,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0.3333333333333333,
+      "fallback_teds": 0.7024928465002364,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "baseline_matches_v4_all": true,
+      "valid_candidates": 1,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 46.92166666666667,
+      "mean_first_text_seconds": 1.3643333333333334,
+      "known_total_tokens": 15861,
+      "attempted_calls_without_usage": 0,
+      "smoke_gate_pass": false
+    },
+    "ocr_html": {
+      "table_count": 3,
+      "candidate_valid_count": 0,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0,
+      "fallback_teds": 0.6890469428104301,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "baseline_matches_v4_all": true,
+      "valid_candidates": 0,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 14.619666666666667,
+      "mean_first_text_seconds": 1.6766666666666667,
+      "known_total_tokens": 18560,
+      "attempted_calls_without_usage": 0,
+      "smoke_gate_pass": false
+    }
+  },
+  "tables": [
+    {
+      "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+      "baseline_teds": 0.21116466993212246,
+      "baseline_structure_only": 0.3587301587301587,
+      "generic_html": {
+        "status": "invalid_candidate_baseline_retained",
+        "candidate_teds": null,
+        "effective_teds": 0.21116466993212246,
+        "delta": null,
+        "candidate_structure_only": null,
+        "candidate_numeric_token_f1": null,
+        "latency_seconds": 50.281,
+        "validation_error": "Incomplete grid coverage; explicit empty cells required"
+      },
+      "ocr_html": {
+        "status": "invalid_candidate_baseline_retained",
+        "candidate_teds": null,
+        "effective_teds": 0.21116466993212246,
+        "delta": null,
+        "candidate_structure_only": null,
+        "candidate_numeric_token_f1": null,
+        "latency_seconds": 11.296,
+        "validation_error": "Incomplete grid coverage; explicit empty cells required"
+      }
+    },
+    {
+      "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+      "baseline_teds": 0.9596622889305816,
+      "baseline_structure_only": 0.975609756097561,
+      "generic_html": {
+        "status": "valid_candidate_review_required",
+        "candidate_teds": 1,
+        "effective_teds": 1,
+        "delta": 0.040337711069418414,
+        "candidate_structure_only": 1,
+        "candidate_numeric_token_f1": 1,
+        "latency_seconds": 41.328,
+        "validation_error": null
+      },
+      "ocr_html": {
+        "status": "invalid_candidate_baseline_retained",
+        "candidate_teds": null,
+        "effective_teds": 0.9596622889305816,
+        "delta": null,
+        "candidate_structure_only": null,
+        "candidate_numeric_token_f1": null,
+        "latency_seconds": 13.641,
+        "validation_error": "Incomplete grid coverage; explicit empty cells required"
+      }
+    },
+    {
+      "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+      "baseline_teds": 0.8963138695685865,
+      "baseline_structure_only": 0.9735849056603774,
+      "generic_html": {
+        "status": "invalid_candidate_baseline_retained",
+        "candidate_teds": null,
+        "effective_teds": 0.8963138695685865,
+        "delta": null,
+        "candidate_structure_only": null,
+        "candidate_numeric_token_f1": null,
+        "latency_seconds": 49.156,
+        "validation_error": "Incomplete grid coverage; explicit empty cells required"
+      },
+      "ocr_html": {
+        "status": "invalid_candidate_baseline_retained",
+        "candidate_teds": null,
+        "effective_teds": 0.8963138695685865,
+        "delta": null,
+        "candidate_structure_only": null,
+        "candidate_numeric_token_f1": null,
+        "latency_seconds": 18.922,
+        "validation_error": "Incomplete grid coverage; explicit empty cells required"
+      }
+    }
+  ],
+  "heldout_gate": "At least one arm must have all valid candidates and no TEDS regression on the fixed smoke set; not a quality guarantee.",
+  "limitations": [
+    "Three selected development tables, not an independent held-out set or full PDF evaluation.",
+    "HTML well-formedness does not prove cell accuracy. Numeric multiset F1 ignores cell alignment.",
+    "Usage totals include only returned usage, not unreported billable usage; currency cost is not inferred.",
+    "The v5 JSON run is historical, not a controlled JSON-vs-HTML format ablation.",
+    "No production parser, chunker, retrieval, database or frontend integration in this experiment."
+  ],
+  "ready_for_heldout_expansion": false,
+  "run_settings": {
+    "prompt_sha256": "279ec81ec8f9269f3f90721de3bf023f9425ce08dfc3eb04e5d178c322780e7f",
+    "max_calls": 6,
+    "calls_attempted": 6,
+    "sdk_retries": 0,
+    "arms": {
+      "generic_html": {
+        "model": "qwen3-vl-plus",
+        "settings": {
+          "connect_seconds": 20,
+          "read_seconds": 60,
+          "write_seconds": 30,
+          "pool_seconds": 10,
+          "total_seconds": 300,
+          "max_tokens": 8192
+        },
+        "sdk_retries": 0,
+        "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+        "enable_thinking": false
+      },
+      "ocr_html": {
+        "model": "qwen3.5-ocr",
+        "settings": {
+          "connect_seconds": 20,
+          "read_seconds": 60,
+          "write_seconds": 30,
+          "pool_seconds": 10,
+          "total_seconds": 300,
+          "max_tokens": 8192
+        },
+        "sdk_retries": 0,
+        "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+        "enable_thinking": null
+      }
+    }
+  },
+  "inputs_sha256": {
+    "output/benchmarks/omnidocbench-table-html-v6/scored-generic-v2/results.json": "539f643fe1bc48188ac5158e0810bd57a6a961abf129eadd832d36e426d6ecd8",
+    "output/benchmarks/omnidocbench-table-html-v6/scored-ocr-v2/results.json": "e54cd50cacf3c4ef986815c92cfcea8ad876870bb72eee7b7e5af1d29945926e",
+    "output/benchmarks/omnidocbench-table-html-v6/live/summary.json": "f491a09788374b89d0f5a4abdb1bd8fc57e326952decb8f141610bc4e9f3c288"
+  }
+}

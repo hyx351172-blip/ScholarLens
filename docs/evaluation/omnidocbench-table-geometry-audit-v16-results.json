@@ -1,0 +1,768 @@
+{
+  "experiment": "upstream-table-diagnostics-v16",
+  "source": "C:\\Users\\hp\\Documents\\论文\\ScholarLens-claim-citation-entailment\\output\\benchmarks\\omnidocbench-table-records-validation-v15",
+  "cohort": "v15 now inspected for diagnosis; development, not a new held-out",
+  "results": [
+    {
+      "id": "case-01",
+      "page": "page-38fc7c6b-80ed-46be-bb53-29986a63ad3e.png",
+      "normalization": "unchanged",
+      "shape": [
+        45,
+        7
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 8,
+          "detected_boundaries": 7,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 7,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            7,
+            7
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 46,
+          "detected_boundaries": 48,
+          "difference": 2,
+          "relation": "more_detected_boundaries",
+          "stable": false,
+          "all_cluster_count": 85,
+          "unselected_cluster_count": 37,
+          "tolerance_trial_counts": [
+            47,
+            48
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 275,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "x_axis_count_mismatch",
+          "y_axis_count_mismatch",
+          "y_axis_unstable"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unstable_or_inconsistent_axes"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-02",
+      "page": "docstructbench_llm-raw-scihub-o.O-j.1444-2906.2002.00466.x.pdf_4.jpg",
+      "normalization": "unchanged",
+      "shape": [
+        9,
+        7
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 8,
+          "detected_boundaries": 8,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 8,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            8,
+            8
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 10,
+          "detected_boundaries": 11,
+          "difference": 1,
+          "relation": "more_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 11,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            11,
+            11
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 65,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-03",
+      "page": "page-f222e5f3-8628-47cd-a0b6-40f62123228f.png",
+      "normalization": "unchanged",
+      "shape": [
+        43,
+        7
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 8,
+          "detected_boundaries": 8,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 8,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            8,
+            8
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 44,
+          "detected_boundaries": 43,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 52,
+          "unselected_cluster_count": 9,
+          "tolerance_trial_counts": [
+            43,
+            43
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 283,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-04",
+      "page": "page-35ecd651-17dd-43e6-8a6f-8f55d6796d96.png",
+      "normalization": "unchanged",
+      "shape": [
+        38,
+        14
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 15,
+          "detected_boundaries": 14,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 14,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            14,
+            14
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 39,
+          "detected_boundaries": 38,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 38,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            38,
+            38
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 300,
+      "at_detector_capacity": true,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "x_axis_count_mismatch",
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-05",
+      "page": "page-ab4f331b-e8f3-41fb-ba6b-8da5ade54983.png",
+      "normalization": "unchanged",
+      "shape": [
+        26,
+        20
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 21,
+          "detected_boundaries": 20,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 20,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            20,
+            20
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 27,
+          "detected_boundaries": 22,
+          "difference": -5,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 22,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            22,
+            22
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 300,
+      "at_detector_capacity": true,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "x_axis_count_mismatch",
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-06",
+      "page": "page-c7771a62-5b6b-48f0-b591-6b657d26e125.png",
+      "normalization": "unchanged",
+      "shape": [
+        40,
+        11
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 12,
+          "detected_boundaries": 12,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 12,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            12,
+            12
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 41,
+          "detected_boundaries": 22,
+          "difference": -19,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 22,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            22,
+            22
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 221,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-07",
+      "page": "page-5cb4b2fe-c14d-450e-9b97-4b6e7c99493b.png",
+      "normalization": "unchanged",
+      "shape": [
+        91,
+        9
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 10,
+          "detected_boundaries": 10,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 10,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            10,
+            10
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 92,
+          "detected_boundaries": 13,
+          "difference": -79,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 13,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            13,
+            13
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 108,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-08",
+      "page": "page-dca64e05-1ce6-49ee-857a-9b5d05a87357.png",
+      "normalization": "unchanged",
+      "shape": [
+        50,
+        3
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 4,
+          "detected_boundaries": 18,
+          "difference": 14,
+          "relation": "more_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 20,
+          "unselected_cluster_count": 2,
+          "tolerance_trial_counts": [
+            18,
+            18
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 51,
+          "detected_boundaries": 25,
+          "difference": -26,
+          "relation": "fewer_detected_boundaries",
+          "stable": false,
+          "all_cluster_count": 32,
+          "unselected_cluster_count": 7,
+          "tolerance_trial_counts": [
+            25,
+            25
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 256,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "x_axis_count_mismatch",
+          "y_axis_count_mismatch",
+          "y_axis_unstable"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": true
+    },
+    {
+      "id": "case-09",
+      "page": "page-232d386f-6c9d-4b50-9463-89dedce995e5.png",
+      "normalization": "unchanged",
+      "shape": [
+        19,
+        3
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 4,
+          "detected_boundaries": 4,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 4,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            4,
+            4
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 20,
+          "detected_boundaries": 22,
+          "difference": 2,
+          "relation": "more_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 23,
+          "unselected_cluster_count": 1,
+          "tolerance_trial_counts": [
+            22,
+            22
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 63,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-10",
+      "page": "page-1cecd66d-3563-422a-a204-999bba0bb528.png",
+      "normalization": "repaired",
+      "shape": [
+        5,
+        9
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 10,
+          "detected_boundaries": 10,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 10,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            10,
+            10
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 6,
+          "detected_boundaries": 6,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 6,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            6,
+            6
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 45,
+      "at_detector_capacity": false,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "unassigned_or_ambiguous_ocr"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 5,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-11",
+      "page": "page-9390721f-e06c-47ea-8b21-0f27c72df7b7.png",
+      "normalization": "unchanged",
+      "shape": [
+        37,
+        13
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 14,
+          "detected_boundaries": 14,
+          "difference": 0,
+          "relation": "equal_counts",
+          "stable": true,
+          "all_cluster_count": 14,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            14,
+            14
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 38,
+          "detected_boundaries": 33,
+          "difference": -5,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 38,
+          "unselected_cluster_count": 5,
+          "tolerance_trial_counts": [
+            33,
+            33
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 300,
+      "at_detector_capacity": true,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    },
+    {
+      "id": "case-12",
+      "page": "page-b23ec9d4-e4aa-458f-8e65-c2c7f8e9dd46.png",
+      "normalization": "unchanged",
+      "shape": [
+        29,
+        18
+      ],
+      "axes": {
+        "x": {
+          "expected_boundaries": 19,
+          "detected_boundaries": 18,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": false,
+          "all_cluster_count": 18,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            19,
+            18
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        },
+        "y": {
+          "expected_boundaries": 30,
+          "detected_boundaries": 29,
+          "difference": -1,
+          "relation": "fewer_detected_boundaries",
+          "stable": true,
+          "all_cluster_count": 29,
+          "unselected_cluster_count": 0,
+          "tolerance_trial_counts": [
+            29,
+            29
+          ],
+          "interpretation": "relative count only; neither decoder nor detector is ground truth"
+        }
+      },
+      "detector_cells": 300,
+      "at_detector_capacity": true,
+      "grid_gate": {
+        "passed": false,
+        "reasons": [
+          "x_axis_count_mismatch",
+          "x_axis_unstable",
+          "y_axis_count_mismatch"
+        ],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "ambiguous_ocr_count": 0,
+      "downstream_gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "effective_byte_identical": true,
+      "missing_output": false
+    }
+  ],
+  "detector_capacity": 300,
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "gold_access": false,
+  "production_applied": false,
+  "protected_inputs_unchanged": true,
+  "artifact_sha256": {
+    "detector-graph-audit.json": "f90c8d05ec6b33834225877eb1321b05afe218db23e08ae1d38a3331e741ddb5",
+    "input-integrity.json": "89477ddbf0d4c3a2651f54d401b1d0242e91210166a59b93c59627d981360273",
+    "case-01/diagnostics.json": "fa05aab12d6563be30e76d80d9928f9654fc96f34232ad8fe583b71e1d7e8678",
+    "case-01/downstream-trace.json": "0550b48621446076f1a0aa8f660205a5a30e2fccb0bd5c58f9fb88b4feb91433",
+    "case-01/effective.html": "8cdee3ee5b9896d1fac8e3a6ac28c4984f5c22653152ffba7be940bf0079819f",
+    "case-01/normalized-structure.html": "669bd8d336a364396483fe3ebd4ffbcc9043ec4f76951e66457deaabf92ab16f",
+    "case-01/overlay.html": "04c08156886c4981a6148e6d7c3f67651f44b6d50925b05d7421ecaae98a7cac",
+    "case-02/diagnostics.json": "b1c47a2a196be91bff5b65397e8e31d67e9e522dd9d2d04f1da9aab864b197b9",
+    "case-02/downstream-trace.json": "1c93e20578b820d4ca40f7302e6cbae32bc2917f4bf99c4b62bdd542f7c6109c",
+    "case-02/effective.html": "7e97e0563c0b4c986342cc141b19226a19d4d707b6b89d147be76ee6fb3bca71",
+    "case-02/normalized-structure.html": "a11e8871daa3714654176f988ef35abf742e5c3ae8e798d880f8066ed4f84af5",
+    "case-02/overlay.html": "7947b64bb393703ad1a127adb0c2bc58277e310fd74bd8bef639b54d839c2a28",
+    "case-03/diagnostics.json": "aa6c04fd4a12179fc30faafe98c6777e55545cb86c5c8c3005cb047fef70cf15",
+    "case-03/downstream-trace.json": "a63340b455d258967acf5069aaa93c00b5ea339daf20e6cd5724ac4a4f51c026",
+    "case-03/effective.html": "31a7c4add808a26d82ef09ee7393806fc884a0281f4f112d10e404b593b711d2",
+    "case-03/normalized-structure.html": "e9cf15b2b70582e982dc9784f6b1f162b255a9bfd3b19c5274f6afc6398f53b6",
+    "case-03/overlay.html": "cb1d8c5ea9fc59d89656e9b1d386f0c63e7038f30044a044e49ea9dc233640fd",
+    "case-04/diagnostics.json": "eedfdff7e6eacd476a4cc37aef3b6f02d715f1a80e8c7154ce7b3b22448dea74",
+    "case-04/downstream-trace.json": "4e347bf9db45f3d6f67a5830fa12bf345f1adc32be2e510bbd3de25e034234c5",
+    "case-04/effective.html": "ec83e55efcbd002d0b1ca2c643bef573128f816778c2094aa9a8d4fca2f5a8d1",
+    "case-04/normalized-structure.html": "a61feb7bde592238bacc98fae74839f780949e9fc01810d035ac13e9b31e5f6c",
+    "case-04/overlay.html": "bf776cdcf037d0f13cd2d82e463069406c6eae4dd8a343b777d795b6416e471a",
+    "case-05/diagnostics.json": "1d4e7a0d15edc78dfbf5bbb00fb20a8b42bf4a4f5cb3e52d9b5ceb628988ba76",
+    "case-05/downstream-trace.json": "46d57f5eefab14a0c157a7a5f0a1f3d18ae1b76861f8afc4cbbd61ba7554f1cb",
+    "case-05/effective.html": "96c686803766ac91b9621cf51cc6ec7e7575df41f228777edc0f1e496754f22f",
+    "case-05/normalized-structure.html": "1ba83678f1e1f164f98479891f02537f2a03a8a2613f1119b39264a3a51c9074",
+    "case-05/overlay.html": "c92cc7c10a966f080f74d0af53979e4285a67e403d0e43a75182aaff06241c74",
+    "case-06/diagnostics.json": "c7421cc191a2471930b4a74da0a16aba1b39fd6b5bdc30b1ed5b5355988ebc73",
+    "case-06/downstream-trace.json": "0c129f6c8098c84f5f4351de806c0f1ebae2a35c61acd5bc3a6fc8a0a41f3a10",
+    "case-06/effective.html": "73d413a45df24743f2f5b99dbe3f7b58389d4896ddb10ed988c1d853b083d3cd",
+    "case-06/normalized-structure.html": "eb8e907ec6a318b66fac1d7075b615b7487ed1433cb8e24135cb1fa9e25bea14",
+    "case-06/overlay.html": "6440ba153a86566de5441811f763dfde2647592ea3f75f8f9fe87187511c5c4f",
+    "case-07/diagnostics.json": "5757f62a07f22cd10bfbb3d63ad22409b39e0d9305c9ba1fb9c282399550b1ff",
+    "case-07/downstream-trace.json": "24067b55a728bdf024e31701bb5f75a70698529852cddfcac3ebeb1409a48911",
+    "case-07/effective.html": "e41f0431554b80301fab380f2ca1a2cff3ddd1e8f0d37c348964658ec573e545",
+    "case-07/normalized-structure.html": "879314f453a1f3220856fe839cad8d36bfe35df53d25ded180fe4e0537a38d8b",
+    "case-07/overlay.html": "9d6e596a4784a8660e6a3e6d52d7e19ac228bcb58ede66c82fff725141706b12",
+    "case-08/diagnostics.json": "8fd8d0d748f5022073e1f43d9db2da8e29e64040ec522275117555239f8824e1",
+    "case-08/downstream-trace.json": "76549dfb3931cdf5f3080bdb1adf96d005402f02f6ea2832f2abf2d96e969c5b",
+    "case-08/normalized-structure.html": "afea27b751b9b709ca7487a4ae14d39c99522a38565a6fc6ce043b18e7ec5e1c",
+    "case-08/overlay.html": "671dcc78516d0f197770841d324352ca600507820e20ef5e9f76790969ce2271",
+    "case-09/diagnostics.json": "f4a521e3d0391e063a60fae3075c955ff997c91d273e167dec244e2b05d7dddb",
+    "case-09/downstream-trace.json": "f7269336027bb93b890baaadc439b33c706098ad52c254967ea2b4ecdbfae844",
+    "case-09/effective.html": "3ed79c37a1b5d6fe17678faaf6fcadc6f22e39fd3dfae60b3d85281dbae9f788",
+    "case-09/normalized-structure.html": "dfc75c3eb0a0955d297d798fdb958df7925a4e9bd87c29fd12555d6646ff0a1c",
+    "case-09/overlay.html": "d3389b396c1d6e854338b7e11f5d82dc1c04112d8955f79efe8ab74ed7127737",
+    "case-10/diagnostics.json": "862184c08dbde8e3c0ba59a00457e04cde265a75b40ed7863d93278e1ce24962",
+    "case-10/downstream-trace.json": "99c0490ebcc3b47128a2a1507a2e0e988cc80a657f8b625c2fb2d72630f4529b",
+    "case-10/effective.html": "5bee0ae77e7b2d8c600e925070751217fa7a7bc13933e091d3dc9dca4abe76c6",
+    "case-10/normalized-structure.html": "f0645fbef42457a53f0758f6c7cd0048754d359be7dc55a8957ddaa249dc40d7",
+    "case-10/overlay.html": "956fe1b95f4cd4cfaeff1c9ae4f7e017e1a8eb74c31398da70226a9ba5e8f0ec",
+    "case-11/diagnostics.json": "cf386702f3f3add4ba2cc1c744c92293df36e311e59dabbb43fc8e981f2fcdba",
+    "case-11/downstream-trace.json": "64796c63c4e2a95fb4c27f0ca0c8961d19f60404068907f7b5e453ac3bfeb253",
+    "case-11/effective.html": "6940833a5406cf09d6021ea3ecb051c1aada418f5f9d98ea8b31cae633e51e77",
+    "case-11/normalized-structure.html": "b8f766891c6051016c2307d9293dbc87115232d7310d6f75c8571339b12520d8",
+    "case-11/overlay.html": "dcadd6806d9a6bd0b69dd2f81ac2af8fa7dce22f9f7f46690b5ad4403bb86f0b",
+    "case-12/diagnostics.json": "d93af0db8ea53a5f9579f14752d1cb6e1bcadb7041912015dd05208ddd5af9c2",
+    "case-12/downstream-trace.json": "81647b7996d372fe5f4891e4c8a23628810621be186b87a8f85a1be4106da02e",
+    "case-12/effective.html": "39491b215455e008005b02b05db382b93654bcd84dedf14cc53c241272b544da",
+    "case-12/normalized-structure.html": "8c4fb3edc2c42c37b311e231cb5884c1980beddda3187c9f75ae2f7c2fcfebdd",
+    "case-12/overlay.html": "ff5f6b10c1ee2f681376f859a931ff90ffde868c75965919bafa6bb0394dcaea"
+  }
+}

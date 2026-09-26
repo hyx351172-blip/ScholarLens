@@ -1,0 +1,312 @@
+{
+  "evaluated_at": "2026-09-25",
+  "scope": "3 fixed development table pairs; not a full E2E or held-out benchmark",
+  "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+  "evaluator": "pinned OmniDocBench normalized_html_table + TEDS; direct 1:1 table scoring",
+  "evaluator_sha256": {
+    "src/core/preprocess/data_preprocess.py": "8589bf60feab06f52a23238fed33e0b3215dfa121b06ae8e82388fae2f0ef08d",
+    "src/metrics/table_metric.py": "e506ed341c89a24b03adba75e8ea3247a1d2eece10a9e09f4a81aee7f1b4f060"
+  },
+  "baseline_matches_v4_all": true,
+  "aggregate": {
+    "table_count": 3,
+    "candidate_valid_count": 0,
+    "baseline_teds": 0.6890469428104301,
+    "candidate_teds_failed_as_zero": 0.0,
+    "fallback_teds": 0.6890469428104301,
+    "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold"
+  },
+  "results": [
+    {
+      "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+      "baseline": {
+        "teds": 0.21116466993212246,
+        "structure_only": 0.3587301587301587,
+        "html_edit_distance": 0.5532411005751593,
+        "numeric_token_multiset": {
+          "precision": 0.9013157894736842,
+          "recall": 0.8353658536585366,
+          "f1": 0.8670886075949367,
+          "pred_count": 152,
+          "gold_count": 164,
+          "matched_count": 137,
+          "missing": {
+            "85": 1,
+            "125": 1,
+            "120": 1,
+            "25": 19,
+            "5": 2,
+            "22": 1,
+            "47": 1,
+            "0.4": 1
+          },
+          "extra": {
+            "259": 14,
+            "54259": 1
+          }
+        },
+        "score_seconds": 2.703
+      },
+      "candidate": null,
+      "effective": {
+        "teds": 0.21116466993212246,
+        "structure_only": 0.3587301587301587,
+        "html_edit_distance": 0.5532411005751593,
+        "numeric_token_multiset": {
+          "precision": 0.9013157894736842,
+          "recall": 0.8353658536585366,
+          "f1": 0.8670886075949367,
+          "pred_count": 152,
+          "gold_count": 164,
+          "matched_count": 137,
+          "missing": {
+            "85": 1,
+            "125": 1,
+            "120": 1,
+            "25": 19,
+            "5": 2,
+            "22": 1,
+            "47": 1,
+            "0.4": 1
+          },
+          "extra": {
+            "259": 14,
+            "54259": 1
+          }
+        },
+        "score_seconds": 2.703
+      },
+      "runtime": {
+        "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+        "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+        "status": "invalid_candidate_baseline_retained",
+        "crop_sha256": "356ec6440dd26d3868203ac0fb1cb2b06ce8eaf10b0f3c5c3f4f2980d1874185",
+        "model": "qwen3-vl-plus",
+        "usage": {
+          "completion_tokens": 5292,
+          "prompt_tokens": 2730,
+          "total_tokens": 8022,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": null,
+            "rejected_prediction_tokens": null,
+            "text_tokens": 5292
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0,
+            "image_tokens": 2480,
+            "text_tokens": 250
+          }
+        },
+        "finish_reason": "stop",
+        "request_id": "chatcmpl-b88a7eb1-eb97-92ac-972f-19400f095e58",
+        "validation_error": "cell 6: overlapping cells",
+        "latency_seconds": 132.422
+      },
+      "raw_candidate_diagnostics": {
+        "json_valid": true,
+        "rows": 35,
+        "cols": 8,
+        "cell_count": 234,
+        "overlap_slots": 2,
+        "uncovered_slots": 11,
+        "out_of_bounds_cell_indices": [
+          221,
+          228,
+          229,
+          230,
+          231,
+          232,
+          233
+        ],
+        "malformed_cell_indices": [],
+        "uncertain_cell_indices": []
+      },
+      "baseline_matches_v4": true,
+      "candidate_teds_delta": null
+    },
+    {
+      "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+      "baseline": {
+        "teds": 0.9596622889305816,
+        "structure_only": 0.975609756097561,
+        "html_edit_distance": 0.023174157303370788,
+        "numeric_token_multiset": {
+          "precision": 1.0,
+          "recall": 0.9803149606299213,
+          "f1": 0.9900596421471173,
+          "pred_count": 249,
+          "gold_count": 254,
+          "matched_count": 249,
+          "missing": {
+            "0": 1,
+            "1": 1,
+            "00": 1,
+            "16": 1,
+            "39": 1
+          },
+          "extra": {}
+        },
+        "score_seconds": 13.968
+      },
+      "candidate": null,
+      "effective": {
+        "teds": 0.9596622889305816,
+        "structure_only": 0.975609756097561,
+        "html_edit_distance": 0.023174157303370788,
+        "numeric_token_multiset": {
+          "precision": 1.0,
+          "recall": 0.9803149606299213,
+          "f1": 0.9900596421471173,
+          "pred_count": 249,
+          "gold_count": 254,
+          "matched_count": 249,
+          "missing": {
+            "0": 1,
+            "1": 1,
+            "00": 1,
+            "16": 1,
+            "39": 1
+          },
+          "extra": {}
+        },
+        "score_seconds": 13.968
+      },
+      "runtime": {
+        "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+        "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+        "status": "request_failed_baseline_retained",
+        "crop_sha256": "d0f66c6b135feba98ebfde82eedf4efad938572708013d0ed06ae094aee488df",
+        "error_type": "APITimeoutError",
+        "latency_seconds": 180.031
+      },
+      "raw_candidate_diagnostics": {
+        "json_valid": false
+      },
+      "baseline_matches_v4": true,
+      "candidate_teds_delta": null
+    },
+    {
+      "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+      "baseline": {
+        "teds": 0.8963138695685865,
+        "structure_only": 0.9735849056603774,
+        "html_edit_distance": 0.04387390315242119,
+        "numeric_token_multiset": {
+          "precision": 0.993103448275862,
+          "recall": 0.9370932754880694,
+          "f1": 0.9642857142857142,
+          "pred_count": 435,
+          "gold_count": 461,
+          "matched_count": 432,
+          "missing": {
+            "50": 1,
+            "28": 1,
+            "0": 11,
+            "7": 3,
+            "20": 2,
+            "4": 2,
+            "1": 1,
+            "2": 1,
+            "6": 2,
+            "11": 2,
+            "680": 1,
+            "855": 1,
+            "1211": 1
+          },
+          "extra": {
+            "8": 1,
+            "680855": 1,
+            "1217": 1
+          }
+        },
+        "score_seconds": 14.438
+      },
+      "candidate": null,
+      "effective": {
+        "teds": 0.8963138695685865,
+        "structure_only": 0.9735849056603774,
+        "html_edit_distance": 0.04387390315242119,
+        "numeric_token_multiset": {
+          "precision": 0.993103448275862,
+          "recall": 0.9370932754880694,
+          "f1": 0.9642857142857142,
+          "pred_count": 435,
+          "gold_count": 461,
+          "matched_count": 432,
+          "missing": {
+            "50": 1,
+            "28": 1,
+            "0": 11,
+            "7": 3,
+            "20": 2,
+            "4": 2,
+            "1": 1,
+            "2": 1,
+            "6": 2,
+            "11": 2,
+            "680": 1,
+            "855": 1,
+            "1211": 1
+          },
+          "extra": {
+            "8": 1,
+            "680855": 1,
+            "1217": 1
+          }
+        },
+        "score_seconds": 14.438
+      },
+      "runtime": {
+        "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+        "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+        "status": "request_failed_baseline_retained",
+        "crop_sha256": "e511cafd93e93d49e5f15770070987141c6ab0d43eca4697756cfe899e60983b",
+        "error_type": "APITimeoutError",
+        "latency_seconds": 180.188
+      },
+      "raw_candidate_diagnostics": {
+        "json_valid": false
+      },
+      "baseline_matches_v4": true,
+      "candidate_teds_delta": null
+    }
+  ],
+  "source_integrity": [
+    {
+      "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+      "document_unchanged": true,
+      "native_unchanged": true,
+      "image_unchanged": true
+    },
+    {
+      "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+      "document_unchanged": true,
+      "native_unchanged": true,
+      "image_unchanged": true
+    },
+    {
+      "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+      "document_unchanged": true,
+      "native_unchanged": true,
+      "image_unchanged": true
+    }
+  ],
+  "verification": {
+    "duration_seconds": 15.619,
+    "skips": 0,
+    "gold_sent_to_model": false,
+    "unit_tests": 196,
+    "failures": 0,
+    "production_applied": false
+  },
+  "artifacts": "output/benchmarks/omnidocbench-table-vlm-v5/",
+  "limitations": [
+    "Only 3 development tables, selected after observing baseline errors.",
+    "Numeric token multiset ignores cell alignment, labels, units and values with letters; not cell numeric accuracy.",
+    "Fallback aggregate uses schema validity only, not gold-based best-of selection.",
+    "No downstream retrieval, generation, chunking or production integration tested."
+  ]
+}

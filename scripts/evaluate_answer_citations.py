@@ -44,7 +44,7 @@ _PURE_MARKDOWN_HEADING_PATTERN = re.compile(
     r"(?:#{1,6}\s+.+|\*\*[^*\n]+\*\*\s*[:：]?)\s*$"
 )
 _STRUCTURAL_LEAD_IN_PATTERN = re.compile(
-    r"^\s*(?:\*{1,2})?[A-Za-z][A-Za-z -]{0,40}(?:\*{1,2})?\s*:\s*$"
+    r"^\s*(?:\*{1,2})?[^.!?。！？:\n]{1,80}(?:\*{1,2})?\s*[:：]\s*$"
 )
 _SENTENCE_PERIOD_SENTINEL = "\ue000"
 

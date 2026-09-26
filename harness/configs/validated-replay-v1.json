@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "id": "validated-replay-v1",
+  "description": "Zero-cost replay of the frozen target-grounding and claim-entailment acceptance artifacts.",
+  "stages": [
+    {
+      "id": "target_grounding",
+      "label": "Target-grounded retrieval",
+      "source": {
+        "kind": "artifact",
+        "path": "docs/evaluation/target-grounded-retrieval-dev-v1-results.json"
+      },
+      "metrics": [
+        {
+          "id": "target_resolution_rate",
+          "label": "Complete target resolution",
+          "path": "summary.complete_target_resolution_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "required_source_rate",
+          "label": "Complete required-source coverage",
+          "path": "summary.complete_required_source_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        }
+      ],
+      "gates": [
+        {
+          "id": "all_targets_resolved",
+          "metric": "target_resolution_rate",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "all_required_sources_retrieved",
+          "metric": "required_source_rate",
+          "operator": ">=",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "id": "claim_entailment",
+      "label": "Claim-citation entailment",
+      "source": {
+        "kind": "artifact",
+        "path": "docs/evaluation/claim-citation-entailment-heldout-v5-results.json"
+      },
+      "metrics": [
+        {
+          "id": "claim_accuracy",
+          "label": "Claim decision accuracy",
+          "path": "summary.claim_decision_accuracy",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "case_exact_match",
+          "label": "Case exact-match rate",
+          "path": "summary.case_exact_match_rate",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "unsupported_recall",
+          "label": "Unsupported-claim recall",
+          "path": "summary.unsupported_claim_recall",
+          "unit": "ratio",
+          "direction": "higher"
+        },
+        {
+          "id": "supported_recall",
+          "label": "Supported-claim recall",
+          "path": "summary.supported_claim_recall",
+          "unit": "ratio",
+          "direction": "higher"
+        }
+      ],
+      "gates": [
+        {
+          "id": "perfect_claim_accuracy",
+          "metric": "claim_accuracy",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "perfect_case_match",
+          "metric": "case_exact_match",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "perfect_unsupported_recall",
+          "metric": "unsupported_recall",
+          "operator": ">=",
+          "value": 1.0
+        },
+        {
+          "id": "perfect_supported_recall",
+          "metric": "supported_recall",
+          "operator": ">=",
+          "value": 1.0
+        }
+      ]
+    }
+  ]
+}
+

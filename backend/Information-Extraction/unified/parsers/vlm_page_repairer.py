@@ -20,6 +20,7 @@ import pymupdf
 from .docling_parser import DoclingParseResult
 from .evidence_context_postprocessor import LogicalFigure
 from .models import ContentBlock
+from .markdown_renderer import render_document_markdown
 from .table_postprocessor import LogicalTable
 
 
@@ -211,6 +212,7 @@ class VLMPageRepairer:
                 result.warnings.append(
                     f"page {page}: VLM repair failed: {type(exc).__name__}: {exc}"
                 )
+        repaired.markdown = render_document_markdown(repaired.document.blocks)
         return result
 
     def _page_context(

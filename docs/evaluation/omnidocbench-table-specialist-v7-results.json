@@ -1,0 +1,1025 @@
+{
+  "experiment": "omnidocbench-table-specialist-v7",
+  "schema_version": "1.0",
+  "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+  "manifest_sha256": "ec607623012941880f473966b1ddbe4e345919a886561044d6604175054411de",
+  "evaluator_sha256": {
+    "src/core/preprocess/data_preprocess.py": "8589bf60feab06f52a23238fed33e0b3215dfa121b06ae8e82388fae2f0ef08d",
+    "src/metrics/table_metric.py": "e506ed341c89a24b03adba75e8ea3247a1d2eece10a9e09f4a81aee7f1b4f060"
+  },
+  "production_applied": false,
+  "gold_access_in_model_stage": false,
+  "table_count": 3,
+  "arms": {
+    "generic_html": {
+      "table_count": 3,
+      "candidate_valid_count": 1,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0.3333333333333333,
+      "fallback_teds": 0.7024928465002364,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "valid_candidates": 1,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 46.92166666666667,
+      "known_total_tokens": 15861,
+      "calls_without_usage": 0,
+      "smoke_gate_pass": false
+    },
+    "ocr_html": {
+      "table_count": 3,
+      "candidate_valid_count": 0,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0.0,
+      "fallback_teds": 0.6890469428104301,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "valid_candidates": 0,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 14.619666666666667,
+      "known_total_tokens": 18560,
+      "calls_without_usage": 0,
+      "smoke_gate_pass": false
+    },
+    "qwen_native": {
+      "table_count": 3,
+      "candidate_valid_count": 0,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0.0,
+      "fallback_teds": 0.6890469428104301,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "valid_candidates": 0,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 17.047,
+      "known_total_tokens": 18064,
+      "calls_without_usage": 0,
+      "smoke_gate_pass": false
+    },
+    "pp_tablemagic": {
+      "table_count": 3,
+      "candidate_valid_count": 0,
+      "baseline_teds": 0.6890469428104301,
+      "candidate_teds_failed_as_zero": 0.0,
+      "fallback_teds": 0.6890469428104301,
+      "fallback_policy": "schema-invalid/request failure retains baseline; never select by gold",
+      "valid_candidates": 0,
+      "calls_attempted": 3,
+      "regression_pages": [],
+      "mean_latency_seconds": 264.198,
+      "known_total_tokens": null,
+      "calls_without_usage": null,
+      "smoke_gate_pass": false
+    }
+  },
+  "tables": [
+    {
+      "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+      "baseline": {
+        "teds": 0.21116466993212246,
+        "structure_only": 0.3587301587301587,
+        "html_edit_distance": 0.5532411005751593,
+        "numeric_token_multiset": {
+          "precision": 0.9013157894736842,
+          "recall": 0.8353658536585366,
+          "f1": 0.8670886075949367,
+          "pred_count": 152,
+          "gold_count": 164,
+          "matched_count": 137,
+          "missing": {
+            "85": 1,
+            "125": 1,
+            "120": 1,
+            "25": 19,
+            "5": 2,
+            "22": 1,
+            "47": 1,
+            "0.4": 1
+          },
+          "extra": {
+            "259": 14,
+            "54259": 1
+          }
+        },
+        "score_seconds": 3.266
+      },
+      "generic_html": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.21116466993212246,
+          "structure_only": 0.3587301587301587,
+          "html_edit_distance": 0.5532411005751593,
+          "numeric_token_multiset": {
+            "precision": 0.9013157894736842,
+            "recall": 0.8353658536585366,
+            "f1": 0.8670886075949367,
+            "pred_count": 152,
+            "gold_count": 164,
+            "matched_count": 137,
+            "missing": {
+              "85": 1,
+              "125": 1,
+              "120": 1,
+              "25": 19,
+              "5": 2,
+              "22": 1,
+              "47": 1,
+              "0.4": 1
+            },
+            "extra": {
+              "259": 14,
+              "54259": 1
+            }
+          },
+          "score_seconds": 3.266
+        },
+        "runtime": {
+          "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+          "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "arm": "generic_html",
+          "crop_sha256": "356ec6440dd26d3868203ac0fb1cb2b06ce8eaf10b0f3c5c3f4f2980d1874185",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3-vl-plus",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 3467,
+            "prompt_tokens": 2672,
+            "total_tokens": 6139,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 3467
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": 2480,
+              "text_tokens": 192
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-acd66454-e89a-91f3-909d-d7723636a9c5",
+          "events": 3468,
+          "first_event_seconds": 1.687,
+          "first_text_seconds": 1.687,
+          "max_event_gap_seconds": 0.188,
+          "max_text_gap_seconds": 0.188,
+          "refused": false,
+          "total_seconds": 50.281,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.063,
+          "output_chars": 6753,
+          "latency_seconds": 50.281,
+          "validation_error": "Incomplete grid coverage; explicit empty cells required"
+        }
+      },
+      "ocr_html": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.21116466993212246,
+          "structure_only": 0.3587301587301587,
+          "html_edit_distance": 0.5532411005751593,
+          "numeric_token_multiset": {
+            "precision": 0.9013157894736842,
+            "recall": 0.8353658536585366,
+            "f1": 0.8670886075949367,
+            "pred_count": 152,
+            "gold_count": 164,
+            "matched_count": 137,
+            "missing": {
+              "85": 1,
+              "125": 1,
+              "120": 1,
+              "25": 19,
+              "5": 2,
+              "22": 1,
+              "47": 1,
+              "0.4": 1
+            },
+            "extra": {
+              "259": 14,
+              "54259": 1
+            }
+          },
+          "score_seconds": 3.125
+        },
+        "runtime": {
+          "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+          "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "arm": "ocr_html",
+          "crop_sha256": "356ec6440dd26d3868203ac0fb1cb2b06ce8eaf10b0f3c5c3f4f2980d1874185",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 3589,
+            "prompt_tokens": 2683,
+            "total_tokens": 6272,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 3589
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": null,
+              "image_tokens": 2480,
+              "text_tokens": 203
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-21458790-3400-998e-b869-306b3f92cd50",
+          "events": 1054,
+          "first_event_seconds": 0.656,
+          "first_text_seconds": 0.671,
+          "max_event_gap_seconds": 1.922,
+          "max_text_gap_seconds": 1.922,
+          "refused": false,
+          "total_seconds": 11.296,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.0,
+          "output_chars": 5742,
+          "latency_seconds": 11.296,
+          "validation_error": "Incomplete grid coverage; explicit empty cells required"
+        }
+      },
+      "qwen_native": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.21116466993212246,
+          "structure_only": 0.3587301587301587,
+          "html_edit_distance": 0.5532411005751593,
+          "numeric_token_multiset": {
+            "precision": 0.9013157894736842,
+            "recall": 0.8353658536585366,
+            "f1": 0.8670886075949367,
+            "pred_count": 152,
+            "gold_count": 164,
+            "matched_count": 137,
+            "missing": {
+              "85": 1,
+              "125": 1,
+              "120": 1,
+              "25": 19,
+              "5": 2,
+              "22": 1,
+              "47": 1,
+              "0.4": 1
+            },
+            "extra": {
+              "259": 14,
+              "54259": 1
+            }
+          },
+          "score_seconds": 2.89
+        },
+        "runtime": {
+          "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+          "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "arm": "qwen_native",
+          "crop_sha256": "356ec6440dd26d3868203ac0fb1cb2b06ce8eaf10b0f3c5c3f4f2980d1874185",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "input_tokens_details": {
+              "image_tokens": 2480,
+              "text_tokens": 78
+            },
+            "prompt_tokens_details": {},
+            "total_tokens": 6155,
+            "output_tokens": 3597,
+            "input_tokens": 2558,
+            "output_tokens_details": {
+              "text_tokens": 3597
+            },
+            "image_tokens": 2480
+          },
+          "finish_reason": "stop",
+          "response_id": "2cf047a6-9b09-90a2-b846-d2c06f91c66c",
+          "events": 1058,
+          "first_event_seconds": 0.469,
+          "first_text_seconds": 0.469,
+          "http_status": 200,
+          "total_seconds": 12.75,
+          "output_chars": 5754,
+          "latency_seconds": 12.75,
+          "validation_error": "Incomplete grid coverage: 176 uncovered slots in 53x8; explicit empty cells required"
+        }
+      },
+      "pp_tablemagic": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.21116466993212246,
+          "structure_only": 0.3587301587301587,
+          "html_edit_distance": 0.5532411005751593,
+          "numeric_token_multiset": {
+            "precision": 0.9013157894736842,
+            "recall": 0.8353658536585366,
+            "f1": 0.8670886075949367,
+            "pred_count": 152,
+            "gold_count": 164,
+            "matched_count": 137,
+            "missing": {
+              "85": 1,
+              "125": 1,
+              "120": 1,
+              "25": 19,
+              "5": 2,
+              "22": 1,
+              "47": 1,
+              "0.4": 1
+            },
+            "extra": {
+              "259": 14,
+              "54259": 1
+            }
+          },
+          "score_seconds": 2.812
+        },
+        "runtime": {
+          "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+          "page": "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+          "arm": "pp_tablemagic",
+          "crop_sha256": "356ec6440dd26d3868203ac0fb1cb2b06ce8eaf10b0f3c5c3f4f2980d1874185",
+          "status": "invalid_candidate_baseline_retained",
+          "finish_reason": "stop",
+          "model": "PP-TableMagic",
+          "response_format": "html",
+          "usage": null,
+          "total_seconds": 290.969,
+          "initialization_seconds": 127.813,
+          "inference_seconds": 163.156,
+          "versions": {
+            "paddlepaddle": "3.3.1",
+            "paddleocr": "3.7.0",
+            "paddlex": "3.7.2",
+            "numpy": "1.26.4"
+          },
+          "options": {
+            "device": "cpu",
+            "cpu_threads": 4,
+            "enable_mkldnn": false,
+            "use_doc_orientation_classify": false,
+            "use_doc_unwarping": false,
+            "use_layout_detection": false,
+            "wired_table_structure_recognition_model_name": "SLANeXt_wired",
+            "wireless_table_structure_recognition_model_name": "SLANeXt_wireless",
+            "text_detection_model_name": "PP-OCRv5_server_det",
+            "text_recognition_model_name": "PP-OCRv5_server_rec"
+          },
+          "table_orientation_classify": false,
+          "raw_result_sha256": "0523f1291d946515867f0d7d32c3af4ad4c9c285dbcc14f7237dcc5fe1dbb89b",
+          "process_total_seconds": 298.61,
+          "latency_seconds": 290.969,
+          "validation_error": "Unbalanced HTML tags"
+        }
+      }
+    },
+    {
+      "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+      "baseline": {
+        "teds": 0.9596622889305816,
+        "structure_only": 0.975609756097561,
+        "html_edit_distance": 0.023174157303370788,
+        "numeric_token_multiset": {
+          "precision": 1.0,
+          "recall": 0.9803149606299213,
+          "f1": 0.9900596421471173,
+          "pred_count": 249,
+          "gold_count": 254,
+          "matched_count": 249,
+          "missing": {
+            "0": 1,
+            "1": 1,
+            "00": 1,
+            "16": 1,
+            "39": 1
+          },
+          "extra": {}
+        },
+        "score_seconds": 16.359
+      },
+      "generic_html": {
+        "candidate": {
+          "teds": 1.0,
+          "structure_only": 1.0,
+          "html_edit_distance": 0.0,
+          "numeric_token_multiset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "pred_count": 254,
+            "gold_count": 254,
+            "matched_count": 254,
+            "missing": {},
+            "extra": {}
+          },
+          "score_seconds": 16.469
+        },
+        "effective": {
+          "teds": 1.0,
+          "structure_only": 1.0,
+          "html_edit_distance": 0.0,
+          "numeric_token_multiset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "pred_count": 254,
+            "gold_count": 254,
+            "matched_count": 254,
+            "missing": {},
+            "extra": {}
+          },
+          "score_seconds": 16.469
+        },
+        "runtime": {
+          "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+          "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "arm": "generic_html",
+          "crop_sha256": "d0f66c6b135feba98ebfde82eedf4efad938572708013d0ed06ae094aee488df",
+          "status": "valid_candidate_review_required",
+          "model": "qwen3-vl-plus",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 2970,
+            "prompt_tokens": 2344,
+            "total_tokens": 5314,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 2970
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": 2152,
+              "text_tokens": 192
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-e1582e71-352d-9261-ac3e-a308f43460a0",
+          "events": 2971,
+          "first_event_seconds": 1.484,
+          "first_text_seconds": 1.484,
+          "max_event_gap_seconds": 0.344,
+          "max_text_gap_seconds": 0.344,
+          "refused": false,
+          "total_seconds": 41.328,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.047,
+          "output_chars": 5727,
+          "latency_seconds": 41.328,
+          "rows": 41,
+          "cols": 12,
+          "cells": 492,
+          "uncertain_cells": 0
+        }
+      },
+      "ocr_html": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.9596622889305816,
+          "structure_only": 0.975609756097561,
+          "html_edit_distance": 0.023174157303370788,
+          "numeric_token_multiset": {
+            "precision": 1.0,
+            "recall": 0.9803149606299213,
+            "f1": 0.9900596421471173,
+            "pred_count": 249,
+            "gold_count": 254,
+            "matched_count": 249,
+            "missing": {
+              "0": 1,
+              "1": 1,
+              "00": 1,
+              "16": 1,
+              "39": 1
+            },
+            "extra": {}
+          },
+          "score_seconds": 15.765
+        },
+        "runtime": {
+          "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+          "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "arm": "ocr_html",
+          "crop_sha256": "d0f66c6b135feba98ebfde82eedf4efad938572708013d0ed06ae094aee488df",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 3900,
+            "prompt_tokens": 2355,
+            "total_tokens": 6255,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 3900
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": null,
+              "image_tokens": 2152,
+              "text_tokens": 203
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-aaea0de8-0a90-95b4-adbe-a83cc7feb79f",
+          "events": 1182,
+          "first_event_seconds": 2.219,
+          "first_text_seconds": 2.219,
+          "max_event_gap_seconds": 1.812,
+          "max_text_gap_seconds": 1.812,
+          "refused": false,
+          "total_seconds": 13.641,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.047,
+          "output_chars": 6795,
+          "latency_seconds": 13.641,
+          "validation_error": "Incomplete grid coverage; explicit empty cells required"
+        }
+      },
+      "qwen_native": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.9596622889305816,
+          "structure_only": 0.975609756097561,
+          "html_edit_distance": 0.023174157303370788,
+          "numeric_token_multiset": {
+            "precision": 1.0,
+            "recall": 0.9803149606299213,
+            "f1": 0.9900596421471173,
+            "pred_count": 249,
+            "gold_count": 254,
+            "matched_count": 249,
+            "missing": {
+              "0": 1,
+              "1": 1,
+              "00": 1,
+              "16": 1,
+              "39": 1
+            },
+            "extra": {}
+          },
+          "score_seconds": 15.141
+        },
+        "runtime": {
+          "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+          "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "arm": "qwen_native",
+          "crop_sha256": "d0f66c6b135feba98ebfde82eedf4efad938572708013d0ed06ae094aee488df",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "input_tokens_details": {
+              "image_tokens": 2152,
+              "text_tokens": 78
+            },
+            "prompt_tokens_details": {},
+            "total_tokens": 6130,
+            "output_tokens": 3900,
+            "input_tokens": 2230,
+            "output_tokens_details": {
+              "text_tokens": 3900
+            },
+            "image_tokens": 2152
+          },
+          "finish_reason": "stop",
+          "response_id": "b47e03ac-dca0-9f8e-94c8-c3f8abd3dba4",
+          "events": 1198,
+          "first_event_seconds": 5.109,
+          "first_text_seconds": 5.109,
+          "http_status": 200,
+          "total_seconds": 16.797,
+          "output_chars": 6795,
+          "latency_seconds": 16.797,
+          "validation_error": "Incomplete grid coverage: 113 uncovered slots in 41x12; explicit empty cells required"
+        }
+      },
+      "pp_tablemagic": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.9596622889305816,
+          "structure_only": 0.975609756097561,
+          "html_edit_distance": 0.023174157303370788,
+          "numeric_token_multiset": {
+            "precision": 1.0,
+            "recall": 0.9803149606299213,
+            "f1": 0.9900596421471173,
+            "pred_count": 249,
+            "gold_count": 254,
+            "matched_count": 249,
+            "missing": {
+              "0": 1,
+              "1": 1,
+              "00": 1,
+              "16": 1,
+              "39": 1
+            },
+            "extra": {}
+          },
+          "score_seconds": 14.312
+        },
+        "runtime": {
+          "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+          "page": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+          "arm": "pp_tablemagic",
+          "crop_sha256": "d0f66c6b135feba98ebfde82eedf4efad938572708013d0ed06ae094aee488df",
+          "status": "invalid_candidate_baseline_retained",
+          "finish_reason": "stop",
+          "model": "PP-TableMagic",
+          "response_format": "html",
+          "usage": null,
+          "total_seconds": 198.25,
+          "initialization_seconds": 9.875,
+          "inference_seconds": 188.375,
+          "versions": {
+            "paddlepaddle": "3.3.1",
+            "paddleocr": "3.7.0",
+            "paddlex": "3.7.2",
+            "numpy": "1.26.4"
+          },
+          "options": {
+            "device": "cpu",
+            "cpu_threads": 4,
+            "enable_mkldnn": false,
+            "use_doc_orientation_classify": false,
+            "use_doc_unwarping": false,
+            "use_layout_detection": false,
+            "wired_table_structure_recognition_model_name": "SLANeXt_wired",
+            "wireless_table_structure_recognition_model_name": "SLANeXt_wireless",
+            "text_detection_model_name": "PP-OCRv5_server_det",
+            "text_recognition_model_name": "PP-OCRv5_server_rec"
+          },
+          "table_orientation_classify": false,
+          "raw_result_sha256": "d9d70b455e1e439afc88956d53e397af2f13277e7bf3c8ba54f2e871f8526935",
+          "process_total_seconds": 207.656,
+          "latency_seconds": 198.25,
+          "validation_error": "Unbalanced HTML tags"
+        }
+      }
+    },
+    {
+      "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+      "baseline": {
+        "teds": 0.8963138695685865,
+        "structure_only": 0.9735849056603774,
+        "html_edit_distance": 0.04387390315242119,
+        "numeric_token_multiset": {
+          "precision": 0.993103448275862,
+          "recall": 0.9370932754880694,
+          "f1": 0.9642857142857142,
+          "pred_count": 435,
+          "gold_count": 461,
+          "matched_count": 432,
+          "missing": {
+            "50": 1,
+            "28": 1,
+            "0": 11,
+            "7": 3,
+            "20": 2,
+            "4": 2,
+            "1": 1,
+            "2": 1,
+            "6": 2,
+            "11": 2,
+            "680": 1,
+            "855": 1,
+            "1211": 1
+          },
+          "extra": {
+            "8": 1,
+            "680855": 1,
+            "1217": 1
+          }
+        },
+        "score_seconds": 16.313
+      },
+      "generic_html": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.8963138695685865,
+          "structure_only": 0.9735849056603774,
+          "html_edit_distance": 0.04387390315242119,
+          "numeric_token_multiset": {
+            "precision": 0.993103448275862,
+            "recall": 0.9370932754880694,
+            "f1": 0.9642857142857142,
+            "pred_count": 435,
+            "gold_count": 461,
+            "matched_count": 432,
+            "missing": {
+              "50": 1,
+              "28": 1,
+              "0": 11,
+              "7": 3,
+              "20": 2,
+              "4": 2,
+              "1": 1,
+              "2": 1,
+              "6": 2,
+              "11": 2,
+              "680": 1,
+              "855": 1,
+              "1211": 1
+            },
+            "extra": {
+              "8": 1,
+              "680855": 1,
+              "1217": 1
+            }
+          },
+          "score_seconds": 16.313
+        },
+        "runtime": {
+          "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+          "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "arm": "generic_html",
+          "crop_sha256": "e511cafd93e93d49e5f15770070987141c6ab0d43eca4697756cfe899e60983b",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3-vl-plus",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 3584,
+            "prompt_tokens": 824,
+            "total_tokens": 4408,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 3584
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": 632,
+              "text_tokens": 192
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-0dc2071b-d9bc-9c7c-9322-a81e0a0a9284",
+          "events": 3585,
+          "first_event_seconds": 0.922,
+          "first_text_seconds": 0.922,
+          "max_event_gap_seconds": 0.391,
+          "max_text_gap_seconds": 0.391,
+          "refused": false,
+          "total_seconds": 49.156,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.0,
+          "output_chars": 6602,
+          "latency_seconds": 49.156,
+          "validation_error": "Incomplete grid coverage; explicit empty cells required"
+        }
+      },
+      "ocr_html": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.8963138695685865,
+          "structure_only": 0.9735849056603774,
+          "html_edit_distance": 0.04387390315242119,
+          "numeric_token_multiset": {
+            "precision": 0.993103448275862,
+            "recall": 0.9370932754880694,
+            "f1": 0.9642857142857142,
+            "pred_count": 435,
+            "gold_count": 461,
+            "matched_count": 432,
+            "missing": {
+              "50": 1,
+              "28": 1,
+              "0": 11,
+              "7": 3,
+              "20": 2,
+              "4": 2,
+              "1": 1,
+              "2": 1,
+              "6": 2,
+              "11": 2,
+              "680": 1,
+              "855": 1,
+              "1211": 1
+            },
+            "extra": {
+              "8": 1,
+              "680855": 1,
+              "1217": 1
+            }
+          },
+          "score_seconds": 16.422
+        },
+        "runtime": {
+          "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+          "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "arm": "ocr_html",
+          "crop_sha256": "e511cafd93e93d49e5f15770070987141c6ab0d43eca4697756cfe899e60983b",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "completion_tokens": 5198,
+            "prompt_tokens": 835,
+            "total_tokens": 6033,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": null,
+              "rejected_prediction_tokens": null,
+              "text_tokens": 5198
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": null,
+              "image_tokens": 632,
+              "text_tokens": 203
+            }
+          },
+          "finish_reason": "stop",
+          "response_id": "chatcmpl-c7d519ab-f746-9e9f-af37-7620ac37ce0b",
+          "events": 1652,
+          "first_event_seconds": 2.14,
+          "first_text_seconds": 2.14,
+          "max_event_gap_seconds": 1.969,
+          "max_text_gap_seconds": 1.969,
+          "refused": false,
+          "total_seconds": 18.922,
+          "tail_event_gap_seconds": 0.0,
+          "tail_text_gap_seconds": 0.047,
+          "output_chars": 8579,
+          "latency_seconds": 18.922,
+          "validation_error": "Incomplete grid coverage; explicit empty cells required"
+        }
+      },
+      "qwen_native": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.8963138695685865,
+          "structure_only": 0.9735849056603774,
+          "html_edit_distance": 0.04387390315242119,
+          "numeric_token_multiset": {
+            "precision": 0.993103448275862,
+            "recall": 0.9370932754880694,
+            "f1": 0.9642857142857142,
+            "pred_count": 435,
+            "gold_count": 461,
+            "matched_count": 432,
+            "missing": {
+              "50": 1,
+              "28": 1,
+              "0": 11,
+              "7": 3,
+              "20": 2,
+              "4": 2,
+              "1": 1,
+              "2": 1,
+              "6": 2,
+              "11": 2,
+              "680": 1,
+              "855": 1,
+              "1211": 1
+            },
+            "extra": {
+              "8": 1,
+              "680855": 1,
+              "1217": 1
+            }
+          },
+          "score_seconds": 16.375
+        },
+        "runtime": {
+          "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+          "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "arm": "qwen_native",
+          "crop_sha256": "e511cafd93e93d49e5f15770070987141c6ab0d43eca4697756cfe899e60983b",
+          "status": "invalid_candidate_baseline_retained",
+          "model": "qwen3.5-ocr",
+          "response_format": "html",
+          "usage": {
+            "input_tokens_details": {
+              "image_tokens": 632,
+              "text_tokens": 95
+            },
+            "prompt_tokens_details": {},
+            "total_tokens": 5779,
+            "output_tokens": 5052,
+            "input_tokens": 727,
+            "output_tokens_details": {
+              "text_tokens": 5052
+            },
+            "image_tokens": 632
+          },
+          "finish_reason": "stop",
+          "response_id": "ef499a41-cf86-9641-9d3d-65906b12e3d2",
+          "events": 1696,
+          "first_event_seconds": 0.266,
+          "first_text_seconds": 0.266,
+          "http_status": 200,
+          "total_seconds": 21.594,
+          "output_chars": 8791,
+          "latency_seconds": 21.594,
+          "validation_error": "Incomplete grid coverage: 943 uncovered slots in 40x36; explicit empty cells required"
+        }
+      },
+      "pp_tablemagic": {
+        "candidate": null,
+        "effective": {
+          "teds": 0.8963138695685865,
+          "structure_only": 0.9735849056603774,
+          "html_edit_distance": 0.04387390315242119,
+          "numeric_token_multiset": {
+            "precision": 0.993103448275862,
+            "recall": 0.9370932754880694,
+            "f1": 0.9642857142857142,
+            "pred_count": 435,
+            "gold_count": 461,
+            "matched_count": 432,
+            "missing": {
+              "50": 1,
+              "28": 1,
+              "0": 11,
+              "7": 3,
+              "20": 2,
+              "4": 2,
+              "1": 1,
+              "2": 1,
+              "6": 2,
+              "11": 2,
+              "680": 1,
+              "855": 1,
+              "1211": 1
+            },
+            "extra": {
+              "8": 1,
+              "680855": 1,
+              "1217": 1
+            }
+          },
+          "score_seconds": 14.532
+        },
+        "runtime": {
+          "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+          "page": "page-14a6b411-9097-4eec-86da-92075868d243.png",
+          "arm": "pp_tablemagic",
+          "crop_sha256": "e511cafd93e93d49e5f15770070987141c6ab0d43eca4697756cfe899e60983b",
+          "status": "invalid_candidate_baseline_retained",
+          "finish_reason": "stop",
+          "model": "PP-TableMagic",
+          "response_format": "html",
+          "usage": null,
+          "total_seconds": 303.375,
+          "initialization_seconds": 9.563,
+          "inference_seconds": 293.812,
+          "versions": {
+            "paddlepaddle": "3.3.1",
+            "paddleocr": "3.7.0",
+            "paddlex": "3.7.2",
+            "numpy": "1.26.4"
+          },
+          "options": {
+            "device": "cpu",
+            "cpu_threads": 4,
+            "enable_mkldnn": false,
+            "use_doc_orientation_classify": false,
+            "use_doc_unwarping": false,
+            "use_layout_detection": false,
+            "wired_table_structure_recognition_model_name": "SLANeXt_wired",
+            "wireless_table_structure_recognition_model_name": "SLANeXt_wireless",
+            "text_detection_model_name": "PP-OCRv5_server_det",
+            "text_recognition_model_name": "PP-OCRv5_server_rec"
+          },
+          "table_orientation_classify": false,
+          "raw_result_sha256": "b364cdad37d969bc1d7a55633b172d1ced80b191fcd5e49c1e084efe60799c7f",
+          "process_total_seconds": 311.859,
+          "latency_seconds": 303.375,
+          "validation_error": "Unbalanced HTML tags"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Selected development crops, not held-out or full PDF/RAG evaluation.",
+    "Two electronics datasheets and one scientific benchmark; do not infer general paper quality.",
+    "Native task and model pipelines differ in prompting/preprocessing; not a single-variable ablation.",
+    "Schema validity does not imply correct cells; no gold-based best-of selection.",
+    "Paddle cold initialization/download excluded from inference time; not equivalent to API latency.",
+    "Invalid candidates are not scored as HTML; failed-as-zero is task completion, not raw TEDS.",
+    "Numeric multiset F1 ignores cell positions and is not cell numeric accuracy."
+  ],
+  "inputs_sha256": {
+    "output/benchmarks/omnidocbench-table-html-v6/scored-generic-v2/results.json": "539f643fe1bc48188ac5158e0810bd57a6a961abf129eadd832d36e426d6ecd8",
+    "output/benchmarks/omnidocbench-table-html-v6/scored-ocr-v2/results.json": "e54cd50cacf3c4ef986815c92cfcea8ad876870bb72eee7b7e5af1d29945926e",
+    "output/benchmarks/omnidocbench-table-specialist-v7/scored-qwen-native/results.json": "3c9b578f109359ec8ef2e7f50462ef36b6738d2ecb2fdd14def9de31d190a76f",
+    "output/benchmarks/omnidocbench-table-specialist-v7/scored-pp-tablemagic/results.json": "95a255e483db8ac40f5e5115ae05b2d403c2eb304e4617ad8f0fd3b45b7df414"
+  }
+}

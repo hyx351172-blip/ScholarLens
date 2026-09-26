@@ -1,0 +1,72 @@
+{
+  "experiment": "table-grid-binding-v10",
+  "artifact_type": "summary_of_full_local_results",
+  "full_results": "output/benchmarks/omnidocbench-table-grid-binding-v10-scored-v2/results.json",
+  "full_results_sha256": "bec92bc59bff2bc6dadc9ba2f9684fcfb215544667b44bfc9993a7e6b2c93f68",
+  "gold_access_in_inference": false,
+  "production_applied": false,
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "aggregate": {
+    "cases": 3,
+    "candidates_scored": 1,
+    "gate_passed": 1,
+    "baseline_teds": 0.6890469428104301,
+    "effective_offline_teds": 0.7015547601962964
+  },
+  "results": [
+    {
+      "id": "page-035cb436-c01e-41db-b40e-8977678777eb",
+      "baseline_teds": 0.21116466993212246,
+      "candidate_teds": null,
+      "gate_passed": false,
+      "reason": "invalid_v8_structure"
+    },
+    {
+      "id": "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7",
+      "baseline_teds": 0.9596622889305816,
+      "v9_raw_diagnostic_teds": 0.6300813008130082,
+      "candidate_teds": 0.9971857410881801,
+      "candidate_structure_teds": 1.0,
+      "gate_passed": true,
+      "ocr_count": 280,
+      "unassigned_ocr": 0,
+      "empty_cells": 212,
+      "all_gold_cells": {"exact": 490, "total": 492},
+      "nonempty_gold_cells": {"exact": 278, "total": 280},
+      "numeric_regex_cells": {"exact": 254, "total": 254},
+      "remaining_errors": [
+        {"row": 13, "col": 1, "gold": "0D", "prediction": "OD"},
+        {"row": 25, "col": 2, "gold": "O", "prediction": "0"}
+      ]
+    },
+    {
+      "id": "page-14a6b411-9097-4eec-86da-92075868d243",
+      "baseline_teds": 0.8963138695685865,
+      "v9_raw_diagnostic_teds": 0.9398719519474237,
+      "candidate_teds": null,
+      "gate_passed": false,
+      "reason": "y_axis_count_mismatch",
+      "physical_row_boundaries": 41,
+      "required_v8_row_boundaries": 42
+    }
+  ],
+  "validation": {
+    "new_tests": 19,
+    "total_tests": 289,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 22.967,
+    "isolated_environment_pure_tests": 14,
+    "traceability_passed": true,
+    "protected_files_unchanged": 27
+  },
+  "limitations": [
+    "Three selected development tables, not held-out.",
+    "Complex hierarchical headers still rejected; no production promotion.",
+    "Two OCR glyph errors remain; numeric regex excludes hex/alphanumeric tokens.",
+    "No explicit header or unit-bearing-cell accuracy available on the accepted case.",
+    "No downstream RAG evaluation."
+  ]
+}

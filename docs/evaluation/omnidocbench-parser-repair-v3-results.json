@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.0",
+  "evaluated_at": "2026-09-25",
+  "scope": "Frozen 10-page development smoke test; not full benchmark or held-out result",
+  "dataset": {
+    "name": "OmniDocBench English academic pages",
+    "selection": "Deterministic subset quotas and filename sorting; unchanged from smoke-v2",
+    "gold_sha256": "f25369f9845039f7474591e9a0c275443c5a2149fc975270f35a80ada7da43a4",
+    "subsets": {
+      "equation_hard": 4,
+      "table_hard": 3,
+      "layout_hard": 1,
+      "v1.5": 2
+    },
+    "layout": {
+      "single_column": 7,
+      "double_column": 3
+    },
+    "pages": [
+      "docstructbench_llm-raw-scihub-o.O-ajhb.10190.pdf_5.jpg",
+      "docstructbench_llm-raw-scihub-o.O-ana.20363.pdf_5.jpg",
+      "page-035cb436-c01e-41db-b40e-8977678777eb.png",
+      "page-05746fc5-2045-4dea-94e7-4bbab648d702.png",
+      "page-0cbdcfa9-3248-4e54-8704-2bc73e6d29e7.png",
+      "page-14a6b411-9097-4eec-86da-92075868d243.png",
+      "page-175b8afd-8077-4f65-bdbf-40682e0a9a4b.png",
+      "page-1ce383cc-63a3-43c9-b6f2-7498a952b65c.png",
+      "page-268266af-56c0-4b3b-9d07-73c6e50feb58.png",
+      "page-2861127b-41a4-44d5-b026-2de9cb408347.png"
+    ],
+    "input": "Lossless image-to-single-page-PDF wrapper; PDF point dimensions equal image pixels; identical in every variant"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "docling": "2.117.0",
+    "ocr": "EasyOCR 1.7.2",
+    "table_mode": "accurate",
+    "device": "CPU",
+    "formula_model": "docling-project/CodeFormulaV2",
+    "formula_model_revision": "ecedbe111d15c2dc60bfd4a823cbe80127b58af4",
+    "evaluator_revision": "f133a71e9e91c3621c7ce8994200a7b394a06eb3",
+    "evaluator_compatibility_override": "lxml 4.9.3 Windows wheel instead of 4.9.1; identical across variants",
+    "match_method": "quick_match",
+    "paid_api_calls": 0,
+    "cdm_run": false
+  },
+  "denominators": {
+    "text_pages": 9,
+    "formula_pages": 4,
+    "gold_isolated_formulas": 30,
+    "tables": 3,
+    "reading_order_pages": 10
+  },
+  "metric_interpretation": {
+    "edit_dist": "Lower is better; ALL_page_avg",
+    "teds": "Higher is better; 0..1",
+    "empty_formula_predictions": "Official matched result rows with empty pred; not object recall"
+  },
+  "variants": [
+    {
+      "variant": "baseline",
+      "text_edit": 0.23328591482786207,
+      "formula_edit": 1,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.4841912118382707,
+      "evaluated_formula_rows": 30,
+      "empty_formula_predictions": 30,
+      "match_debug": {
+        "workers": 2,
+        "page_count": 10,
+        "quick_match_truncated_timeout_sec": 300,
+        "match_timeout_sec": 420,
+        "text_match_fallback_pages": {
+          "quick_match_timeout": [],
+          "page_timeout": []
+        },
+        "text_match_fallback_counts": {
+          "quick_match_timeout": 0,
+          "page_timeout": 0
+        }
+      },
+      "teds_debug": {
+        "TEDS": {
+          "stage": "TEDS",
+          "workers": 2,
+          "timeout_sec": 120,
+          "sample_count": 3,
+          "timeout_case_count": 0,
+          "timeout_cases": [],
+          "error_case_count": 0,
+          "error_cases": []
+        }
+      },
+      "result_directory": "output/benchmarks/omnidocbench-scholar-lens-smoke-v2/official-results"
+    },
+    {
+      "variant": "export_only",
+      "text_edit": 0.20570630793008504,
+      "formula_edit": 0.86670200622572,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.3749325184619302,
+      "evaluated_formula_rows": 30,
+      "empty_formula_predictions": 11,
+      "match_debug": {
+        "workers": 2,
+        "page_count": 10,
+        "quick_match_truncated_timeout_sec": 300,
+        "match_timeout_sec": 420,
+        "text_match_fallback_pages": {
+          "quick_match_timeout": [],
+          "page_timeout": []
+        },
+        "text_match_fallback_counts": {
+          "quick_match_timeout": 0,
+          "page_timeout": 0
+        }
+      },
+      "teds_debug": {
+        "TEDS": {
+          "stage": "TEDS",
+          "workers": 2,
+          "timeout_sec": 120,
+          "sample_count": 3,
+          "timeout_case_count": 0,
+          "timeout_cases": [],
+          "error_case_count": 0,
+          "error_cases": []
+        }
+      },
+      "result_directory": "output/benchmarks/omnidocbench-scholar-lens-export-only-v3/result"
+    },
+    {
+      "variant": "fixed",
+      "text_edit": 0.20802621024998735,
+      "formula_edit": 0.25472516904375386,
+      "table_teds": 0.6856227716019037,
+      "table_structure": 0.7719070450777767,
+      "table_edit": 0.6137346493526842,
+      "reading_edit": 0.23900560224089634,
+      "evaluated_formula_rows": 30,
+      "empty_formula_predictions": 0,
+      "match_debug": {
+        "workers": 2,
+        "page_count": 10,
+        "quick_match_truncated_timeout_sec": 300,
+        "match_timeout_sec": 420,
+        "text_match_fallback_pages": {
+          "quick_match_timeout": [],
+          "page_timeout": []
+        },
+        "text_match_fallback_counts": {
+          "quick_match_timeout": 0,
+          "page_timeout": 0
+        }
+      },
+      "teds_debug": {
+        "TEDS": {
+          "stage": "TEDS",
+          "workers": 2,
+          "timeout_sec": 120,
+          "sample_count": 3,
+          "timeout_case_count": 0,
+          "timeout_cases": [],
+          "error_case_count": 0,
+          "error_cases": []
+        }
+      },
+      "result_directory": "output/benchmarks/omnidocbench-scholar-lens-fixed-v3/result"
+    }
+  ],
+  "fixed_inference": {
+    "successful_pages": 10,
+    "failed_pages": 0,
+    "detected_formula_blocks": 22,
+    "nonempty_formula_blocks": 22,
+    "orig_fallback_formula_blocks": 0,
+    "sum_successful_parse_seconds": 1402.163,
+    "mean_successful_parse_seconds": 140.2163,
+    "note": "Retains original parse timings when consolidating cached successful artifacts; excludes failed attempt/download time. Not a controlled latency benchmark.",
+    "initial_run": "output/benchmarks/omnidocbench-scholar-lens-smoke-v3",
+    "retry_run": "output/benchmarks/omnidocbench-scholar-lens-smoke-v3-prefix",
+    "consolidated_run": "output/benchmarks/omnidocbench-scholar-lens-fixed-v3"
+  },
+  "tests": {
+    "command": "python -m unittest discover -s tests",
+    "passed": 175,
+    "failed": 0,
+    "duration_seconds": 15.608,
+    "live_backend_upload_tested": false
+  },
+  "limitations": [
+    "Development smoke sample only; 100-page frozen expansion not run.",
+    "Formula transcriptions retain errors; no CDM semantic/rendering validation.",
+    "Table metrics unchanged.",
+    "Two table-heavy pages have unmatched reading-order elements.",
+    "Existing Milvus data was not reprocessed or reindexed."
+  ]
+}

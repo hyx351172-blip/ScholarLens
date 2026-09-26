@@ -355,6 +355,8 @@ class DoclingChunkingIntegrationTests(unittest.TestCase):
             )
 
             self.assertTrue(result["metadata"]["chunking_performed"])
+            self.assertIn("$$\n" + formula_block.text + "\n$$", result["markdown"])
+            self.assertIn(context.text, result["markdown"])
             self.assertGreater(result["chunk_stats"]["total_chunks"], 0)
             self.assertEqual(result["chunk_schema_version"], "1.1")
             self.assertTrue(all(chunk["source_block_ids"] for chunk in result["chunks"]))

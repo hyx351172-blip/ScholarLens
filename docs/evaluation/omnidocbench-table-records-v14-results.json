@@ -1,0 +1,494 @@
+{
+  "experiment": "table-record-reconstruction-v14",
+  "cohort": "development-regression",
+  "aggregate": {
+    "cases": 20,
+    "reconstructed": 1,
+    "improved_vs_v13": 1,
+    "regressed_vs_v13": 0,
+    "unchanged_vs_v13": 19,
+    "previous_v13_teds": 0.5843320362941054,
+    "previous_v13_structure_teds": 0.7402801608831403,
+    "effective_v14_teds": 0.6197814869719923,
+    "effective_v14_structure_teds": 0.7702801608831403
+  },
+  "results": [
+    {
+      "id": "case-01",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.9349206349206349,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.9349206349206349,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-02",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Paddle worker failed: timeout"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.46913935515779337,
+        "structure_teds": 0.8757763975155279,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.46913935515779337,
+        "structure_teds": 0.8757763975155279,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-03",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.7883303230902166,
+        "structure_teds": 0.8528528528528528,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.7883303230902166,
+        "structure_teds": 0.8528528528528528,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-04",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Span extends outside declared rows or safe column limit"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.7584807613709348,
+        "structure_teds": 0.9248554913294798,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.7584807613709348,
+        "structure_teds": 0.9248554913294798,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-05",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v14": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-06",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Paddle worker failed: timeout"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.4215329817046859,
+        "structure_teds": 0.766977363515313,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.4215329817046859,
+        "structure_teds": 0.766977363515313,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-07",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "body_row_count_conflict"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.9624589665951337,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.9624589665951337,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-08",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.839612955287994,
+        "structure_teds": 0.8571428571428572,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.839612955287994,
+        "structure_teds": 0.8571428571428572,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-09",
+      "status": "unchanged",
+      "gate": {
+        "passed": true,
+        "reasons": [],
+        "policy": "Offline geometric integrity only; review required, no OCR-accuracy or production guarantee."
+      },
+      "previous_v13": {
+        "teds": 0.6379126387397064,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.6379126387397064,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v13_candidate"
+    },
+    {
+      "id": "case-10",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v14": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-11",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.6903528528528529,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.6903528528528529,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-12",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.3558839998620792,
+        "structure_teds": 0.624,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.3558839998620792,
+        "structure_teds": 0.624,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-13",
+      "status": "reconstructed",
+      "gate": {
+        "passed": true,
+        "reasons": [],
+        "policy": "Restricted record-anchor candidate; offline development only."
+      },
+      "previous_v13": {
+        "teds": 0.2885109864422628,
+        "structure_teds": 0.4,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.9975,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.7089890135577372,
+      "score_reused_byte_identical": false,
+      "effective_source": "v14_record_reconstruction"
+    },
+    {
+      "id": "case-14",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Incomplete grid coverage: 1 uncovered slots in 8x8; explicit empty cells required"
+        ],
+        "error_type": "ValueError"
+      },
+      "previous_v13": {
+        "teds": 0.1325108298134613,
+        "structure_teds": 0.75,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.1325108298134613,
+        "structure_teds": 0.75,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-15",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.7473590393095038,
+        "structure_teds": 0.9473684210526316,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.7473590393095038,
+        "structure_teds": 0.9473684210526316,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-16",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "effective_v14": {
+        "teds": 0.0,
+        "structure_teds": 0.0,
+        "missing_output": true
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-17",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.756900058980007,
+        "structure_teds": 0.8066298342541436,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.756900058980007,
+        "structure_teds": 0.8066298342541436,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-18",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.9676033829595025,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.9676033829595025,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-19",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "unsupported_header_prefix"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.9952485380116959,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.9952485380116959,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "v12_baseline"
+    },
+    {
+      "id": "case-20",
+      "status": "unchanged",
+      "gate": {
+        "passed": false,
+        "reasons": [
+          "Unbalanced HTML tags"
+        ]
+      },
+      "previous_v13": {
+        "teds": 0.939882420783643,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "effective_v14": {
+        "teds": 0.939882420783643,
+        "structure_teds": 1.0,
+        "missing_output": false
+      },
+      "delta_from_v13": 0.0,
+      "score_reused_byte_identical": true,
+      "effective_source": "oriented_docling"
+    }
+  ],
+  "protected_inputs_unchanged": true,
+  "gold_access_in_inference": false,
+  "production_applied": false,
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "code_sha256": "79241b8e61c3eafb779be2de3dfc84a38e4433d68def6dcae80b8e007a75a245",
+  "limitations": [
+    "Only one eligible real merged-row failure in this cohort.",
+    "Normal wrapping/spans mainly covered by synthetic negatives.",
+    "Restricted typed record anchors, not general borderless-table recognition.",
+    "Unchanged scores reused after exact HTML hash equality."
+  ]
+}

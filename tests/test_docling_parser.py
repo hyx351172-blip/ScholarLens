@@ -2,6 +2,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -89,6 +90,51 @@ class _Converter:
 
 
 class DoclingParserTests(unittest.TestCase):
+    def test_formula_enrichment_is_enabled_and_can_be_disabled(self):
+        """AC-PARSE-601: the real converter receives the formula option."""
+        from docling.datamodel.base_models import InputFormat
+        for enabled in (True, False):
+            with self.subTest(enabled=enabled), patch(
+                "docling.document_converter.DocumentConverter"
+            ) as factory:
+                DoclingParser(do_formula_enrichment=enabled, do_ocr=True)._build_converter()
+                options = factory.call_args.kwargs["format_options"][InputFormat.PDF].pipeline_options
+                self.assertEqual(options.do_formula_enrichment, enabled)
+                self.assertEqual(options.ocr_options.kind, "easyocr")
+
+    def test_markdown_uses_final_block_order_and_preserves_formula_fallback(self):
+        """AC-PARSE-602: Markdown and downstream blocks share one source."""
+        items = [
+            _Item("text", "Bottom paragraph.", bbox=(50, 200, 550, 180)),
+            _Item("formula", text=r"\frac{a}{b}", bbox=(50, 400, 550, 360)),
+            _Item("text", "Top paragraph.", bbox=(50, 700, 550, 650)),
+            _Item("formula", orig="x + y", bbox=(50, 300, 550, 260)),
+            _Item("formula", bbox=(50, 150, 550, 100)),
+        ]
+        parser = DoclingParser(converter=_Converter(_Document(items)))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "paper.pdf"
+            path.write_bytes(b"%PDF fixture")
+            result = parser.parse(path)
+        self.assertLess(result.markdown.index("Top paragraph"), result.markdown.index(r"\frac{a}{b}"))
+        self.assertLess(result.markdown.index(r"\frac{a}{b}"), result.markdown.index("Bottom paragraph"))
+        self.assertIn("$$\n" + r"\frac{a}{b}" + "\n$$", result.markdown)
+        self.assertIn("$$\nx + y\n$$", result.markdown)
+        self.assertIn("formula-ocr-fallback", result.markdown)
+        self.assertIn("formula-not-decoded", result.markdown)
+        self.assertNotIn("A Reliable Paper", result.markdown)
+        self.assertTrue(result.document.parser.formula_enrichment_enabled)
+
+    def test_top_left_provenance_is_normalized_before_reading_order(self):
+        """AC-PARSE-603: coordinates use the canonical bottom-left origin."""
+        from types import SimpleNamespace
+        item = _Item("text", "Top text", bbox=(10, 20, 100, 80))
+        item.prov[0].bbox.coord_origin = _Label("TOPLEFT")
+        document = _Document([item])
+        document.pages[1] = SimpleNamespace(size=SimpleNamespace(height=800))
+        blocks, _ = DoclingParser()._normalize_items(document)
+        self.assertEqual(blocks[0].bbox, [10, 780, 100, 720])
+
     def _build_parser(self):
         items = [
             # Real Docling output may label the paper title as section_header.
