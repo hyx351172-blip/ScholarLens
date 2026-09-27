@@ -12,10 +12,11 @@ Never guess a filename when the mapping is weak, ambiguous, or unavailable.
   supports meaningful acronym expansion, and maps a target only when one corpus
   filename clears both the confidence threshold and ambiguity margin.
 - **AC-201.2** — A resolved target is sent to the existing Milvus `/search`
-  endpoint as an escaped `filename == ...` filter; the original query remains
-  unfiltered.
-- **AC-201.3** — An unresolved target or document-catalog failure preserves the
-  previous unfiltered retrieval behavior instead of guessing or failing chat.
+  endpoint as an escaped document filter. Updated by AC-2902: explicitly scoped
+  originals are filtered too; file IDs are preferred, with legacy filename fallback.
+- **AC-201.3** — Never guess an unresolved target. Updated by AC-2904: catalog
+  failure returns a service error; unresolved planner branches cannot expand an
+  explicit document scope. Collection-wide fallback remains only for unscoped queries.
 - **AC-201.4** — Retrieval trace records the overall resolution state and each
   target's status, filename, confidence score, and reason.
 - **AC-201.5** — The development dataset contains positive aliases, safe

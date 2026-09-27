@@ -3,8 +3,11 @@
 Bounded repair of the two live journey failures, not a general semantic verifier.
 
 - AC-2201: Reject malformed, missing, and unknown source citations without guessing IDs.
-- AC-2202: Normalize detected insufficient-evidence responses to a fixed abstention,
+- AC-2202: Normalize detected whole-answer insufficient-evidence responses to a fixed abstention,
   removing any accompanying unsupported explanation.
+
+V2 clarification: a caveat after an affirmative cited sentence is not automatically
+a whole-answer refusal; see `../answer_guard_v2/acceptance.md` for bounded rules.
 - AC-2203: Streaming and non-streaming validate the full answer before publishing.
 - AC-2204: Empty retrieval never falls back to free-form model knowledge.
 

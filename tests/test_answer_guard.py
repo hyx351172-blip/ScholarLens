@@ -7,6 +7,27 @@ from backend.chat.answer_guard import guard_answer, INSUFFICIENT_EVIDENCE
 
 
 class AnswerGuardTests(unittest.TestCase):
+    # AC-2401: grouped citations canonicalize only valid bounded source IDs.
+    def test_grouped_citations(self):
+        self.assertEqual(guard_answer('Result [S1, S3–S5].', 5)[0], 'Result [S1][S3][S4][S5].')
+        self.assertEqual(guard_answer('Result [S2, S2; S3].', 3)[0], 'Result [S2][S3].')
+        for marker in ('[S3-S1]', '[S1,S99]', '[S0]', '[S1-S999999999]', '[S1, foo]', '[S1,]'):
+            self.assertEqual(guard_answer('Result '+marker, 5)[0], INSUFFICIENT_EVIDENCE)
+
+    # AC-2402: a limitation does not erase a preceding cited answer.
+    def test_partial_answer_caveat(self):
+        for text in ('The baseline is BERT [S1]. Other scores are not provided.',
+                     '基线是 BERT [S1]。论文未提供其他分数。'):
+            self.assertEqual(guard_answer(text, 1)[0], text)
+
+    # AC-2403: leading/global refusal variants still discard extra explanations.
+    def test_english_refusals(self):
+        for text in ('The paper does not specify the dataset size [S1]. It was released in 2023.',
+                     'Current retrieval evidence is insufficient to answer the question [S1].',
+                     'There is evidence [S1]. I cannot reliably answer the question.',
+                     '该论文未报告该值 [S1]。GPT-4发布于2023年。'):
+            self.assertEqual(guard_answer(text, 1)[0], INSUFFICIENT_EVIDENCE)
+
     # AC-2201: malformed, unknown and missing citations fail closed.
     def test_bad_citations(self):
         for answer in ('结论 [S母公司]', '结论 [S99]', '结论 [S1] [S错误]', '结论 [S1', '结论'):
@@ -32,7 +53,8 @@ class GuardIntegrationTests(unittest.IsolatedAsyncioTestCase):
         request = ChatRequest(query='结论是什么', collection_name='test',
                               llm_config=dict(api_key='test', api_url='https://example.invalid', model_name='test'))
         docs = [dict(chunk_text='evidence', filename='paper.pdf', score=1.0, metadata={})]
-        for raw in ('结论 [S母公司]', '论文未报告该值 [S1]。发布于2023年。', '正确结果 [S1]'):
+        for raw in ('结论 [S母公司]', '论文未报告该值 [S1]。发布于2023年。', '正确结果 [S1]',
+                    '正确结果 [S1, S1]。', 'BERT [S1]. Other scores are not provided.'):
             service = ChatService()
             service.retrieve_for_request = AsyncMock(return_value=RetrievalExecution(documents=docs, trace={}))
             service.call_llm_non_stream = AsyncMock(return_value=raw)

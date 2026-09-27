@@ -3,7 +3,8 @@ import json
 import threading
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
+from fastapi import HTTPException
 
 from backend.chat.kb_chat import ChatRequest, ChatService
 from backend.chat.multi_query_retrieval import RetrievalExecution, parse_query_plan
@@ -83,6 +84,7 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
             ]
 
         service.plan_retrieval = fake_plan
+        service.list_collection_documents = AsyncMock(return_value=[])
         service.retrieve_documents = fake_retrieve
         request = _request(
             use_multi_query=True,
@@ -100,7 +102,7 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(execution.documents), 3)
 
     async def test_resolved_targets_are_pushed_down_as_filename_filters(self):
-        """AC-201.2/AC-201.4: filter resolved targets and expose the trace."""
+        """AC-201.2/AC-201.4/AC-2902: legacy filenames also constrain original."""
         service = ChatService()
         plan = parse_query_plan(
             '{"intent":"comparison","subqueries":['
@@ -116,8 +118,8 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
 
         async def fake_catalog(*_args, **_kwargs):
             return [
-                "2408.09869_docling-technical-report.pdf",
-                "PMC2950080_structured-digital-tables.pdf",
+                {"filename": "2408.09869_docling-technical-report.pdf"},
+                {"filename": "PMC2950080_structured-digital-tables.pdf"},
             ]
 
         async def fake_retrieve(query, **kwargs):
@@ -138,7 +140,7 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
             ]
 
         service.plan_retrieval = fake_plan
-        service.list_collection_filenames = fake_catalog
+        service.list_collection_documents = fake_catalog
         service.retrieve_documents = fake_retrieve
         request = _request(
             query="Compare Docling and structured digital tables",
@@ -153,16 +155,16 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
 
         execution = await service.retrieve_for_request(request)
 
-        self.assertIsNone(
-            captured_filters["Compare Docling and structured digital tables"]
-        )
+        original_filter = captured_filters["Compare Docling and structured digital tables"]
+        self.assertIn('2408.09869_docling-technical-report.pdf', original_filter)
+        self.assertIn('PMC2950080_structured-digital-tables.pdf', original_filter)
         self.assertEqual(
             captured_filters["Question Docling"],
-            'filename == "2408.09869_docling-technical-report.pdf"',
+            '(filename in ["2408.09869_docling-technical-report.pdf"])',
         )
         self.assertEqual(
             captured_filters["Question structured tables"],
-            'filename == "PMC2950080_structured-digital-tables.pdf"',
+            '(filename in ["PMC2950080_structured-digital-tables.pdf"])',
         )
         resolutions = execution.trace["target_resolutions"]
         self.assertEqual(resolutions["docling"]["status"], "resolved")
@@ -171,8 +173,8 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
             "PMC2950080_structured-digital-tables.pdf",
         )
 
-    async def test_catalog_failure_preserves_unfiltered_retrieval(self):
-        """AC-201.3: catalog errors degrade to the prior unfiltered path."""
+    async def test_catalog_failure_is_visible_and_does_not_remove_scope(self):
+        """AC-201.3/AC-2904: superseded unsafe fallback must not execute."""
         service = ChatService()
         plan = parse_query_plan(
             '{"intent":"comparison","subqueries":['
@@ -200,25 +202,13 @@ class ChatServiceMultiQueryTests(unittest.IsolatedAsyncioTestCase):
             ]
 
         service.plan_retrieval = fake_plan
-        service.list_collection_filenames = broken_catalog
+        service.list_collection_documents = broken_catalog
         service.retrieve_documents = fake_retrieve
 
-        execution = await service.retrieve_for_request(
-            _request(
-                use_multi_query=True,
-                top_k=3,
-                multi_query_config={
-                    "original_reserve": 1,
-                    "per_target_reserve": 1,
-                    "candidate_k_per_query": 3,
-                },
-            )
-        )
-
-        self.assertEqual(captured_filters, [None, None, None])
-        self.assertEqual(
-            execution.trace["target_resolution_status"], "catalog_error"
-        )
+        with self.assertRaises(HTTPException) as raised:
+            await service.retrieve_for_request(_request(use_multi_query=True))
+        self.assertEqual(raised.exception.status_code, 503)
+        self.assertEqual(captured_filters, [])
 
     async def test_retrieve_documents_forwards_filter_expression(self):
         """AC-201.2: the filename expression reaches the Milvus API."""

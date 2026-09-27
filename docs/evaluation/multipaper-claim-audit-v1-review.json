@@ -1,0 +1,51 @@
+{
+  "status": "AI_REVIEW_DRAFT_NOT_HUMAN_GOLD",
+  "reviewer": "Codex AI",
+  "frozen_inputs_sha256": "47528f2cb542fbb7d7a16fc30dfcb4ceec71584283102517fdb2e64bdb31fa6a",
+  "note": "These are targeted diagnostic reviews, not labels for all 35 units. Do not replace raw judge results or compute a corrected accuracy from these three examples.",
+  "findings": [
+    {
+      "case_id": "A01",
+      "unit_id": "A1",
+      "category": "citation_scope_insufficient_and_judge_output_invalid",
+      "claim_fragment": "纯注意力机制模型，不含循环或卷积组件 [S2][S3]",
+      "cited_sources": ["S2", "S3"],
+      "evidence_observation": "S2 describes the general encoder-decoder setup; S3 describes stacked self-attention and point-wise fully connected layers. The explicit no-recurrence/no-convolution statement occurs in S8, which this unit does not cite.",
+      "proposed_action": "Split architecture and absence claims; cite the actual no-recurrence/no-convolution snippet for the latter, or omit that extra assertion. Do not rescue an assertion using another unit's citation.",
+      "judge_observation": "The raw model text accepts absence of mention as support, but the whole A01 response is invalid JSON and has no accepted automatic decision.",
+      "human_review": {"status": "pending", "reviewer": "", "decision": null}
+    },
+    {
+      "case_id": "X01",
+      "unit_id": "A2",
+      "category": "partially_supported_composite_and_judge_false_positive_candidate",
+      "claim_fragment": "其下游任务适配时通常仅添加轻量级分类头 [S10]",
+      "cited_sources": ["S10"],
+      "evidence_observation": "S10 describes the bidirectional Transformer encoder, pretraining/fine-tuning, model sizes, and GPT comparison. It does not state the lightweight-classification-head detail. The judge's supporting reason also omits that part of this composite unit.",
+      "proposed_action": "Remove the unsupported elaboration or retrieve and cite a snippet supporting that specific downstream adaptation detail. Split the composite before evaluating.",
+      "judge_observation": "Accepted automatic judgment is supported=true. Local AI review disputes full support; the raw result remains unchanged.",
+      "human_review": {"status": "pending", "reviewer": "", "decision": null}
+    },
+    {
+      "case_id": "L03",
+      "unit_id": "A5",
+      "category": "inline_fraction_flattening_and_judge_overinterpretation",
+      "claim_fragment": "缩放因子 alpha/r",
+      "cited_sources": ["S1", "S2"],
+      "evidence_observation": "Both retrieved snippets flatten the fraction into 'scale ΔWx by α r'. The judge asserts this means multiplication. That assertion is not justified by the flattened text.",
+      "pdf_verification": {
+        "source": "backend/data/evaluation_papers/2106.09685_lora.pdf",
+        "source_repository": "C:/Users/hp/Desktop/ScholarLens",
+        "sha256": "e9a0d3128767db616085dc0f4e6e455e672e89af823e8ed1282793682787395a",
+        "page": 4,
+        "section": "4.1 LOW-RANK-PARAMETRIZED UPDATE MATRICES",
+        "method": "Rendered complete page using pdftoppm and visually inspected",
+        "observed_formula": "alpha divided by r",
+        "observed_initialization": "A Gaussian, B zero; alpha set to the first r tried and not tuned"
+      },
+      "proposed_action": "Repair inline fraction preservation and regenerate affected chunks/index entries. Do not change the correct answer to alpha times r. Treat snippet support as ambiguous until the evidence is repaired.",
+      "judge_observation": "Raw supported=false is retained. PDF verification establishes the answer is correct on this formula, not that the current flattened snippet is faithful.",
+      "human_review": {"status": "pending", "reviewer": "", "decision": null}
+    }
+  ]
+}

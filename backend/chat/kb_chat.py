@@ -8,7 +8,7 @@ import time
 import uuid
 import os
 import sys
-from typing import List, Dict, Any, Optional, AsyncIterable
+from typing import List, Dict, Any, Optional, AsyncIterable, Literal
 from datetime import datetime
 
 import uvicorn
@@ -23,6 +23,12 @@ from pathlib import Path
 
 try:
     from backend.chat.answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
+    from backend.chat.claim_bound_answer import build_catalog, build_messages
+    from backend.chat.claim_bound_output_v2 import (
+        render_claim_answer, empty_binding, CLAIM_EVIDENCE_ERROR, CLAIM_GENERATION_ERROR,
+    )
+    from backend.chat import evidence_units
+    from backend.chat.document_scope import DocumentScope, resolve_document_scope
     from backend.chat.multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
@@ -34,6 +40,12 @@ try:
     from backend.chat.section_intent_retrieval import rerank_section_intent
 except ModuleNotFoundError:  # Direct execution from backend/chat.
     from answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
+    from claim_bound_answer import build_catalog, build_messages
+    from claim_bound_output_v2 import (
+        render_claim_answer, empty_binding, CLAIM_EVIDENCE_ERROR, CLAIM_GENERATION_ERROR,
+    )
+    import evidence_units
+    from document_scope import DocumentScope, resolve_document_scope
     from multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
@@ -129,6 +141,10 @@ class ChatRequest(BaseModel):
     stream: bool = Field(True, description="是否流式输出")
     prompt_template: Optional[str] = Field(None, description="自定义prompt模板")
     return_source: bool = Field(True, description="是否返回来源文档")
+    answer_mode: Literal["legacy", "claim_bound"] = Field(
+        "legacy", description="回答格式；claim_bound 为待真实模型验证的逐条结论引用模式")
+    claim_evidence_mode: Literal["fixed_v1", "sentence_v2"] = Field(
+        "fixed_v1", description="仅 claim_bound 使用；sentence_v2 为待真实模型复测的完整句证据模式")
 
     # Milvus服务地址
     milvus_api_url: str = Field("http://localhost:8000", description="Milvus API地址")
@@ -251,11 +267,11 @@ class ChatService:
                 detail=f"调用Milvus API失败: {str(e)}"
             )
 
-    async def list_collection_filenames(
+    async def list_collection_documents(
         self,
         collection_name: str,
         milvus_api_url: str,
-    ) -> List[str]:
+    ) -> List[Dict[str, Any]]:
         """Read the current corpus catalog used for safe target resolution."""
 
         try:
@@ -282,18 +298,25 @@ class ChatService:
             documents = result.get("documents", [])
             if not isinstance(documents, list):
                 raise HTTPException(status_code=500, detail="知识库文档目录格式错误")
-            return sorted(
-                {
-                    str(item.get("filename", "")).strip()
-                    for item in documents
-                    if isinstance(item, dict) and str(item.get("filename", "")).strip()
-                }
-            )
+            if any(not isinstance(item, dict)
+                   or not isinstance(item.get('filename'), str)
+                   or not item['filename'].strip()
+                   or (item.get('file_id') is not None and not isinstance(item['file_id'], str))
+                   for item in documents):
+                raise HTTPException(status_code=500, detail="知识库文档目录包含无效记录")
+            return [dict(item, filename=item['filename'].strip()) for item in documents]
         except requests.exceptions.RequestException as e:
             raise HTTPException(
                 status_code=500,
                 detail=f"调用Milvus文档目录API失败: {str(e)}",
             )
+
+    async def list_collection_filenames(
+        self, collection_name: str, milvus_api_url: str,
+    ) -> List[str]:
+        """Compatibility helper for offline tools; request scope also needs IDs."""
+        documents = await self.list_collection_documents(collection_name, milvus_api_url)
+        return sorted({str(item['filename']).strip() for item in documents})
 
     async def plan_retrieval(
         self,
@@ -325,10 +348,28 @@ class ChatService:
         self,
         request: ChatRequest,
     ) -> RetrievalExecution:
-        """Plan and execute retrieval while preserving single-query fallback."""
+        """Keep the user's catalog-grounded scope outside planner control."""
+
+        try:
+            catalog = await self.list_collection_documents(
+                request.collection_name, request.milvus_api_url,
+            )
+        except Exception as exc:
+            # A catalog outage must not silently remove a document restriction.
+            raise HTTPException(status_code=503, detail="无法读取论文目录，已停止检索；请检查知识库服务后重试。") from exc
+        scope = resolve_document_scope(request.query, catalog)
+        scope_trace = dict(scope.to_dict(), dropped_candidates=0, skipped_queries=[])
+        if scope.status in {"ambiguous", "unresolved"}:
+            return RetrievalExecution(documents=[], trace={
+                "mode": "scope_blocked", "fallback_reason": scope.reason,
+                "queries": [], "final_count": 0, "document_scope": scope_trace,
+                "target_resolution_status": "not_applicable", "target_resolutions": {},
+            })
 
         planner_started = time.perf_counter()
-        if request.use_multi_query:
+        if scope.status == "resolved" and len(scope.documents) == 1:
+            plan = single_query_plan(planner_source="document_scope")
+        elif request.use_multi_query:
             plan = await self.plan_retrieval(
                 request.query,
                 request.llm_config,
@@ -344,54 +385,41 @@ class ChatService:
             else request.top_k
         )
 
-        target_filters: Dict[str, str] = {}
+        query_scopes: Dict[str, DocumentScope] = {}
+        blocked_queries: set[str] = set()
         target_resolutions: Dict[str, Dict[str, Any]] = {}
         target_resolution_status = "not_applicable"
         if plan.is_multi_query:
-            try:
-                filenames = await self.list_collection_filenames(
-                    request.collection_name,
-                    request.milvus_api_url,
-                )
-                for subquery in plan.subqueries:
-                    resolution = resolve_target_filename(subquery.target, filenames)
-                    target_resolutions[subquery.query_id] = resolution.to_dict()
-                    if resolution.filename:
-                        target_filters[subquery.query] = (
-                            f"filename == {json.dumps(resolution.filename, ensure_ascii=False)}"
-                        )
-                resolved_count = sum(
-                    item["status"] == "resolved"
-                    for item in target_resolutions.values()
-                )
-                if resolved_count == len(plan.subqueries):
-                    target_resolution_status = "complete"
-                elif resolved_count:
-                    target_resolution_status = "partial"
-                else:
-                    target_resolution_status = "unresolved"
-            except Exception as exc:
-                target_resolution_status = "catalog_error"
-                target_resolutions = {
-                    item.query_id: {
-                        "target": item.target,
-                        "status": "catalog_error",
-                        "filename": None,
-                        "score": 0.0,
-                        "reason": type(exc).__name__,
-                    }
-                    for item in plan.subqueries
-                }
+            permitted = scope.documents if scope.status == "resolved" else tuple(catalog)
+            filenames = [item['filename'] for item in permitted]
+            for subquery in plan.subqueries:
+                resolution = resolve_target_filename(subquery.target, filenames)
+                target_resolutions[subquery.query_id] = resolution.to_dict()
+                if resolution.filename:
+                    matched = tuple(d for d in permitted if d['filename'] == resolution.filename)
+                    query_scopes[subquery.query] = DocumentScope('resolved', matched, 'planner_target_within_scope')
+                elif scope.status == 'resolved':
+                    blocked_queries.add(subquery.query)
+                    scope_trace['skipped_queries'].append(subquery.query_id)
+            resolved_count = sum(item['status'] == 'resolved' for item in target_resolutions.values())
+            target_resolution_status = ('complete' if resolved_count == len(plan.subqueries)
+                                        else 'partial' if resolved_count else 'unresolved')
 
         async def retrieve(query: str) -> List[Dict[str, Any]]:
-            return await self.retrieve_documents(
+            if query in blocked_queries:
+                return []  # existing executor falls back to the scoped original
+            active_scope = query_scopes.get(query, scope)
+            documents = await self.retrieve_documents(
                 query=query,
                 collection_name=request.collection_name,
                 milvus_api_url=request.milvus_api_url,
                 top_k=candidate_k,
                 score_threshold=request.score_threshold,
-                filter_expr=target_filters.get(query),
+                filter_expr=active_scope.filter_expr,
             )
+            filtered = [d for d in documents if active_scope.allows(d) and scope.allows(d)]
+            scope_trace['dropped_candidates'] += len(documents) - len(filtered)
+            return filtered
 
         execution = await execute_retrieval_plan(
             original_query=request.query,
@@ -405,6 +433,7 @@ class ChatService:
         execution.trace["planner_latency_seconds"] = round(planner_latency, 4)
         execution.trace["target_resolution_status"] = target_resolution_status
         execution.trace["target_resolutions"] = target_resolutions
+        execution.trace["document_scope"] = scope_trace
         return execution
 
     async def rerank_for_request(
@@ -764,6 +793,68 @@ class ChatService:
                 detail=f"调用LLM失败: {str(e)}"
             )
 
+    async def call_llm_claims(self, messages, llm_config):
+        """One bounded structured generation call; no hidden retry/fallback."""
+        try:
+            async with AsyncOpenAI(api_key=llm_config.api_key, base_url=llm_config.api_url,
+                                   max_retries=0, timeout=60) as client:
+                response = await client.chat.completions.create(
+                    model=llm_config.model_name, messages=messages,
+                    temperature=llm_config.temperature, max_tokens=llm_config.max_tokens,
+                    response_format={"type": "json_object"}, stream=False)
+        except Exception:
+            # Do not let provider errors expose keys or raw request data via SSE.
+            raise HTTPException(status_code=502, detail="结构化回答服务调用失败，请稍后重试。") from None
+        if not response.choices:
+            raise ValueError('incomplete_claim_generation')
+        choice = response.choices[0]
+        if (choice.finish_reason != 'stop' or getattr(choice.message, 'refusal', None)
+                or not isinstance(choice.message.content, str) or not choice.message.content.strip()):
+            raise ValueError('incomplete_claim_generation')
+        return choice.message.content
+
+    async def generate_claim_bound_answer(self, request, documents):
+        sentence_mode = request.claim_evidence_mode == 'sentence_v2'
+        catalog_builder = evidence_units.build_catalog if sentence_mode else build_catalog
+        message_builder = evidence_units.build_messages if sentence_mode else build_messages
+        renderer = evidence_units.render_claim_answer if sentence_mode else render_claim_answer
+
+        def failed(status):
+            binding = empty_binding(status)
+            if sentence_mode:
+                binding['evidence_catalog_version'] = evidence_units.VERSION
+            return binding
+
+        try:
+            catalog = catalog_builder(documents)
+        except ValueError:
+            return CLAIM_EVIDENCE_ERROR, failed('invalid_claim_evidence')
+        messages = message_builder(request.query, catalog,
+            [msg.model_dump() for msg in request.history], request.prompt_template)
+        try:
+            raw = await self.call_llm_claims(messages, request.llm_config)
+        except ValueError:
+            return CLAIM_GENERATION_ERROR, failed('incomplete_claim_generation')
+        return renderer(raw, catalog)
+
+    async def generate_answer(self, request, documents, *, streaming):
+        """Shared dispatch; retain the legacy prompt and guard by default."""
+        if request.answer_mode == 'claim_bound':
+            answer, binding = await self.generate_claim_bound_answer(request, documents)
+            return answer, binding['status'], binding
+        template = request.prompt_template or self.default_prompt_template
+        user_message = template.format(context=self.format_context(documents), query=request.query)
+        messages = [dict(role=msg.role, content=msg.content) for msg in request.history if msg.role != 'system']
+        messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
+        messages.append({'role': 'user', 'content': user_message})
+        if streaming:
+            pending = [token async for token in self.call_llm_stream(messages, request.llm_config)]
+            raw = ''.join(pending)
+        else:
+            raw = await self.call_llm_non_stream(messages, request.llm_config)
+        answer, status = guard_answer(raw, len(documents))
+        return answer, status, None
+
     async def chat_stream(
         self,
         request: ChatRequest
@@ -833,40 +924,9 @@ class ChatService:
             else:
                 rerank_time = 0
 
-            # 3. 构建上下文
-            context = self.format_context(documents)
-
-            # 4. 构建prompt
-            prompt_template = request.prompt_template or self.default_prompt_template
-            user_message = prompt_template.format(
-                context=context,
-                query=request.query
-            )
-
-            # 5. 构建消息列表
-            messages = []
-
-            # 添加历史对话
-            for msg in request.history:
-                messages.append({
-                    "role": msg.role,
-                    "content": msg.content
-                })
-
-            # 添加当前问题
-            messages.append({
-                "role": "user",
-                "content": user_message
-            })
-
-            # 6. 调用LLM（流式）
-            messages = [message for message in messages if message['role'] != 'system']
-            messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
+            # 3-6. Generate and validate the selected format before emitting text.
             llm_start = time.time()
-            pending_answer = []
-            async for token in self.call_llm_stream(messages, request.llm_config):
-                pending_answer.append(token)
-            answer, guard_status = guard_answer(''.join(pending_answer), len(documents))
+            answer, guard_status, citation_binding = await self.generate_answer(request, documents, streaming=True)
             # Validate before emitting any text; token fragments can split citations.
             for token in (answer,):
                 yield json.dumps({
@@ -909,6 +969,7 @@ class ChatService:
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
                     "answer_guard": guard_status,
+                    **({'citation_binding': citation_binding} if citation_binding is not None else {}),
                     "total_time": total_time,
                     "documents_count": len(documents),
                     "retrieval_trace": retrieval_trace,
@@ -1001,34 +1062,9 @@ class ChatService:
             else:
                 rerank_time = 0
 
-            # 3. 构建上下文
-            context = self.format_context(documents)
-
-            # 4. 构建prompt
-            prompt_template = request.prompt_template or self.default_prompt_template
-            user_message = prompt_template.format(
-                context=context,
-                query=request.query
-            )
-
-            # 5. 构建消息列表
-            messages = []
-            for msg in request.history:
-                messages.append({
-                    "role": msg.role,
-                    "content": msg.content
-                })
-            messages.append({
-                "role": "user",
-                "content": user_message
-            })
-
-            # 6. 调用LLM（非流式）
-            messages = [message for message in messages if message['role'] != 'system']
-            messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
+            # 3-6. Same contract and guard as the streaming endpoint.
             llm_start = time.time()
-            answer = await self.call_llm_non_stream(messages, request.llm_config)
-            answer, guard_status = guard_answer(answer, len(documents))
+            answer, guard_status, citation_binding = await self.generate_answer(request, documents, streaming=False)
             llm_time = time.time() - llm_start
 
             # 7. 构建来源文档
@@ -1075,12 +1111,15 @@ class ChatService:
                     "rerank_time": rerank_time,
                     "llm_time": llm_time,
                     "answer_guard": guard_status,
+                    **({'citation_binding': citation_binding} if citation_binding is not None else {}),
                     "total_time": total_time,
                     "documents_count": len(documents),
                     "retrieval_trace": retrieval_trace,
                 }
             )
 
+        except HTTPException:
+            raise
         except Exception as e:
             import traceback
             error_trace = traceback.format_exc()
@@ -1153,6 +1192,8 @@ async def chat(request: ChatRequest):
             # 非流式返回
             return await service.chat_non_stream(request)
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
