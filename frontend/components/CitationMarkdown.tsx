@@ -1,8 +1,11 @@
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkEvidenceCitations from '../src/remarkEvidenceCitations';
+import 'katex/dist/katex.min.css';
 
 import {
   buildSourceMap,
-  linkifyCitationMarkers,
   sourceIdFromEvidenceHref,
   type CitationSource,
 } from '../src/citations';
@@ -18,6 +21,8 @@ export function CitationMarkdown({ content, sources = [], onSelectSource }: Cita
 
   return (
     <ReactMarkdown
+      remarkPlugins={[remarkMath, remarkEvidenceCitations]}
+      rehypePlugins={[[rehypeKatex, { trust: false, maxExpand: 1000 }]]}
       components={{
         h1: ({ node: _node, ...props }) => <h1 className="mb-3 text-xl font-semibold text-slate-950" {...props} />,
         h2: ({ node: _node, ...props }) => <h2 className="mb-2 mt-5 text-lg font-semibold text-slate-950" {...props} />,
@@ -57,7 +62,7 @@ export function CitationMarkdown({ content, sources = [], onSelectSource }: Cita
         },
       }}
     >
-      {linkifyCitationMarkers(content)}
+      {content}
     </ReactMarkdown>
   );
 }

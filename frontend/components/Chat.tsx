@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 
 import { config } from '../src/config';
 import { type CitationSource } from '../src/citations';
+import { retrievalOptions, type RetrievalMode } from '../src/retrievalMode';
 import { AnswerSources } from './AnswerSources';
 import { CitationMarkdown } from './CitationMarkdown';
 import { EvidenceDrawer } from './EvidenceDrawer';
@@ -79,6 +80,7 @@ export function Chat() {
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
   const [selectedEvidence, setSelectedEvidence] = useState<SelectedEvidence | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>('dense');
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [llmConfig, setLLMConfig] = useState<LLMConfig>({
@@ -223,6 +225,7 @@ export function Chat() {
           llm_config: llmConfig,
           top_k: 10,
           score_threshold: 0.1,
+          ...retrievalOptions(retrievalMode),
           use_reranker: false,
           stream: true,
           return_source: true,
@@ -286,6 +289,7 @@ export function Chat() {
   };
 
   const handleNewChat = () => {
+    if (isLoading) return;
     setMessages([]);
     setCurrentSessionId(null);
     setSelectedEvidence(null);
@@ -293,6 +297,7 @@ export function Chat() {
   };
 
   const loadSession = (session: ChatSession) => {
+    if (isLoading) return;
     setMessages(session.messages);
     setCurrentSessionId(session.id);
     setSelectedEvidence(null);
@@ -304,6 +309,7 @@ export function Chat() {
 
   const deleteSession = (sessionId: string, event: React.MouseEvent) => {
     event.stopPropagation();
+    if (isLoading) return;
     const updatedSessions = chatSessions.filter((session) => session.id !== sessionId);
     setChatSessions(updatedSessions);
     localStorage.setItem('chat_sessions', JSON.stringify(updatedSessions));
@@ -318,6 +324,16 @@ export function Chat() {
     setSelectedEvidence({ sourceId, source });
   };
 
+  const handleKnowledgeBaseChange = (collectionId: string) => {
+    if (isLoading || collectionId === selectedKB?.collection_id) return;
+    // Never relabel an existing conversation or send its history to a new KB.
+    setMessages([]);
+    setCurrentSessionId(null);
+    setSelectedEvidence(null);
+    setMessage('');
+    setSelectedKB(knowledgeBases.find(item => item.collection_id === collectionId) ?? null);
+  };
+
   return (
     <div className="relative flex h-[calc(100vh-64px)] overflow-hidden bg-[#f8f8fb]">
       <aside className="hidden w-[252px] flex-col border-r border-slate-200 bg-white xl:flex">
@@ -329,6 +345,7 @@ export function Chat() {
           <button
             type="button"
             onClick={handleNewChat}
+            disabled={isLoading}
             className={buttonStyles({ variant: 'secondary', size: 'sm', iconOnly: true })}
             aria-label="新建对话"
           >
@@ -354,6 +371,7 @@ export function Chat() {
               <button
                 type="button"
                 onClick={() => loadSession(session)}
+                disabled={isLoading}
                 className="min-w-0 flex-1 p-3 text-left"
               >
                 <div className="min-w-0">
@@ -375,6 +393,7 @@ export function Chat() {
               <button
                 type="button"
                 onClick={(event) => deleteSession(session.id, event)}
+                disabled={isLoading}
                 className={buttonStyles({ variant: 'danger', size: 'sm', iconOnly: true, className: 'mr-2 mt-2 opacity-0 group-hover:opacity-100' })}
                 aria-label={`删除对话 ${session.title}`}
               >
@@ -386,7 +405,7 @@ export function Chat() {
       </aside>
 
       <section className="flex min-w-0 flex-1 flex-col">
-        <div className="flex min-h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-3 md:px-7">
+        <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 md:px-7">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-violet-600" />
@@ -394,18 +413,14 @@ export function Chat() {
             </div>
             <p className="mt-1 truncate text-xs text-slate-500">回答中的引用可点击核对原文</p>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="relative hidden sm:block">
+          <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
+            <label className="relative block min-w-0 flex-1 sm:flex-none">
               <span className="sr-only">选择知识库</span>
               <select
                 value={selectedKB?.collection_id || ''}
-                onChange={(event) => {
-                  const knowledgeBase = knowledgeBases.find(
-                    (item) => item.collection_id === event.target.value,
-                  );
-                  setSelectedKB(knowledgeBase ?? null);
-                }}
-                className="max-w-[220px] appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-9 text-sm text-slate-700 outline-none transition hover:border-violet-300 focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                onChange={(event) => handleKnowledgeBaseChange(event.target.value)}
+                disabled={isLoading}
+                className="w-full min-w-0 appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-9 text-sm text-slate-700 outline-none transition hover:border-violet-300 focus:border-violet-400 focus:ring-2 focus:ring-violet-100 sm:max-w-[220px]"
               >
                 {knowledgeBases.length === 0 && <option value="">暂无知识库</option>}
                 {knowledgeBases.map((knowledgeBase) => (
@@ -416,6 +431,11 @@ export function Chat() {
               </select>
               <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
             </label>
+            <button type="button" onClick={handleNewChat} disabled={isLoading}
+              aria-label="窄屏新建对话"
+              className={buttonStyles({ variant: 'secondary', iconOnly: true, className: 'shrink-0 xl:hidden' })}>
+              <Plus size={17} />
+            </button>
             <button
               type="button"
               onClick={() => setShowSettings((visible) => !visible)}
@@ -427,6 +447,21 @@ export function Chat() {
           </div>
         </div>
 
+        <label className="block border-b border-slate-200 bg-white px-4 pb-3 xl:hidden">
+          <span className="sr-only">历史对话</span>
+          <select aria-label="历史对话" value={currentSessionId ?? ''} disabled={isLoading}
+            onChange={(event) => {
+              const session = chatSessions.find(item => item.id === event.target.value);
+              if (session) loadSession(session); else handleNewChat();
+            }}
+            className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+            <option value="">新对话</option>
+            {chatSessions.map(session => <option key={session.id} value={session.id}>
+              {session.title} · {session.knowledgeBaseName}
+            </option>)}
+          </select>
+        </label>
+
         <AnimatePresence initial={false}>
           {showSettings && (
             <motion.div
@@ -436,6 +471,19 @@ export function Chat() {
               className="overflow-hidden border-b border-slate-200 bg-white"
             >
               <div className="grid gap-4 px-5 py-4 md:grid-cols-3 md:px-7">
+                <label className="text-xs font-medium text-slate-500">
+                  检索方式
+                  <select
+                    value={retrievalMode}
+                    disabled={isLoading}
+                    onChange={(event) => setRetrievalMode(event.target.value as RetrievalMode)}
+                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-violet-400 disabled:opacity-50"
+                  >
+                    <option value="dense">Dense · 向量检索（默认）</option>
+                    <option value="hybrid">Hybrid · BM25 + Dense + RRF</option>
+                  </select>
+                  <span className="mt-1 block font-normal">Hybrid 同时检索关键词与语义；复用原有向量，不重新入库。</span>
+                </label>
                 <label className="text-xs font-medium text-slate-500">
                   模型
                   <select

@@ -423,6 +423,8 @@ def _query_rrf(
     fused = list(fused_by_id.values())
     for item in fused:
         item["score"] = float(item["query_rrf_score"])
+        if item.get("retrieval_mode") == "hybrid":
+            item["score_type"] = "query_rrf"
     return sorted(
         fused,
         key=lambda item: (

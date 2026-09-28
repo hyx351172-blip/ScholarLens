@@ -20,7 +20,22 @@ The replay copies frozen artifacts into a new immutable directory under
 - `run.json`: normalized machine-readable result;
 - `report.md`: human-readable acceptance report.
 
+## Hybrid retrieval artifact replay
+
+BM25 + Dense + RRF has a separate zero-call artifact replay:
+
+```powershell
+python -m harness run --config harness/configs/hybrid-search-ab-replay-v1.json
+```
+
+This extracts Dense/Hybrid metrics from both previously used datasets. It does
+not rerun retrieval or models. Its PASS checks artifact execution and zero API
+calls, not adoption quality; MRR/NDCG regressions remain visible. See the
+[hybrid A/B report](../docs/evaluation/hybrid-search-ab-20260928.md) for the
+historical Top-10 replay limits and commands to rebuild BM25 offline.
+
 ## Live answer-quality run
+
 
 The live configuration invokes the existing target-grounding and
 answer-citation evaluators. It uses the configured model API and therefore can

@@ -20,6 +20,13 @@ export interface CitationSource {
   query_rrf_score?: number;
   matched_query_ids?: string[];
   query_ranks?: Record<string, number>;
+  retrieval_mode?: string | null;
+  score_type?: string | null;
+  dense_score?: number | null;
+  bm25_score?: number | null;
+  hybrid_rrf_score?: number | null;
+  branch_ranks?: Record<string, number> | null;
+  section_boost?: number | null;
   metadata: CitationMetadata;
 }
 

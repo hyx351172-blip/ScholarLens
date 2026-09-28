@@ -4,6 +4,7 @@ RAG对话模块 - FastAPI接口版本
 """
 import asyncio
 import json
+import re
 import time
 import uuid
 import os
@@ -22,7 +23,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 try:
-    from backend.chat.answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
+    from backend.chat.answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE, identity_history
     from backend.chat.claim_bound_answer import build_catalog, build_messages
     from backend.chat.claim_bound_output_v2 import (
         render_claim_answer, empty_binding, CLAIM_EVIDENCE_ERROR, CLAIM_GENERATION_ERROR,
@@ -32,6 +33,7 @@ try:
     from backend.chat.multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
+        RetrievalSubquery,
         create_query_plan,
         execute_retrieval_plan,
         resolve_target_filename,
@@ -39,7 +41,7 @@ try:
     )
     from backend.chat.section_intent_retrieval import rerank_section_intent
 except ModuleNotFoundError:  # Direct execution from backend/chat.
-    from answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE
+    from answer_guard import guard_answer, GROUNDING_POLICY, INSUFFICIENT_EVIDENCE, identity_history
     from claim_bound_answer import build_catalog, build_messages
     from claim_bound_output_v2 import (
         render_claim_answer, empty_binding, CLAIM_EVIDENCE_ERROR, CLAIM_GENERATION_ERROR,
@@ -49,6 +51,7 @@ except ModuleNotFoundError:  # Direct execution from backend/chat.
     from multi_query_retrieval import (
         RetrievalExecution,
         RetrievalPlan,
+        RetrievalSubquery,
         create_query_plan,
         execute_retrieval_plan,
         resolve_target_filename,
@@ -114,6 +117,12 @@ class SourceDocument(BaseModel):
     query_rrf_score: Optional[float] = None
     matched_query_ids: Optional[List[str]] = None
     query_ranks: Optional[Dict[str, int]] = None
+    retrieval_mode: Optional[str] = None
+    score_type: Optional[str] = None
+    dense_score: Optional[float] = None
+    bm25_score: Optional[float] = None
+    hybrid_rrf_score: Optional[float] = None
+    branch_ranks: Optional[Dict[str, int]] = None
     section_intent: Optional[str] = None
     section_boost: Optional[float] = None
     metadata: Dict[str, Any] = {}
@@ -127,9 +136,10 @@ class ChatRequest(BaseModel):
     # 召回配置
     top_k: int = Field(10, ge=1, le=50, description="召回文档数量")
     score_threshold: float = Field(0.1, ge=0.0, le=1.0, description="相似度阈值")
+    retrieval_mode: Literal["dense", "hybrid"] = Field("dense", description="Dense 或 BM25 + Dense + RRF")
 
-    # 跨论文多查询召回（默认关闭，保持旧接口行为）
-    use_multi_query: bool = Field(False, description="是否启用自动问题拆分和多路召回")
+    # The switch controls LLM planning, not required named-paper coverage.
+    use_multi_query: bool = Field(False, description="是否启用模型问题拆分；明确命名的多篇论文始终分别检索")
     multi_query_config: MultiQueryConfig = Field(default_factory=MultiQueryConfig)
 
     # 重排序配置
@@ -178,7 +188,8 @@ class ChatService:
 5. 每条列表项尽量只写一个事实句；如含多个事实句，则每句分别引用。
 6. 比较类问题必须分别回答每个比较对象，并引用支持各对象的证据。
 7. 不要使用检索证据之外的知识补全；证据不足时明确说明缺少什么。
-8. 回答保持紧凑，删除没有证据或仅重复后文的引言，不要单独列出未在正文中使用的参考文献列表。"""
+8. 回答保持紧凑，删除没有证据或仅重复后文的引言，不要单独列出未在正文中使用的参考文献列表。
+9. 只回答所问的比较维度；例如仅比较架构时，分别说明各论文的架构，不附加训练任务或下游用途。每句话的全部细节都必须由该句引用的原文支持。"""
 
     async def retrieve_documents(
         self,
@@ -188,6 +199,7 @@ class ChatService:
         top_k: int = 10,
         score_threshold: float = 0.1,
         filter_expr: Optional[str] = None,
+        retrieval_mode: Literal["dense", "hybrid"] = "dense",
     ) -> List[Dict[str, Any]]:
         """
         从Milvus召回相关文档
@@ -216,13 +228,16 @@ class ChatService:
                 "top_k": candidate_top_k,
                 "filter_expr": filter_expr,
             }
+            if retrieval_mode == "hybrid":
+                payload.update(retrieval_mode="hybrid", hybrid_candidate_k=candidate_top_k,
+                               dense_score_threshold=score_threshold)
 
             print(f"正在从Milvus召回文档: {url}")
             response = await asyncio.to_thread(
                 requests.post,
                 url,
                 json=payload,
-                timeout=30,
+                timeout=60 if retrieval_mode == "hybrid" else 30,
             )
 
             if response.status_code != 200:
@@ -242,10 +257,15 @@ class ChatService:
             documents = result.get("results", [])
 
             # 过滤低于阈值的文档
-            filtered_docs = [
-                doc for doc in documents
-                if doc["score"] >= score_threshold
-            ]
+            if retrieval_mode == "hybrid":
+                if any(doc.get("score_type") != "hybrid_rrf" or
+                       doc.get("hybrid_rrf_score") is None for doc in documents):
+                    raise HTTPException(status_code=502, detail="Invalid Hybrid retrieval score contract")
+                # Thresholding has already been applied to Dense in /search.
+                # A positive lexical hit has no cosine score; RRF is not cosine.
+                filtered_docs = documents
+            else:
+                filtered_docs = [doc for doc in documents if doc["score"] >= score_threshold]
             ranked_docs = rerank_section_intent(query, filtered_docs)
             section_matches = [
                 doc for doc in ranked_docs
@@ -359,6 +379,13 @@ class ChatService:
             raise HTTPException(status_code=503, detail="无法读取论文目录，已停止检索；请检查知识库服务后重试。") from exc
         scope = resolve_document_scope(request.query, catalog)
         scope_trace = dict(scope.to_dict(), dropped_candidates=0, skipped_queries=[])
+        named_comparison = scope.status == 'resolved' and len(scope.documents) > 1
+        if named_comparison and (len(scope.documents) > 3 or request.top_k < len(scope.documents)):
+            return RetrievalExecution(documents=[], trace={
+                'mode': 'scope_blocked', 'fallback_reason': 'insufficient_named_paper_budget',
+                'queries': [], 'final_count': 0,
+                'document_scope': dict(scope_trace, coverage_status='incomplete'),
+            })
         if scope.status in {"ambiguous", "unresolved"}:
             return RetrievalExecution(documents=[], trace={
                 "mode": "scope_blocked", "fallback_reason": scope.reason,
@@ -377,6 +404,14 @@ class ChatService:
             )
         else:
             plan = single_query_plan(planner_source="disabled")
+        if named_comparison and not plan.is_multi_query:
+            # Exact catalog identities, bounded to three papers. No paid planner,
+            # paraphrasing or switch-dependent loss of a comparison target.
+            plan = RetrievalPlan(mode='comparison', planner_source='catalog_scope', subqueries=tuple(
+                RetrievalSubquery(f'catalog_{i}', doc['filename'],
+                                  f"{doc['filename']}\n{request.query}")
+                for i, doc in enumerate(scope.documents, 1)
+            ))
         planner_latency = time.perf_counter() - planner_started
 
         candidate_k = (
@@ -416,24 +451,42 @@ class ChatService:
                 top_k=candidate_k,
                 score_threshold=request.score_threshold,
                 filter_expr=active_scope.filter_expr,
+                **({"retrieval_mode": "hybrid"} if request.retrieval_mode == "hybrid" else {}),
             )
             filtered = [d for d in documents if active_scope.allows(d) and scope.allows(d)]
             scope_trace['dropped_candidates'] += len(documents) - len(filtered)
             return filtered
 
+        original_reserve = request.multi_query_config.original_reserve
+        per_target_reserve = request.multi_query_config.per_target_reserve
+        if named_comparison:
+            # Even top_k=2 must reserve one slot per requested paper, rather
+            # than falling back to an unbalanced union query.
+            per_target_reserve = max(1, min(per_target_reserve, request.top_k // len(plan.subqueries)))
+            original_reserve = max(0, min(original_reserve,
+                                         request.top_k - per_target_reserve * len(plan.subqueries)))
         execution = await execute_retrieval_plan(
             original_query=request.query,
             plan=plan,
             retrieve=retrieve,
             top_k=request.top_k,
             rrf_k=request.multi_query_config.rrf_k,
-            original_reserve=request.multi_query_config.original_reserve,
-            per_target_reserve=request.multi_query_config.per_target_reserve,
+            original_reserve=original_reserve,
+            per_target_reserve=per_target_reserve,
         )
         execution.trace["planner_latency_seconds"] = round(planner_latency, 4)
         execution.trace["target_resolution_status"] = target_resolution_status
         execution.trace["target_resolutions"] = target_resolutions
         execution.trace["document_scope"] = scope_trace
+        execution.trace["retrieval_mode"] = request.retrieval_mode
+        if named_comparison:
+            missing = [doc['filename'] for doc in scope.documents if not any(
+                DocumentScope('resolved', (doc,)).allows(hit) for hit in execution.documents)]
+            scope_trace.update(coverage_status='incomplete' if missing else 'complete', missing_documents=missing)
+            if missing:
+                execution.trace.update(mode='scope_blocked', fallback_reason='incomplete_named_paper_coverage',
+                                       discarded_count=len(execution.documents), final_count=0)
+                return RetrievalExecution(documents=[], trace=execution.trace)
         return execution
 
     async def rerank_for_request(
@@ -457,11 +510,27 @@ class ChatService:
                 model_name=reranker_config.model_name,
                 top_n=len(documents),
             )
-        return await self.rerank_documents(
+        reranked = await self.rerank_documents(
             query=request.query,
             documents=documents,
             reranker_config=reranker_config,
         )
+        scope_trace = retrieval_trace.get('document_scope', {})
+        if scope_trace.get('coverage_status') == 'complete':
+            # A provider may return fewer rows than top_n. Do not let reranking
+            # undo the named-paper guarantee established by retrieval.
+            ids = scope_trace.get('file_ids', [])
+            names = scope_trace.get('filenames', [])
+            catalog = list({(d.get('file_id') or (d.get('metadata') or {}).get('file_id'), d['filename']):
+                            {'file_id': d.get('file_id') or (d.get('metadata') or {}).get('file_id'),
+                             'filename': d['filename']} for d in documents}.values())
+            required = [d for d in catalog if d['file_id'] in ids or (not d['file_id'] and d['filename'] in names)]
+            missing = [d['filename'] for d in required if not any(DocumentScope('resolved', (d,)).allows(h) for h in reranked)]
+            if missing:
+                scope_trace.update(coverage_status='incomplete', missing_documents=missing)
+                retrieval_trace.update(mode='scope_blocked', fallback_reason='reranker_lost_named_paper_coverage', final_count=0)
+                return []
+        return reranked
 
     async def rerank_documents(
         self,
@@ -680,6 +749,9 @@ class ChatService:
             rerank_time = time.time() - rerank_start
             print(f"✓ 重排序完成，保留 {len(reranked_docs)} 个文档 (耗时: {rerank_time:.2f}秒)")
 
+            for document in reranked_docs:
+                if document.get("retrieval_mode") == "hybrid":
+                    document["score_type"] = "reranker"
             return reranked_docs
 
         except Exception as e:
@@ -725,9 +797,11 @@ class ChatService:
                 else:
                     page_info = f"(第{page_start}-{page_end}页)"
 
-            context_parts.append(
-                f"[S{i}] 来源: {filename}{page_info} | 相关度: {score:.3f}\n{text}"
-            )
+            # RRF rank scores are neither cosine similarity nor confidence.
+            # Keep them in source provenance, not a misleading prompt label.
+            rank_info = ("检索方式: Hybrid（关键词 + 语义）"
+                         if doc.get("retrieval_mode") == "hybrid" else f"相关度: {score:.3f}")
+            context_parts.append(f"[S{i}] 来源: {filename}{page_info} | {rank_info}\n{text}")
 
         return "\n\n".join(context_parts)
 
@@ -830,7 +904,7 @@ class ChatService:
         except ValueError:
             return CLAIM_EVIDENCE_ERROR, failed('invalid_claim_evidence')
         messages = message_builder(request.query, catalog,
-            [msg.model_dump() for msg in request.history], request.prompt_template)
+            identity_history([msg.model_dump() for msg in request.history]), request.prompt_template)
         try:
             raw = await self.call_llm_claims(messages, request.llm_config)
         except ValueError:
@@ -839,20 +913,35 @@ class ChatService:
 
     async def generate_answer(self, request, documents, *, streaming):
         """Shared dispatch; retain the legacy prompt and guard by default."""
+        if not documents:
+            return INSUFFICIENT_EVIDENCE, 'no_evidence', None
         if request.answer_mode == 'claim_bound':
             answer, binding = await self.generate_claim_bound_answer(request, documents)
             return answer, binding['status'], binding
         template = request.prompt_template or self.default_prompt_template
         user_message = template.format(context=self.format_context(documents), query=request.query)
-        messages = [dict(role=msg.role, content=msg.content) for msg in request.history if msg.role != 'system']
-        messages.insert(0, {'role': 'system', 'content': GROUNDING_POLICY})
-        messages.append({'role': 'user', 'content': user_message})
+        history = identity_history([msg.model_dump() for msg in request.history])
+        if history:
+            user_message = ('历史用户问题（仅用于理解指代，不是证据）：\n'
+                            + json.dumps(history, ensure_ascii=False) + '\n\n' + user_message)
+        messages = [{'role': 'system', 'content': GROUNDING_POLICY},
+                    {'role': 'user', 'content': user_message}]
         if streaming:
             pending = [token async for token in self.call_llm_stream(messages, request.llm_config)]
             raw = ''.join(pending)
         else:
             raw = await self.call_llm_non_stream(messages, request.llm_config)
         answer, status = guard_answer(raw, len(documents))
+        # Structural coverage only: this cannot prove sentence-level entailment.
+        catalog = list({(doc.get('file_id') or (doc.get('metadata') or {}).get('file_id'), doc['filename']):
+                        {'file_id': doc.get('file_id') or (doc.get('metadata') or {}).get('file_id'),
+                         'filename': doc['filename']} for doc in documents}.values())
+        scope = resolve_document_scope(request.query, catalog)
+        if scope.status == 'resolved' and len(scope.documents) > 1 and status in {'passed', 'normalized_citations'}:
+            cited = [documents[int(i)-1] for i in re.findall(r'\[S([1-9]\d*)\]', answer)]
+            if any(not any(DocumentScope('resolved', (doc,)).allows(hit) for hit in cited)
+                   for doc in scope.documents):
+                return INSUFFICIENT_EVIDENCE, 'incomplete_cited_document_coverage', None
         return answer, status, None
 
     async def chat_stream(
@@ -950,6 +1039,12 @@ class ChatService:
                         "query_rrf_score": doc.get("query_rrf_score"),
                         "matched_query_ids": doc.get("matched_query_ids"),
                         "query_ranks": doc.get("query_ranks"),
+                        "retrieval_mode": doc.get("retrieval_mode"),
+                        "score_type": doc.get("score_type"),
+                        "dense_score": doc.get("dense_score"),
+                        "bm25_score": doc.get("bm25_score"),
+                        "hybrid_rrf_score": doc.get("hybrid_rrf_score"),
+                        "branch_ranks": doc.get("branch_ranks"),
                         "section_intent": doc.get("section_intent"),
                         "section_boost": doc.get("section_boost"),
                         "metadata": doc.get("metadata", {})
@@ -1083,6 +1178,12 @@ class ChatService:
                         query_rrf_score=doc.get("query_rrf_score"),
                         matched_query_ids=doc.get("matched_query_ids"),
                         query_ranks=doc.get("query_ranks"),
+                        retrieval_mode=doc.get("retrieval_mode"),
+                        score_type=doc.get("score_type"),
+                        dense_score=doc.get("dense_score"),
+                        bm25_score=doc.get("bm25_score"),
+                        hybrid_rrf_score=doc.get("hybrid_rrf_score"),
+                        branch_ranks=doc.get("branch_ranks"),
                         section_intent=doc.get("section_intent"),
                         section_boost=doc.get("section_boost"),
                         metadata=doc.get("metadata", {})

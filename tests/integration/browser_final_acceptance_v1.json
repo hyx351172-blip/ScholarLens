@@ -1,0 +1,44 @@
+{
+  "id": "browser-final-20260927",
+  "role": "development browser acceptance, not held-out or full benchmark",
+  "application_commit": "005c440d1408c685b74b399e722b7456d167080c",
+  "source_cases": "tests/integration/run_multipaper_journey.py::CASES",
+  "entrypoint": "http://localhost:5173",
+  "transport": "browser UI, including native webpage file chooser and streaming chat",
+  "scope": {
+    "papers": ["1706.03762_attention-is-all-you-need.pdf", "1810.04805_bert.pdf"],
+    "pages": 31,
+    "max_chat_submissions": 8,
+    "extraction_mode": "docling",
+    "vlm_repair": false,
+    "top_k": 10,
+    "score_threshold": 0.1,
+    "reranker": false,
+    "multi_query": false,
+    "answer_mode": "legacy",
+    "max_output_tokens": 2000,
+    "paid_judge": false,
+    "manual_retries": false,
+    "sdk_retries": "existing application behavior, not modified"
+  },
+  "cases": [
+    {"id":"A01","question":"Attention Is All You Need 论文提出什么模型？其核心架构是什么？","expected":"Transformer; encoder-decoder; attention replacing recurrence/convolution","answerable":true,"targets":["attention"]},
+    {"id":"A02","question":"Attention Is All You Need 表2中 Transformer big 的 EN-DE 和 EN-FR BLEU 分别是多少？","expected":"Table 2, PDF p8: 28.4 / 41.8; distinguish prose 41.0","answerable":true,"targets":["attention"]},
+    {"id":"A03","question":"Attention Is All You Need 的缩放点积注意力公式是什么，为什么要除以根号 d_k？","expected":"softmax(QK^T/sqrt(d_k))V; control dot-product scale and small softmax gradients","answerable":true,"targets":["attention"]},
+    {"id":"B01","question":"BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding 使用哪两个预训练任务？","expected":"Masked language modeling and next sentence prediction; switch target from prior Attention history","answerable":true,"targets":["bert"]},
+    {"id":"B03","question":"BERT 的 MLM 选取多少比例的 token？选中后 MASK、随机替换、保持不变各占多少？","expected":"15% selected; conditional 80%/10%/10%","answerable":true,"targets":["bert"]},
+    {"id":"X01","question":"比较 Attention Is All You Need 与 BERT 的模型架构：前者是否包含编码器和解码器，后者采用什么结构？","expected":"Attention encoder-decoder vs BERT bidirectional encoder; cite both papers","answerable":true,"targets":["attention","bert"]},
+    {"id":"A04","question":"仅依据 Attention Is All You Need：论文报告的 GPT-4 在 MMLU 上的准确率是多少？","expected":"Insufficient evidence; no fabricated score or unrelated background answer","answerable":false,"targets":["attention"]},
+    {"id":"E01","question":"请总结这个知识库里论文的主要方法。","expected":"Empty knowledge base: abstain, no sources, no prior chat citations","answerable":false,"targets":[]}
+  ],
+  "review_boundary": "Expected facts reused from prior development acceptance; AI source checks are not independent human Gold or citation entailment benchmark scores.",
+  "acceptance": [
+    "UI file selection, upload and processing are actually exercised; API upload is not a substitute",
+    "Exactly two expected documents have completed indexing and positive consistent chunk counts",
+    "Answerable cases cover expected facts and cite the intended paper(s)",
+    "Citation drawer text, paper and page can be checked against the uploaded PDF",
+    "No-answer and empty-library cases do not fabricate an answer or reuse stale sources",
+    "Refresh retains indexed document visibility",
+    "Retain errors and failed cases; do not change application code or scoring during the run"
+  ]
+}
