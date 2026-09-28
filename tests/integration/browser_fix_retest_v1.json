@@ -1,0 +1,50 @@
+{
+  "suite_id": "browser_fix_retest_v1_20260927",
+  "purpose": "Bounded live browser regression after the initial 8-question acceptance; keep original results unchanged.",
+  "authorization": {
+    "user_reply": "好的",
+    "scope": "At most two browser questions using existing Attention/BERT knowledge base; query embedding and answer generation through the configured Aliyun Bailian API.",
+    "max_browser_submissions": 2,
+    "max_output_tokens_per_generation": 2000,
+    "manual_retries": 0,
+    "sdk_retries_may_add_calls": true,
+    "upload": false,
+    "llm_planner": false,
+    "reranker": false,
+    "external_judge": false
+  },
+  "knowledge_base": {
+    "name": "Browser-final-mixed-20260927",
+    "id": "kb_1790514518399",
+    "file_ids": ["file_20260927_fd0fd2ca", "file_20260927_8852afba"]
+  },
+  "model": "qwen3-vl-plus",
+  "temperature": 0.7,
+  "same_conversation": true,
+  "cases": [
+    {
+      "id": "X01-R1",
+      "original_case": "X01",
+      "question": "比较 Attention Is All You Need 与 BERT 的模型架构：前者是否包含编码器和解码器，后者采用什么结构？",
+      "checks": [
+        "Evidence covers both Attention and BERT",
+        "Answer identifies Attention encoder-decoder and BERT bidirectional Transformer encoder",
+        "Attention claims cite Attention evidence and BERT claims cite BERT evidence",
+        "Citation buttons open the matching document/page/chunk"
+      ]
+    },
+    {
+      "id": "B03-R1",
+      "original_case": "B03",
+      "question": "BERT 的 MLM 选取多少比例的 token？选中后 MASK、随机替换、保持不变各占多少？",
+      "checks": [
+        "Same conversation switches from comparison to BERT-only evidence",
+        "Answer distinguishes 15 percent selected from conditional 80/10/10 replacement ratios",
+        "No Attention or stale source attribution",
+        "Citation buttons open the matching BERT document/page/chunk"
+      ]
+    }
+  ],
+  "stop_rule": "Never exceed two submissions or manually retry failed generation. Preserve failures and report them. Do not commit/push or alter frozen historical hashes.",
+  "output_directory": "output/browser-fix-retest-20260927"
+}

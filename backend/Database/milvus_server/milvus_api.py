@@ -1,8 +1,9 @@
 import uuid
+import asyncio
 import json
 import os
 import time
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Literal
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -11,11 +12,18 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType, utility
 from dotenv import load_dotenv
 
 from embedding_client import EmbeddingAPIError, request_embeddings
+try:
+    from .hybrid_search import BM25Index, fuse_rrf, identity
+except ImportError:  # Existing launchers run this service as a standalone script.
+    from hybrid_search import BM25Index, fuse_rrf, identity
+
+HYBRID_MAX_CHUNKS = 20_000
+HYBRID_MAX_TEXT_BYTES = 64 * 1024 * 1024
 
 # 加载仓库根目录 .env 文件
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -60,8 +68,11 @@ class UploadResponse(BaseModel):
 class SearchRequest(BaseModel):
     collection_name: str
     query_text: str
-    top_k: int = 10
+    top_k: int = Field(10, ge=1)
     filter_expr: Optional[str] = None
+    retrieval_mode: Literal["dense", "hybrid"] = "dense"
+    hybrid_candidate_k: int = Field(50, ge=1, le=500)
+    dense_score_threshold: float = Field(0.0, ge=-1.0, le=1.0)
 
 class SearchByFilenameRequest(BaseModel):
     collection_name: str
@@ -559,12 +570,65 @@ class MilvusRAGService:
             print(f"插入文档失败: {e}")
             raise HTTPException(status_code=500, detail=f"插入文档失败: {str(e)}")
 
+    def _read_hybrid_corpus(self, collection: Any, filter_expr: Optional[str]) -> List[Dict]:
+        """Complete current scoped rows; no stale cache or silent truncation."""
+        iterator = collection.query_iterator(
+            batch_size=500, limit=-1, expr=filter_expr,
+            output_fields=["id", "chunk_text", "filename", "file_id", "metadata", "created_at"],
+            consistency_level="Strong", timeout=15,
+        )
+        rows = []
+        text_bytes = 0
+        started = time.monotonic()
+        try:
+            while True:
+                if time.monotonic() - started > 15:
+                    raise HTTPException(status_code=503, detail="Hybrid corpus scan timed out")
+                batch = iterator.next()
+                if not batch:
+                    break
+                if len(rows) + len(batch) > HYBRID_MAX_CHUNKS:
+                    raise HTTPException(status_code=413, detail=
+                        f"Hybrid corpus exceeds {HYBRID_MAX_CHUNKS} chunks; use a narrower paper scope")
+                for row in batch:
+                    text_bytes += len(str(row.get("chunk_text") or "").encode("utf-8"))
+                    if text_bytes > HYBRID_MAX_TEXT_BYTES:
+                        raise HTTPException(status_code=413, detail="Hybrid corpus text exceeds 64 MiB; use a narrower paper scope")
+                    metadata = row.get("metadata") or {}
+                    if isinstance(metadata, str):
+                        metadata = json.loads(metadata)
+                    rows.append(dict(row, metadata=metadata))
+        finally:
+            iterator.close()
+        return rows
+
     def search_by_text(self, collection_name: str, query_text: str,
-                      top_k: int = 10, filter_expr: Optional[str] = None) -> List[Dict]:
+                      top_k: int = 10, filter_expr: Optional[str] = None,
+                      retrieval_mode: str = "dense", hybrid_candidate_k: int = 50,
+                      dense_score_threshold: float = 0.0) -> List[Dict]:
         """根据文本搜索相似文档"""
         try:
+            if retrieval_mode not in ("dense", "hybrid"):
+                raise HTTPException(status_code=422, detail="Unknown retrieval_mode")
             if not utility.has_collection(collection_name):
                 raise HTTPException(status_code=404, detail=f"知识库 {collection_name} 不存在")
+
+            lexical_results = []
+            corpus_ids = set()
+            candidate_k = top_k
+            if retrieval_mode == "hybrid":
+                if not 1 <= top_k <= 500 or not 1 <= hybrid_candidate_k <= 500:
+                    raise HTTPException(status_code=422, detail="Hybrid Top-K and candidate-K must be between 1 and 500")
+                if not query_text.strip():
+                    return []
+                candidate_k = max(top_k, hybrid_candidate_k)
+                scoped_collection = Collection(collection_name)
+                scoped_collection.load()
+                corpus = self._read_hybrid_corpus(scoped_collection, filter_expr)
+                if not corpus:
+                    return []
+                corpus_ids = {identity(row) for row in corpus}
+                lexical_results = BM25Index(corpus).search(query_text, candidate_k)
 
             # 生成查询向量
             print(f"为查询文本生成embedding: {query_text[:50]}...")
@@ -593,14 +657,15 @@ class MilvusRAGService:
 
             output_fields = ["chunk_text", "filename", "file_id", "metadata", "created_at"]
 
-            print(f"执行向量搜索，top_k: {top_k}")
+            print(f"执行向量搜索，top_k: {candidate_k}")
             results = collection.search(
                 data=[query_embedding],
                 anns_field="embedding",
                 param=search_params,
-                limit=top_k,
+                limit=candidate_k,
                 expr=filter_expr,
-                output_fields=output_fields
+                output_fields=output_fields,
+                **({"consistency_level": "Strong"} if retrieval_mode == "hybrid" else {})
             )
 
             # 格式化结果
@@ -618,9 +683,17 @@ class MilvusRAGService:
                     }
                     formatted_results.append(result)
 
+            if retrieval_mode == "hybrid":
+                # Do not fuse a concurrently inserted row absent from the scanned
+                # corpus. Separate operations are not a cross-query transaction.
+                dense_results = [row for row in formatted_results
+                                 if identity(row) in corpus_ids and row["score"] >= dense_score_threshold]
+                formatted_results = fuse_rrf(dense_results, lexical_results, top_k)
             print(f"搜索完成，找到 {len(formatted_results)} 个结果")
             return formatted_results
 
+        except HTTPException:
+            raise
         except Exception as e:
             print(f"搜索失败: {e}")
             import traceback
@@ -979,12 +1052,20 @@ async def upload_json_file(request: UploadKBRequest):
 async def search_documents(request: SearchRequest):
     """根据问题搜索相似文档"""
     try:
-        results = milvus_service.search_by_text(
+        parameters = dict(
             collection_name=request.collection_name,
             query_text=request.query_text,
             top_k=request.top_k,
-            filter_expr=request.filter_expr
+            filter_expr=request.filter_expr,
+            retrieval_mode=request.retrieval_mode,
+            hybrid_candidate_k=request.hybrid_candidate_k,
+            dense_score_threshold=request.dense_score_threshold,
         )
+        if request.retrieval_mode == "hybrid":
+            # A bounded full scan/index must not block the FastAPI event loop.
+            results = await asyncio.to_thread(milvus_service.search_by_text, **parameters)
+        else:
+            results = milvus_service.search_by_text(**parameters)
 
         return {
             "status": "success",
@@ -993,6 +1074,8 @@ async def search_documents(request: SearchRequest):
             "total": len(results)
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

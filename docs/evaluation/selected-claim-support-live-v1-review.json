@@ -1,0 +1,43 @@
+{
+  "experiment": "selected-claim-support-live-v1",
+  "reviewer_type": "assistant_offline_inspection",
+  "status": "AI_DRAFT_PENDING_HUMAN_REVIEW",
+  "basis": "Each claim's explicitly selected original spans and saved model verdict; no additional paid judge, no outside sources or evidence expansion.",
+  "source_artifact": "output/selected-claim-support-live-v1/human-review.json",
+  "source_sha256": "10b4e19444455ee2a41a33b520d287a6db2760295c6908b5baa2bb6a786946f3",
+  "human_verified": false,
+  "semantic_accuracy": null,
+  "definitions": {
+    "appears_supported": "No obvious gap found by AI inspection; not human Gold or a correctness guarantee.",
+    "suspected_false_accept": "Model says supported, while exact selected text leaves a factual or qualifier support gap under this experiment's protocol.",
+    "needs_human_review": "Wording or inference is disputed; do not score automatically as correct/incorrect."
+  },
+  "claims": [
+    {"key":"B01-C001","model_verdict":"supported","assessment":"appears_supported","note":"所选片段包含 Masked LM 第一预训练任务及其名称。","human_verdict":null},
+    {"key":"B01-C002","model_verdict":"supported","assessment":"appears_supported","note":"所选片段包含 Next Sentence Prediction 第二预训练任务；本条不再声称 50% 的解释。","human_verdict":null},
+    {"key":"L01-C001","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确低秩分解、A/B 维度及秩条件。","human_verdict":null},
+    {"key":"L01-C002","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确 W0 冻结且不接收梯度，A/B 可训练。","human_verdict":null},
+    {"key":"L01-C003","model_verdict":"supported","assessment":"appears_supported","note":"所选公式和逐坐标相加描述共同支持本条。","human_verdict":null},
+    {"key":"L01-C004","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确 A 高斯、B 零初始化及初始 BA=0。","human_verdict":null},
+    {"key":"L01-C005","model_verdict":"supported","assessment":"suspected_false_accept","issue":"damaged_formula_inferred","note":"S1:U0003/S2:U0012 只有 α r；评审却声称原文直接支持 α/r，借首次 r 设置的片段也不能恢复除号。","human_verdict":null},
+    {"key":"L01-C006","model_verdict":"supported","assessment":"suspected_false_accept","issue":"unsupported_specific_examples","note":"S5:U0004 支持注意力适配和 MLP 冻结，但未列 Wq/Wv；评审忽略了回答增加的具体名称。","human_verdict":null},
+    {"key":"L01-C007","model_verdict":"supported","assessment":"suspected_false_accept","issue":"omitted_essential_condition","note":"原文 S1:U0010 要求应用到所有权重矩阵；回答未保留这一条件，评审却说全部条件匹配。","human_verdict":null},
+    {"key":"L01-C008","model_verdict":"supported","assessment":"needs_human_review","issue":"broader_performance_wording","note":"证据支持无额外推理延迟，不等于宽泛的性能一致；评审理由进一步写成消除推理延迟。需要人工裁定回答的性能是否仅指延迟。","human_verdict":null},
+    {"key":"L01-C009","model_verdict":"supported","assessment":"appears_supported","note":"所选片段支持减旧 BA 加新 B'A'、快速切换与较小内存开销。","human_verdict":null},
+    {"key":"L01-C010","model_verdict":"supported","assessment":"appears_supported","note":"所选片段共同支持低内在维度启发及更新低内在秩假设。","human_verdict":null},
+    {"key":"L03-C001","model_verdict":"supported","assessment":"suspected_false_accept","issue":"external_knowledge_rescue","note":"所选片段未说 W0 冻结；评审承认未明确出现却引用 standard LoRA setup，违反只用选中证据的限制。","human_verdict":null},
+    {"key":"L03-C002","model_verdict":"supported","assessment":"suspected_false_accept","issue":"missing_dimensions_external_rescue","note":"S1:U0011/S2:U0002 只有初始化，不含 A/B 维度；评审以标准 LoRA 维度及没有矛盾补足，未证明本条引用支持。","human_verdict":null},
+    {"key":"L03-C003","model_verdict":"supported","assessment":"suspected_false_accept","issue":"damaged_formula_inferred","note":"S1:U0012/S2:U0003 是 α r；评审将其当成明确的 α/r。","human_verdict":null},
+    {"key":"L03-C004","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确 Adam、适当初始化缩放和大致等价三个条件。","human_verdict":null},
+    {"key":"L03-C005","model_verdict":"supported","assessment":"needs_human_review","issue":"purpose_inference","note":"首次 r 赋值且不调优有依据；减少超参数调整需求的目的是否允许从中直接推出，需要人工标注规范。","human_verdict":null},
+    {"key":"X02-C001","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确下游微调更新全部参数。","human_verdict":null},
+    {"key":"X02-C002","model_verdict":"supported","assessment":"appears_supported","note":"所选片段明确 W0 冻结和 A/B 可训练，与此前 AI 检查一致，仍非人工裁决。","human_verdict":null},
+    {"key":"X02-C003","model_verdict":"supported","assessment":"suspected_false_accept","issue":"study_scope_generalization","note":"S3:U0004 是本研究设定；回答扩大为默认行为且增加未被该片段列出的矩阵名称，评审均放行。","human_verdict":null},
+    {"key":"X02-C004","model_verdict":"supported","assessment":"suspected_false_accept","issue":"missing_exclusivity_condition","note":"S8:U0006 有低秩分解和维度，但没有仅 A/B 可训练；不能借 X02-C002 引用的冻结句支持本条。","human_verdict":null},
+    {"key":"X02-C005","model_verdict":"unsupported","assessment":"needs_human_review","issue":"judge_reason_misreads_claim","note":"回答明确说其余所有参数更新；评审 contradicted 理由却解释为其余参数未更新，并把除输出层外架构相同误读成完全不变。添加任务头比原文更具体，但不能将该拒绝当作已验证的正确命中。","human_verdict":null}
+  ],
+  "negative_controls": [
+    {"key":"A04","status":"claim_bound_insufficient","provider_calls":0,"human_verdict":null},
+    {"key":"E01","status":"no_evidence","provider_calls":0,"human_verdict":null}
+  ]
+}

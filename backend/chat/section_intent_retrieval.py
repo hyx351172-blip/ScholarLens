@@ -1,9 +1,9 @@
 """Deterministic section-aware scoring for broad scientific-paper questions.
 
-Dense retrieval remains the candidate generator.  This module only adjusts a
-bounded candidate pool when the query clearly asks for a conventional paper
-section such as the method or conclusion.  The original dense score is always
-retained as provenance.
+Dense (default) or opt-in Hybrid retrieval supplies the bounded candidate pool.
+This module only adjusts it when the query clearly asks for a conventional
+paper section such as the method or conclusion. Original candidate scores and
+Hybrid branch scores are retained as provenance, not confidence probabilities.
 """
 
 from __future__ import annotations
@@ -167,7 +167,7 @@ def rerank_section_intent(
     query: str,
     documents: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Rerank a bounded dense candidate list using explicit section signals."""
+    """Rerank a bounded candidate list using explicit section signals."""
 
     intent = infer_section_intent(query)
     scored: list[tuple[int, dict[str, Any]]] = []
@@ -187,6 +187,8 @@ def rerank_section_intent(
             penalty = 0.0 if boost > 0 else _reference_penalty(item)
             item["section_boost"] = round(boost - penalty, 6)
             item["score"] = max(0.0, min(1.0, dense_score + boost - penalty))
+            if item.get("retrieval_mode") == "hybrid":
+                item["score_type"] = "section_adjusted_hybrid_rrf"
         scored.append((position, item))
 
     scored.sort(key=lambda pair: (-float(pair[1]["score"]), pair[0]))

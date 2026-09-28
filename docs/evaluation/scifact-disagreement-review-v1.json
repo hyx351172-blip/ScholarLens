@@ -1,0 +1,68 @@
+{
+  "version": "scifact_disagreement_ai_review_v1",
+  "reviewer_type": "assistant_source_review_not_human_adjudication",
+  "source_run": "output/scifact-verifier-live-v1",
+  "labels_changed": false,
+  "cases_removed": false,
+  "original_denominator": 30,
+  "original_correct": 26,
+  "cases": [
+    {
+      "key": "SF-847-16787954",
+      "original_label": "CONTRADICT",
+      "model_label": "SUPPORT",
+      "ai_assessment": "scope_overreach_clear_support_gap",
+      "evidence_quotes": [
+        "Rifampicin even accumulates in necrotic caseum, a critical lesion site where persisting tubercle bacilli reside.",
+        "does not diffuse well in caseum"
+      ],
+      "ai_note": "原文呈现不同药物的不同结果，模型明确用一个例子来支持 often 所指的频率概括。单例不足以确立通常如此；supported 存在支持缺口。严格口径最终判反驳还是证据不足需另行讨论，不影响应阻止放行的结论。",
+      "recommended_follow_up": "优先测试量词、群体范围及单例/统计汇总依据；不直接使用 often 关键词一律拒答。",
+      "gold_action": "unchanged",
+      "human_verdict": null,
+      "human_note": null
+    },
+    {
+      "key": "SF-852-13843341",
+      "original_label": "CONTRADICT",
+      "model_label": "NOT_ENOUGH_INFO",
+      "ai_assessment": "conditional_inference_policy_gap",
+      "evidence_quotes": [
+        "CONCLUSIONS Non-invasive ventilation is a highly cost effective treatment that both reduced total costs and improved mortality in hospital."
+      ],
+      "ai_note": "断言新增对常规治疗反应不足时这一前置条件；Gold 引用总体疗效，模型按缺失该特定条件处理。两者均不放行该断言，主要是反驳与缺证的推断口径差异，不能直接等同于引用失效。",
+      "recommended_follow_up": "人工确认条件句的适用范围及项目允许的推断边界；不为提高准确率而抹去条件。",
+      "gold_action": "unchanged",
+      "human_verdict": null,
+      "human_note": null
+    },
+    {
+      "key": "SF-452-464511",
+      "original_label": "CONTRADICT",
+      "model_label": "NOT_ENOUGH_INFO",
+      "ai_assessment": "domain_inference_policy_gap",
+      "evidence_quotes": [
+        "Genetically identical cells sharing an environment can display markedly different phenotypes."
+      ],
+      "ai_note": "Gold 用表型差异反驳基因表达不变；模型不愿在没有更直接表达证据时补入领域推断。这是语义推断口径问题，保留数据集分数，同时等待人工明确项目口径。",
+      "recommended_follow_up": "检查是否允许从相关生物学表述作该推断；不要把模型常识自动当成选定证据。",
+      "gold_action": "unchanged",
+      "human_verdict": null,
+      "human_note": null
+    },
+    {
+      "key": "SF-354-8774475",
+      "original_label": "NOT_ENOUGH_INFO",
+      "model_label": "CONTRADICT",
+      "ai_assessment": "annotation_or_nei_mapping_ambiguity",
+      "evidence_quotes": [
+        "Like depletion, mislocalization of Scribble from cell-cell junction was sufficient to promote cell transformation."
+      ],
+      "ai_note": "原始 evidence 为空，本项目因此映射为 NEI；但引用候选摘要中有 promote 与断言 prevents 相反的文字。无证据标注不必然等于实际原文不存在反驳，需要人工检查原始记录及映射，不直接改标签。",
+      "recommended_follow_up": "优先人工复核。若确认需修订，另建标签版本并同时保留原始与修订两套得分，不能回写本次基线。",
+      "gold_action": "unchanged",
+      "human_verdict": null,
+      "human_note": null
+    }
+  ]
+}

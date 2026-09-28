@@ -1,0 +1,89 @@
+{
+  "status": "AI_REVIEW_DRAFT_NOT_HUMAN_GOLD",
+  "experiment": "multipaper-claim-audit-v3.1",
+  "review_scope": "Five non-supported/error units and five targeted supported-unit checks; not exhaustive semantic verification of all 85 units.",
+  "baseline_relabelled": false,
+  "human_review_status": "pending",
+  "items": [
+    {
+      "case_id": "A01", "unit_id": "C003",
+      "raw_status": "ok", "raw_verdict": "uncertain", "raw_reason_code": "ambiguous_evidence",
+      "review_flag": "citation_gap_and_reason_code_boundary",
+      "anchor_ids": ["S2:E0001", "S2:E0002", "S3:E0001"],
+      "ai_note": "主语已明确为 Transformer，但自身 S2/S3 没有直接说明不含循环或卷积。其他单元的 S8 不能救援本条。缺乏支持与证据歧义的分类边界仍需校准，不把该条直接当作论文事实错误。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "B01", "unit_id": "C001",
+      "raw_status": "ok", "raw_verdict": "unsupported", "raw_reason_code": "no_valid_citation",
+      "review_flag": "list_introduction_citation_policy",
+      "anchor_ids": [],
+      "ai_note": "列表引导句没有自身引用，按冻结政策本地判不支持。后续列表有证据，不应因此直接称为事实幻觉。需独立明确列表引导句引用范围，或让生成端给引导句直接引用。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "L03", "unit_id": "C009",
+      "raw_status": "error", "raw_verdict": null, "raw_reason_code": null,
+      "review_flag": "truncated_judge_output_and_damaged_inline_fraction",
+      "anchor_ids": ["S1:E0004", "S2:E0001"],
+      "ai_note": "completion_tokens=1000、finish_reason=length，JSON 未闭合，没有有效判定。原始理由在已知 LoRA 分式和只准使用 α r 文本之间反复，不能摘取某一句作为最终 uncertain 或 supported，也不能从坏 JSON 抢救评分。解析片段中的除号缺失仍未修复。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "X01", "unit_id": "C013",
+      "raw_status": "ok", "raw_verdict": "unsupported", "raw_reason_code": "not_in_evidence",
+      "review_flag": "unsupported_classifier_head_qualifiers",
+      "anchor_ids": [],
+      "ai_note": "自身 S10 没有直接支撑通常、仅、轻量级分类头等限定。更新全部参数与添加分类头是不同维度，不能把全参数微调当作分类头不存在的证据；本条引用缺口仍应优先修复。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "X02", "unit_id": "C006",
+      "raw_status": "ok", "raw_verdict": "unsupported", "raw_reason_code": "contradicted",
+      "review_flag": "possible_judge_false_negative_original_weights_vs_updates",
+      "anchor_ids": ["S3:E0001", "S3:E0002", "S3:E0003", "S2:E0003"],
+      "ai_note": "评审用可以适配其他矩阵反驳原始预训练权重被冻结，疑似混淆应用低秩更新与解冻原始权重。S2:E0003 明确写 freezes the pretrained model weights。对 LayerNorm 的特指和整体范围可单独复核，但 cited evidence 未明显给出解冻原始权重的反例，不能自动接受 contradicted 为真实矛盾。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "L01", "unit_id": "C008",
+      "raw_status": "ok", "raw_verdict": "supported", "raw_reason_code": "entailed",
+      "review_flag": "possible_judge_false_positive_study_scope_generalization",
+      "anchor_ids": ["S5:E0001", "S5:E0002", "S5:E0004"],
+      "ai_note": "原文限定本研究只适配注意力权重，回答扩展为 LoRA 通常仅应用于注意力权重。评审仍认为该研究的选择足以支持通常，仅靠新提示词没有消除范围泛化。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "X01", "unit_id": "C011",
+      "raw_status": "ok", "raw_verdict": "supported", "raw_reason_code": "entailed",
+      "review_flag": "possible_judge_false_positive_external_knowledge",
+      "anchor_ids": ["S10:E0003", "S10:E0005"],
+      "ai_note": "S10 直接比较的是 BERT 与 GPT，并非原始 Transformer 解码器。评审理由承认这一点，却引用所提供片段外的 Vaswani 解码器常识来支持原句，违反仅用自身引用证据的约束。主语提示 BERT 不能授权这种补证据。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "A03", "unit_id": "C002",
+      "raw_status": "ok", "raw_verdict": "supported", "raw_reason_code": "entailed",
+      "review_flag": "damaged_fraction_and_qualifier_review",
+      "anchor_ids": ["S1:E0003"],
+      "ai_note": "自身 S1 的缩放写成 1 √ d k；评审理由补写了除号。原文 We suspect 与答案较确定的因果表述也需要核对。这里不能借另一单元的 S2 公式作为本条事实证据；不据此自动改分。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "A03", "unit_id": "C003",
+      "raw_status": "ok", "raw_verdict": "supported", "raw_reason_code": "entailed",
+      "review_flag": "anchor_selection_quality_not_necessarily_verdict_error",
+      "anchor_ids": ["S1:E0003", "S3:E0001"],
+      "ai_note": "模型只选 S1:E0003，其中分式已压平；但本条自身引用还包含 S3:E0001，明确写 divide each by √ d k。因此不能简单判整条 unsupported；应区分判定是否可由完整自身证据支持与实际选中锚点是否充分。此处 S3:E0001 是复核建议，不是修改后的模型输出。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    },
+    {
+      "case_id": "A03", "unit_id": "C005",
+      "raw_status": "ok", "raw_verdict": "supported", "raw_reason_code": "entailed",
+      "review_flag": "discourse_referent_not_resolved_by_noun_subject_rules",
+      "anchor_ids": ["S1:E0002", "S1:E0003"],
+      "ai_note": "完整回答的紧邻前句谈未缩放点积注意力劣于加性注意力，但评审将该问题解释为小梯度问题。v3.1 的名词主语规则未覆盖这种事件或问题指代；是否能充分支持需结合原文复核，不能把无 unresolved 预警理解为所有指代均已解决。",
+      "human_verdict": null, "human_approved": null, "reviewer": ""
+    }
+  ]
+}

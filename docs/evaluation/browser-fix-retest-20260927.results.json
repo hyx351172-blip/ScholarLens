@@ -1,0 +1,85 @@
+{
+  "suite_id": "browser_fix_retest_v1_20260927",
+  "date": "2026-09-27",
+  "base_commit": "005c440d1408c685b74b399e722b7456d167080c",
+  "working_tree": "uncommitted browser acceptance fixes",
+  "reviewer": "assistant_browser_and_source_review_not_human_gold",
+  "configuration": {
+    "model": "qwen3-vl-plus",
+    "temperature": 0.7,
+    "max_output_tokens": 2000,
+    "top_k": 10,
+    "score_threshold": 0.1,
+    "use_reranker": false,
+    "use_multi_query": false,
+    "deterministic_named_paper_coverage": true,
+    "answer_mode": "legacy",
+    "knowledge_base": "kb_1790514518399"
+  },
+  "budget": {
+    "authorized_browser_submissions": 2,
+    "observed_browser_submissions": 2,
+    "observed_chat_http_200": 2,
+    "manual_retries": 0,
+    "new_uploads": 0,
+    "external_judge_calls": 0,
+    "llm_planner_calls": 0,
+    "logged_search_requests": 4,
+    "provider_billed_attempts": null,
+    "note": "Server logs show three searches for X01-R1 and one for B03-R1. Provider billing/token usage and SDK retries were not independently measured. No further calls are authorized by this completed run."
+  },
+  "cases": [
+    {
+      "id": "X01-R1",
+      "original_case": "X01",
+      "core_regression_status": "pass",
+      "strict_answer_review": "warning_not_fully_supported",
+      "started_at": "2026-09-27T14:06:36.009Z",
+      "server_seconds": {"retrieval": 5.33, "rerank": 0.0, "generation": 7.33, "total": 12.66},
+      "source_count": 10,
+      "source_distribution": {"attention": 8, "bert": 2},
+      "cited_sources": [
+        {"source_id": "S1", "file_id": "file_20260927_fd0fd2ca", "filename": "1706.03762_attention-is-all-you-need.pdf", "page": 3, "chunk_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697:paragraph:block_000026:part_0001", "drawer_checked": true},
+        {"source_id": "S10", "file_id": "file_20260927_8852afba", "filename": "1810.04805_bert.pdf", "page": 3, "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000029:part_0001", "drawer_checked": true}
+      ],
+      "core_review": "Attention encoder-decoder claims cite its section 3.1; BERT bidirectional encoder claims cite BERT section 3. Both cited drawers identify the correct paper/page/chunk.",
+      "remaining_issue": "The additional MLM/downstream-feature-input statement cites S10, whose text establishes architecture, bidirectionality and fine-tuning but does not fully establish that entire added statement. Do not mark all assertions supported."
+    },
+    {
+      "id": "B03-R1",
+      "original_case": "B03",
+      "core_regression_status": "pass",
+      "strict_answer_review": "pass_assistant_source_review",
+      "started_at": "2026-09-27T14:07:19.097Z",
+      "server_seconds": {"retrieval": 4.39, "rerank": 0.0, "generation": 3.64, "total": 8.02},
+      "source_count": 10,
+      "source_distribution": {"attention": 0, "bert": 10},
+      "cited_sources": [
+        {"source_id": "S1", "file_id": "file_20260927_8852afba", "filename": "1810.04805_bert.pdf", "page": 12, "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000191:part_0001", "drawer_checked": true},
+        {"source_id": "S3", "file_id": "file_20260927_8852afba", "filename": "1810.04805_bert.pdf", "page": 4, "chunk_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e:paragraph:block_000046:part_0001", "drawer_checked": true}
+      ],
+      "core_review": "Correctly distinguishes 15% selected positions from conditional 80% MASK, 10% random and 10% unchanged. Both cited passages support the ratios. In the same conversation S1 now opens BERT, not the preceding Attention source."
+    }
+  ],
+  "summary": {
+    "targeted_core_checks_passed": 2,
+    "targeted_core_checks_total": 2,
+    "strict_review_passed": 1,
+    "strict_review_warnings": 1,
+    "overall_semantic_accuracy": null,
+    "full_release_gate": "not_passed",
+    "old_8_case_results_rewritten": false,
+    "historical_59_fingerprint_errors_resolved": false,
+    "ordinary_browser_pdf_preview_verified": false
+  },
+  "sha256": {
+    "tests/integration/browser_fix_retest_v1.json": "c4668fd508ceaf46ce630dbd4935674a659f256d374bb1734ac86a32d9e25f02",
+    "backend/chat/kb_chat.py": "790eb3374e7dac05749f8c24dc08a3805eef832bf5f15072aaf824338b93b742",
+    "backend/chat/answer_guard.py": "6ceb2dd0957b613eae517bf9b32a23d259bd44124c100aefa967a8ab86180c47",
+    "docs/evaluation/browser-final-e2e-20260927.results.json": "4aaec9fe48749eb661abdd0bd75cf02bdcde4493055074897a88086e15bb3ac7",
+    "output/browser-fix-retest-20260927/final-dom-messages.json": "c86867c464ab809acb8f89dd096d75f72fad70ac53d376e55e0e4659ac6526db",
+    "output/browser-fix-retest-20260927/chat.stdout.snapshot.log": "f4bcd93c36ca72c9a947b7e34136e84a0127f4f0be496bf66b906a1ca348d6a4"
+  },
+  "local_evidence_directory": "output/browser-fix-retest-20260927",
+  "local_evidence_not_committed": true
+}

@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Long scientific equations scroll inside the answer rather than the page. */
+.katex-display { overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 0.25rem 0; }
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

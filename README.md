@@ -1,220 +1,142 @@
 # ScholarLens
 
-> Evidence-grounded scientific paper reading and question answering.
+*Evidence-grounded scientific paper reading and question answering.*
 
-ScholarLens 是一个面向学生与科研人员的论文阅读工作台。系统将 PDF 解析、结构化切分、向量检索和大模型问答串成完整链路，目标是让回答能够回到具体论文片段，而不是只生成不可验证的总结。
+---
 
-## 当前能力
+ScholarLens 是面向学生与科研人员的论文阅读工作台：上传 PDF，围绕论文方法、公式和实验结果提问，再从回答中的引用回到论文原文。
 
-- 上传 PDF，并使用快速、视觉语言模型或 Docling 模式提取结构化论文内容。
-- 可选使用 VLM 对 Docling 困难页面进行证据受限的标题、摘要、Caption 关系修复及 Table→Figure 语义重分类；逻辑表按完整表号和主 Caption 的有界所有权归并。
-- 按章节及表格、Figure、Formula 绑定关系生成可追溯的 ScientificChunk。
-- Chunker 对无结构大表、超长表格行和 Figure 描述执行有界切分，并保留精确页码、物理 block 与稳定 Chunk ID。
-- 按标题与页面边界切分文档，保留跨页上下文。
-- 使用 Embedding 模型生成向量，并通过 Milvus 完成 Dense Top-K 检索。
-- 使用相似度阈值过滤低相关片段。
-- 后端可选启用跨论文 Query Planner、多路并行 Dense 召回、Query RRF
-  去重和覆盖感知 Top-K；默认关闭并保留单查询降级路径。
-- 基于召回片段进行流式或非流式问答。
-- 回答上下文和来源响应使用稳定的 `[S1]`、`[S2]` 编号；默认提示词要求事实陈述逐句引用检索证据。
-- 后端已提供可选 Reranker 接口；前端当前默认关闭。
-- 管理多个论文知识库，并查看文档、切片和原始 PDF。
+项目的重点不是生成更长的总结，而是保留从 **论文结构 → 检索片段 → 回答引用** 的对应关系。当前为本地开发型 MVP；核心链路已有真实运行记录，实验模块与默认功能分开说明，不宣称生产就绪或所有回答均正确。
 
-当前版本尚未实现 BM25 + Dense 混合召回。跨论文多查询能力已完成开发集
-验证和后端原型接入，但自动规划器仍需新的独立 Held-out 验收，因此不作为
-生产准确率声明。
+## 📋 能做什么
 
-## 系统结构
+- **论文解析**：支持 Docling、快速文本和 VLM 模式；Docling 路径包含阅读顺序、章节层级、逻辑表，以及图/公式与正文关系的后处理。
+- **结构化切分**：按正文、表格、图和公式组织 ScientificChunk，保留章节、页码、物理 block 与稳定 Chunk ID；对超长内容做有界拆分。
+- **论文问答**：默认通过 Milvus Dense 检索证据，可选 BM25 + Dense + RRF 混合检索；针对可解析的显式论文名称约束检索范围，生成带 `[S1]` 等来源编号的回答。
+- **原文核对**：文献库、文档详情、切片浏览、引用证据抽屉和 PDF 页码跳转；区分答案实际引用与未引用检索候选。
+- **可复核评测**：覆盖解析、切分、检索、回答和引用；Evaluation Harness 保存运行快照、检查质量门并对比实验。
 
-```text
-PDF
- └─> Extraction API :8006
-      └─> Chunking API :8001
-           └─> Milvus API :8000 ──> Milvus :19530
-                └─> Chat API :8501
-                     └─> React frontend :5173
+出处与贡献边界见 [项目说明](docs/PROJECT_OVERVIEW.md)，配置步骤见 [本地启动指南](docs/LOCAL_SETUP.md)，结果与失败记录见 [评测索引](docs/evaluation/README.md)。
+
+## ⚙️ 当前默认与可选功能
+
+| 项目 | 当前行为 | 边界 |
+| --- | --- | --- |
+| 前端 PDF 上传 | `docling`，VLM repair 关闭 | 上传 API 自身默认仍为 `fast`；API 调用需显式选择 |
+| Docling 切分 | 解析服务内部的 `StructureAwareChunker` | 快速/VLM 路径使用独立切分服务 |
+| 检索 | `retrieval_mode="dense"`、`top_k=10`、`score_threshold=0.1` | 前端可选 `hybrid`；含章节意图、论文范围等应用层选择逻辑 |
+| 多查询规划 | `use_multi_query=false` | 禁用付费 LLM 规划；目录可解析的 2～3 篇显式命名论文仍分别检索并检查覆盖 |
+| 重排序 | `use_reranker=false` | 后端可选，需额外配置服务 |
+| 回答 | `answer_mode="legacy"` | `claim_bound` 为可选实验分支，未切为默认 |
+
+Hybrid 在应用侧对当前论文范围的完整 Chunk 语料做 BM25 检索，与 Milvus Dense 候选通过等权 RRF（k=60）融合。两路使用相同的论文过滤条件；相似度阈值只作用于 Dense，不把 RRF 分数当作 cosine 或置信概率。BM25 无需额外 API Key、依赖或重建 Collection，但在线查询仍会调用原有 Embedding/生成 API。
+
+重启向量 API 与对话后端、刷新网页，在 **模型设置 → 检索方式** 中选择 Hybrid；直接调用 `/chat` 或 `/search` 时可增加 `"retrieval_mode": "hybrid"`。当前实现每次重读并构建词法索引，最多 20,000 Chunk / 64 MiB 检索文本、15 秒扫描预算；大规模场景需要持久倒排索引等进一步设计。
+
+Hybrid RRF 融合 **词法与语义** 两路排名；Query RRF 融合 **不同问题/论文目标** 的检索结果，二者作用不同。独立表格重识别实验和 qualified-support 核验器没有成为默认问答或解析步骤。
+
+## 🔗 系统结构
+
+以下展示入库与问答的数据流；Docling 的结构化切分不是强制绕经 8001 服务。
+
+```mermaid
+flowchart TB
+    accTitle: ScholarLens Ingestion and Answer Flow
+    accDescr: PDF uploads enter extraction and chunking before vector storage. Questions retrieve evidence through the chat service and return citations to the reader.
+    reader["论文阅读界面 :5173"] -->|上传 PDF| extraction["解析与上传编排 :8006"]
+    extraction -->|Docling| structured["论文 blocks 与结构化切分"]
+    extraction -->|快速或 VLM| markdown_chunker["Markdown 切分 :8001"]
+    structured -->|入库| milvus_api["向量与文档 API :8000"]
+    markdown_chunker -->|产物经编排入库| milvus_api
+    milvus_api --> vector_store[("Milvus :19530")]
+    reader -->|问题| chat_api["检索与回答 :8501"]
+    chat_api -->|证据检索| milvus_api
+    chat_api -->|答案与引用| reader
 ```
 
-```text
-backend/
-├── Information-Extraction/unified/  # PDF 与 VLM 提取
-├── Text_segmentation/               # Markdown 结构化切分
-├── Database/milvus_server/          # 向量存储、知识库和检索 API
-├── chat/                            # RAG 问答与可选重排序
-└── requirements.txt
-frontend/                            # React + Vite 用户界面
-docs/PROJECT_OVERVIEW.md             # 产品定位、范围和路线图
-```
+生成模型、Embedding 以及可选 VLM/Reranker 通过外部 API 调用，不属于本地 Milvus。解析后处理与切分实现位于 [unified](backend/Information-Extraction/unified)；各服务职责见 [项目说明](docs/PROJECT_OVERVIEW.md)。
 
-## 环境要求
+## 🔧 本地运行
 
-- Python 3.11
-- Node.js 18+
-- Docker Desktop
-- 可调用的生成模型和 Embedding 模型 API
+使用 Python 3.11、Docker Desktop，以及能够运行本项目 TypeScript 测试的 Node.js 环境；当前本机 Node 为 24.19.0。后端依赖和前端锁文件分别位于 [requirements.txt](backend/requirements.txt)、[package-lock.json](frontend/package-lock.json)。
 
-## 本地启动
+1. 在仓库根目录按 [本地启动指南](docs/LOCAL_SETUP.md) 创建环境、安装依赖。
+2. 从 [.env.example](.env.example) 创建根目录 `.env`，填写生成与 Embedding 配置；前端仅配置服务地址。
+3. 启动 Milvus、四个后端服务及前端，检查健康状态后访问 `http://localhost:5173`。
 
-### 1. 配置环境变量
+安装、首次模型下载以及真实问答需要相应网络连接；Embedding、生成和可选 VLM/Reranker 可能计费。不要直接批量运行 `tests/integration` 下的 live 脚本。
 
-```powershell
-Copy-Item .env.example .env
-Copy-Item frontend/.env.example frontend/.env
-```
+## 📊 已有验证与结果边界
 
-编辑根目录 `.env`，至少填写 `API_KEY` 和 `EMBEDDING_API_KEY`。不要提交 `.env`，仓库只保留不含密钥的模板。
+以下为各报告所记录的指定版本和配置，不能合并成一个整体准确率。
 
-### 2. 安装后端依赖
+| 验证范围 | 已记录结果 | 不能据此声称 |
+| --- | --- | --- |
+| 三论文端到端开发验收 | Attention、BERT、LoRA 共 57 页、205 chunks；原始严格契约 13/16 | 所有 PDF 内容或浏览器操作均正确 |
+| 文档范围修复回归 | 复用同批 16 题，在线检索/回答机械契约 16/16；无答案/空库拒答 4/4 | 泛化回答准确率或引用蕴含率 100% |
+| 浏览器验收与后续修复 | 2 篇/31 页/108 chunks；初验 8 次问答核心检查 7/8，跨论文失败；修复后另行复测见报告 | 初验已全项通过、普通浏览器 PDF 跳页或所有回答已验收 |
+| 当前代码回归（2026-09-28） | 当前源码 745/745，另在冻结旧版运行 134/134；前端 20/20、生产构建通过 | 879 项均验证当前源码、真实模型整体质量或生产就绪 |
 
-```powershell
-conda create -n scholarlens python=3.11 -y
-conda activate scholarlens
-python -m pip install -r backend/requirements.txt
-```
+详细证据：[原始多论文验收](docs/evaluation/multipaper-e2e-20260926.md)、[范围约束修复](docs/evaluation/document-scope-fix-20260926.md)、[浏览器初验](docs/evaluation/browser-final-e2e-20260927.md)、[后续修复与复测](docs/evaluation/browser-fix-followup-20260927.md)、[最新混合检索回归](docs/evaluation/hybrid-search-ab-20260928.md)。修复复测没有重新上传论文或重跑全部浏览器操作；报告中的 AI 内容核对不等于用户确认的人工 Gold。
 
-### 3. 启动 Milvus
+### 混合检索对比：历史 Dense Top-10 离线回放
 
-```powershell
-docker compose -f backend/Database/milvus_server/docker-compose.yaml up -d
-docker compose -f backend/Database/milvus_server/docker-compose.yaml ps
-```
+19 篇论文 / 2,057 Chunk；v1 共 14 题、已使用的 v2 共 24 题。下表只统计可回答题，无答案题不混入分母。
 
-### 4. 启动四个后端服务
+| 数据集 / 方式 | 可回答题 | 完整证据集命中率@10 | 平均证据集 Recall@10 | 证据集 MRR@10 | NDCG@10 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v1 / Dense | 12 | 100% | 1.0000 | 0.6181 | 0.7274 |
+| v1 / Hybrid | 12 | 100% | 1.0000 | 0.5514 | 0.6872 |
+| 已使用 v2 / Dense | 20 | 75%（15/20） | 0.8500 | 0.5613 | 0.6789 |
+| 已使用 v2 / Hybrid | 20 | 90%（18/20） | 0.9250 | 0.5523 | 0.6645 |
 
-分别打开四个终端，在仓库根目录执行：
+Hybrid 在 v2 找回 3 道题的完整证据，但两组的平均 MRR/NDCG 未提升，因此保留 Dense 默认。这里的 MRR 衡量完整证据集最后一个必要片段的排名，NDCG 使用不完全的 Gold 标注。
 
-```powershell
-python backend/Information-Extraction/unified/unified_pdf_extraction_service.py
-python backend/Text_segmentation/markdown_chunker_api.py
-python backend/Database/milvus_server/milvus_api.py
-python backend/chat/kb_chat.py
-```
+本次将**保存的 Dense Top-10** 与完整语料的 BM25 Top-10 融合，外部模型调用 0；没有重新测试线上 Top-50 候选池、生成答案、拒答或引用蕴含。两组数据此前都用过，不能称为新的独立 Held-out 成绩或回答准确率提升。完整参数、指纹和逐题退步见 [混合检索实现与 A/B](docs/evaluation/hybrid-search-ab-20260928.md)。
 
-健康检查地址：
-
-- PDF 提取：`http://localhost:8006/health`
-- 文本切分：`http://localhost:8001/health`
-- Milvus API：`http://localhost:8000/health`
-- RAG 对话：`http://localhost:8501/health`
-
-### 5. 启动前端
-
-```powershell
-Set-Location frontend
-npm install
-npm run dev
-```
-
-打开 `http://localhost:5173`。
-
-## 检索基线
-
-当前默认链路是：
-
-```text
-Query → Dense Embedding → Milvus Top-K → Score Threshold → LLM Answer
-```
-
-默认参数：`top_k=10`、`score_threshold=0.1`、`use_reranker=false`。后续将通过同一评测集对比 Dense、Dense + Reranker、BM25 + Dense + RRF + Reranker。
-
-跨论文问题可以在 `/chat` 请求中设置 `use_multi_query=true`。后端会调用同一
-生成模型产生结构化子查询，然后并行召回、去重并执行覆盖感知选择；任何规划
-或子查询失败都会退回原始单查询。配置和返回 Trace 见
-[`docs/technical/MULTI_QUERY_RETRIEVAL.md`](docs/technical/MULTI_QUERY_RETRIEVAL.md)。
-
-答案引用契约、确定性检查、语义判分边界和开发集实验结果见
-[`docs/technical/ANSWER_CITATION_EVALUATION.md`](docs/technical/ANSWER_CITATION_EVALUATION.md)。
-
-## 统一评测 Harness
-
-项目提供配置化 Evaluation Harness，用同一入口编排已有检索、回答引用和
-Claim–Citation Entailment 评测，保存不可覆盖的运行快照、执行质量门并比较
-两次实验。先运行不调用外部模型的冻结结果回放：
+如需检查已冻结结果，可先使用不调用模型的 Harness 验证命令：
 
 ```powershell
 python -m harness validate --config harness/configs/validated-replay-v1.json
-python -m harness run --config harness/configs/validated-replay-v1.json
+python -m harness run --config harness/configs/hybrid-search-ab-replay-v1.json
 ```
 
-完整命令、产物结构和可能产生模型费用的 Live 配置见
-[`harness/README.md`](harness/README.md)。
+`validate` 只校验配置；上述混合检索 `run` 只回放已保存结果，不调用模型。其 PASS 不是更换默认检索方式的放行。运行回放、比较和付费 live 模式的区别见 [Harness 说明](harness/README.md)。
 
-局部表格 VLM 重识别为独立离线实验，不改变正式解析或知识库。裁图依据预测框，
-Gold 仅用于单独评分；保存原始响应、失败记录及可视化对照，最多 3 次调用且不自动重试。
-设计与验收见 [`docs/specs/table_vlm_experiment/implementation.md`](docs/specs/table_vlm_experiment/implementation.md)，
-实测结果见 [`docs/evaluation/omnidocbench-table-vlm-v5.md`](docs/evaluation/omnidocbench-table-vlm-v5.md)。
+运行当前版本无付费 API 的代码回归：
 
-后续 HTML 转录对照实现了流式计时、独立总超时、HTML → cells 校验及双模型实验，
-最多 6 次请求且不重试。当前仅一张对照表改进，复杂表仍未通过，不接入生产；
-见 [`表格 HTML A/B v6 报告`](docs/evaluation/omnidocbench-table-html-v6.md)。
+```powershell
+python -X utf8 tests/run_current_suite.py
+npm --prefix frontend test
+npm --prefix frontend run build
+```
 
-表格专用方案 v7 增加独立 CPU PP-TableMagic 与 Qwen 原生 `table_parsing` 实验，
-沿用固定裁图与严格结构准入。两组新候选均未通过，已保留失败结构、识别长度线索和回归记录；
-未替换生产解析。见 [`表格专用解析 v7 报告`](docs/evaluation/omnidocbench-table-specialist-v7.md)。
+版本化测试入口会明确分开当前源码与冻结实验；未提供旧快照时，134 项历史测试不会运行。旧快照及完整评测产物并非全部随 Git 分发，缺失时应报告不可复现，不能修改旧版 SHA 来补成通过。
 
-解码上限审计 v8 通过真实概率张量及独立静态图副本，确认两张长表受长度上限截断。
-延长后结构有效率从 0/3 提升至 2/3；尚未验证 OCR 内容，未接入生产。
-见 [`表格解码上限 v8 报告`](docs/evaluation/omnidocbench-table-decoder-v8.md)。
+## ⚠️ 已知限制
 
-OCR 绑定 v9 补充逐单元格追踪、完整 TEDS 与坐标内容诊断。科研表有提升，但另一张表
-暴露空单元格错位；两者均未通过保守绑定门，继续保留生产基线。
-见 [`表格 OCR 绑定 v9 报告`](docs/evaluation/omnidocbench-table-ocr-binding-v9.md)。
+- 复杂表头、跨行跨列、扫描件、公式以及浮动图表的语义章节归属仍可能出错；已保留失败样本，未用离线特例改进替代整体效果结论。
+- 来源 ID、页码和原文一致，只证明可追溯，不证明每项结论都被引用充分支持。
+- 显式论文范围依赖目录名称/别名，不保证任意译名或代词解析，也不等同于用户权限隔离。
+- 多论文验收中曾出现一次页面内容区空白、刷新后恢复，尚待复现；上传拖拽、取消、断网恢复等未全部完成浏览器验收。
+- 当前优先收尾现有能力；暂停扩展表格与核验器实验，不自动消耗旧实验剩余调用额度。
+- 历史解析验收与当前上传链路必须区分；早期解析编号的规范来源和追踪入口见 [历史解析验收索引](docs/specs/legacy_pdf_parser/acceptance.md)。追踪对齐或代码测试通过均不替代真实端到端/生产验收。
+- Hybrid 尚未完成真实 Milvus/Embedding/浏览器问答 A/B，也不保证纯中文问题对英文原文的词法匹配；当前仍作为可选开发能力。
 
-几何网格绑定 v10 修复了 EEPROM 样本的空格错列：保留空格并按坐标绑定，
-完整 TEDS 达 0.9972（Docling 基线 0.9597），仍有 2 处 OCR 字符错误。
-复杂表头继续拒绝并保留基线；只完成离线实验，未接入生产。
-见 [`表格几何网格 v10 报告`](docs/evaluation/omnidocbench-table-grid-binding-v10.md)。
+## 📚 文档导航
 
-多层表头 v11 结合局部分隔线与 OCR 层次，恢复科研表的三层表头、跨行/跨列及
-列标题路径。该样本结构 TEDS 为 1.0，完整 TEDS 为 0.9909；v10 已通过输出不变。
-仍有 OCR/格式差异，规则适用范围有限，暂不接入生产。
-见 [`多层表头修复 v11 报告`](docs/evaluation/omnidocbench-table-header-v11.md)。
+- [项目定位、架构与改进范围](docs/PROJECT_OVERVIEW.md)
+- [环境配置、启动、检查与排错](docs/LOCAL_SETUP.md)
+- [评测结果与实验索引](docs/evaluation/README.md)
+- [PDF 解析设计](docs/technical/PDF_PARSING_DESIGN.md) · [VLM 页面修复](docs/technical/VLM_PAGE_REPAIR.md)
+- [多查询检索](docs/technical/MULTI_QUERY_RETRIEVAL.md) · [回答引用评测](docs/technical/ANSWER_CITATION_EVALUATION.md)
+- [混合检索实现、A/B 结果与复现](docs/evaluation/hybrid-search-ab-20260928.md)
+- [Evaluation Harness](harness/README.md)
 
-冻结规则后的 v12 新页面扩测覆盖 20 张表，只有 2 张候选通过几何门，1 张改善、
-1 张轻微退步；发现多记录被合并仍可能通过校验，以及旋转表、表内公式等缺口。
-尚未通过泛化验收，仍不接入生产。官方分数、单例负值审计及 320 项测试记录见
-[`20 张表扩测 v12 报告`](docs/evaluation/omnidocbench-table-unseen-v12.md)。
+## 🔐 数据与项目许可
 
-v13 增加多记录合并的保守拦截和有界四方向探测。开发回归集 20 张表完整
-TEDS 均值从 0.5356 到 0.5843，2 张改善、0 张退步；其中旋转样本通过
-校正方向后重新运行 Docling 达到 0.9399。尚未接入生产，仍需独立测试。
-351 项回归/评分器测试及首次超时记录见
-[`表格可靠性修复 v13 报告`](docs/evaluation/omnidocbench-table-safety-v13.md)。
+密钥和本地配置不提交 Git；上传文件、解析产物、数据库数据及运行日志按 `.gitignore` 排除。调用外部模型时，问题、论文片段或页面图像会按所选流程发往服务商，使用前应确认处理权限与费用。
 
-v14 对有独立记录锚点的合并行进行受控重建，保留续行与 OCR 来源。
-目标样本 TEDS 从 0.2885 到 0.9975；20 张表开发集均值从 0.5843 到 0.6198，
-其余 19 张有效输出不变。真实正例仍只有 1 张，未接入生产。
-见 [`合并行重建 v14 报告`](docs/evaluation/omnidocbench-table-records-v14.md)。
+当前配置面向本地开发，部分服务绑定 `0.0.0.0`，容器包含开发凭据；未经鉴权、密钥暴露面和网络边界审查，不应直接暴露到公网。
 
-v15 固定选取 12 个未使用页面做离线验收：全部被上游网格或 HTML 检查拦截，
-没有样本进入 v14 重建，两组 TEDS 同为 0.6814。因此尚未验证重建的泛化或
-条件误拆率，仍不接入生产。见 [`新页面验收 v15 报告`](docs/evaluation/omnidocbench-table-records-validation-v15.md)。
-
-v16 用缓存结果完成网格/OCR 叠加诊断：确认 4 张表触及检测模型 300 框上限，
-修复 1 例孤立 HTML 包装标签，但其 5 条跨列 OCR 仍被拦截，最终输出及指标不变。
-见 [`上游网格诊断 v16 报告`](docs/evaluation/omnidocbench-table-geometry-audit-v16.md)。
-
-单元格 OCR 重读 v17 已完成：9 格局部重读改善跨列粘连，但未超过现有回退，
-且低置信度结果触发拒绝；12 例有效输出保持不变。当前暂停追加表格解析优化，
-转向端到端验证。见 [v17 实验报告](docs/evaluation/omnidocbench-table-cell-ocr-v17.md)。
-
-## 路线图
-
-- [ ] 为每个 Chunk 增加论文标题、章节、页码、DOI/arXiv ID 等科研元数据。
-- [x] 后端生成稳定来源编号并完成逐句引用质量开发集验收。
-- [x] 将回答中的 `[Sx]` 渲染为可点击引用，并展示论文、页码、章节、Chunk 与原文证据。
-- [ ] 增加 BM25 + Dense + RRF 混合检索。
-- [x] 建立 Chunk 级完整证据 Hit@K、MRR、nDCG 和延迟评测。
-- [x] 实现跨论文 Query Planner、多路召回及覆盖感知选择原型。
-- [ ] 用新的独立 Held-out 集验收自动 Query Planner 和回答引用质量。
-- [ ] 在前端加入多论文检索开关与执行 Trace。
-
-## 安全与数据
-
-- API Key 仅保存在本地 `.env` 中。
-- 上传论文、解析结果、日志、PID、数据库数据与向量数据默认不进入 Git。
-- 请仅上传有权处理的论文，并遵守相应论文与模型服务的使用条款。
-
-## 项目状态与许可
-
-ScholarLens 当前处于 MVP 重构阶段。仓库暂未授予开源许可证；在许可证明确前，公开可见不代表允许复制、修改或再分发。
+基础工程沿用已有文档 RAG 的服务划分，ScholarLens 的论文场景改进另行记录，不把整套框架或外部模型宣称为原创。仓库暂未授予开源许可证，也不改变依赖与数据集自身的许可要求。

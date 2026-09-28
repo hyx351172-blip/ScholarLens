@@ -1,0 +1,80 @@
+{
+  "status": "AI_REVIEW_DRAFT_NOT_HUMAN_GOLD",
+  "experiment": "answer-mode-ab-v1",
+  "scope": "Core-answer coverage and targeted claim/evidence inspection, not exhaustive entailment grading of all claims.",
+  "human_review_status": "pending",
+  "items": [
+    {
+      "id": "A01",
+      "core_answer_comparison": "not_pairwise_evaluable",
+      "ai_note": "旧模式连接失败，无可比回答；新模式返回 Transformer、编码器/解码器及注意力架构。保留失败，不用上一轮旧回答补齐本轮。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "A02",
+      "core_answer_comparison": "legacy_delivered_candidate_rejected",
+      "ai_note": "旧模式回答表2的28.4/41.8。新模式原始JSON也包含这两个数，但第4条结论用分号比较正文41.0与表格41.8，被句界启发式拦截，最终显示固定拒答。不是JSON解析失败或证据为空。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "A03",
+      "core_answer_comparison": "legacy_delivered_candidate_rejected",
+      "ai_note": "旧模式覆盖缩放公式及小梯度解释。新模式原始JSON含核心答案，但第5条点积/加性注意力对比含分号，整份被拒绝。旧答案引用S1支持缩放因子时仍涉及压平公式，不能因完整输出而宣称每条引用均充分。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "A04",
+      "core_answer_comparison": "both_abstain",
+      "ai_note": "两种模式均对Attention论文中的GPT-4/MMLU缺失结果拒答，未输出分数。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "B01",
+      "core_answer_comparison": "both_name_MLM_and_NSP",
+      "ai_note": "新模式C002的50%表述容易把训练样本采样比例说成判断概率，且所选S1:E0001、S6:E0001、S8:E0006均没有50%比例；比例在未选中的S8:E0007。完整来源S8含支持，但细粒度绑定不充分。旧模式的列表引导句没有自身引用，后续任务说明有引用。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "B03",
+      "core_answer_comparison": "both_cover_15_and_conditional_80_10_10",
+      "ai_note": "两种模式均保留15%以及选中后80/10/10的条件关系。新模式新增1.5%随机替换说明，所选S1:E0003有相应比例与影响描述；从does not seem到较确定表述的语气差异仍可人工复核。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "L01",
+      "core_answer_comparison": "both_cover_low_rank_and_frozen_W0",
+      "ai_note": "旧模式将研究适配范围写成通常仅注意力。新模式改为实验但仍额外声称主要Wq/Wv、偏置默认不训练，所选锚点只明确研究关注注意力并将其他层及偏置留待后续研究。新模式C009从压平的α r恢复α/r；C008只选S1:E0004，句尾matrices落入未选的E0005。新模式更可追踪，但范围和锚点完整性问题仍在。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "L03",
+      "core_answer_comparison": "both_cover_forward_equation_and_initialization",
+      "ai_note": "两组均给出W0x+BAx、A高斯及B零初始化。新模式C002把矩阵维度和初始化放在同一结论，却只绑定初始化段S1:E0005/S2:E0002；维度在未被该条选择的S1:E0003。新旧两组均从压平α r片段输出α/r；不能将论文中公式可能正确等同于当前引用充分支持。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "L04",
+      "core_answer_comparison": "both_abstain",
+      "ai_note": "两种模式均对LoRA论文中的Llama 3/MMLU缺失结果拒答，未输出分数。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "X01",
+      "core_answer_comparison": "both_cover_encoder_decoder_vs_bidirectional_encoder",
+      "ai_note": "两组均覆盖两篇目标论文。旧模式仍扩展到通常仅轻量级分类头。新模式C008没有这一限定，但所选S10:E0003/E0004没有直接给出仅在顶部添加任务输出层；完整S10其他位置有输出层描述，不能借未选锚点自动证明C008绑定充分。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "X02",
+      "core_answer_comparison": "both_cover_full_finetuning_vs_low_rank_updates",
+      "ai_note": "两组均覆盖BERT全参数微调与LoRA冻结W0/训练A、B。新模式C003仍把本研究仅适配注意力的范围写成LoRA默认设置；S3:E0002/E0003支持研究选择，不足以保证默认这一泛化。旧模式也有默认冻结MLP等类似扩展。",
+      "human_verdict": null, "reviewer": ""
+    },
+    {
+      "id": "E01",
+      "core_answer_comparison": "both_local_abstain_without_calls",
+      "ai_note": "空证据两组均通过本地路径返回证据不足，模型调用为0；这是生成实验中的空证据控制，不是再次访问真实空知识库。",
+      "human_verdict": null, "reviewer": ""
+    }
+  ]
+}

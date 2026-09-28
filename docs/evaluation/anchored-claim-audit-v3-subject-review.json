@@ -1,0 +1,131 @@
+{
+  "status": "AI_REVIEW_DRAFT_NOT_HUMAN_GOLD",
+  "experiment": "multipaper-claim-audit-v3",
+  "date": "2026-09-26",
+  "scope": "All nine units flagged as subject_status=unresolved in the frozen v3 packet; not a semantic accuracy audit of all 85 units",
+  "input_path": "output/e2e-claim-audit-v3/inputs.json",
+  "frozen_packet_modified": false,
+  "external_calls": 0,
+  "summary": {
+    "reviewed_units": 9,
+    "context_hint_needed": 3,
+    "explicit_entities_or_operation_objects": 6,
+    "human_approved": 0
+  },
+  "items": [
+    {
+      "case_id": "A01",
+      "unit_id": "C015",
+      "classification": "context_hint_needed",
+      "assessment": "其指代同句前文的位置编码，而不是模型、输入嵌入或前馈网络。当前规则没有从前一分句的宾语名词中提取这个指代对象。",
+      "proposed_subject_context": {
+        "text": "位置编码",
+        "start": 705,
+        "end": 709,
+        "from_unit_id": "C014"
+      },
+      "citation_ids": ["S8"],
+      "action": "在新版本中保留同句名词提示；不要复制前一分句的无递归/卷积等断言。引用仍仅为 S8。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "B01",
+      "unit_id": "C003",
+      "classification": "context_hint_needed",
+      "assessment": "本分句延续列表条目中的掩码语言模型任务，不是后面的下一句预测任务。当前规则没有识别冒号前的中文任务名。",
+      "proposed_subject_context": {
+        "text": "掩码语言模型",
+        "start": 21,
+        "end": 27,
+        "from_unit_id": "C002"
+      },
+      "citation_ids": ["S4", "S7", "S8"],
+      "action": "在新版本中识别同一列表条目的任务名词；不跨换行借用另一个任务或 B01-C001 的引用范围。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C002",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "本条已显式给出 B 和 A 及各自矩阵维度。它是并列数学对象，不需要从前一条补一个单独主语，也不能任选 A 或 B 替代两者。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S2", "S3"],
+      "action": "区分并列对象已显式与真正指代不明；保留整条原文，不把两个维度断言压成单对象。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C003",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "本条已经写出秩 r 与 d、k 的关系。当前规则因且开头和缺少可继承主语而预警，但符号对象本身在结论中存在，其含义仍需由本条自己的证据确认。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S2", "S3"],
+      "action": "识别显式数学关系，不借其他结论的证据，不因此自动判语义支持。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C005",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "这是更新操作而非名词判断句，A 和 B 这两个更新对象已经显式写出。问题限定 LoRA 的冻结/训练过程，本条自己的 S2/S3 也描述训练；不应把缺少语法上的施事主语直接当成对象不明。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S2", "S3"],
+      "action": "将显式操作对象与主语继承区分；仅字的排他范围仍须评审检查，不能靠对象明确就判支持。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C007",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "W0、Delta W=BA、输入 x 和输出相加关系都已写在本条。并列对象不能安全压成一个，所以旧规则给 unresolved；这不等于缺少指代对象。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S2", "S3"],
+      "action": "保持并列对象与原公式，不从前一分句追加前向传播的额外事实。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L03",
+      "unit_id": "C005",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "B 与 A 及其维度、可训练性质均在本条显式出现。不能沿用上一分句被冻结的 W0 作为此条主语。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S1", "S3"],
+      "action": "识别并列主语并阻断旧 W0 指代继承；保留原引用范围。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "L03",
+      "unit_id": "C006",
+      "classification": "explicit_entities_or_operation_objects",
+      "assessment": "与 L01-C003 同类，秩 r 和大小关系已经显式存在。它不需要补成 A 或 B；符号定义应由 S1/S3 检查。",
+      "proposed_subject_context": null,
+      "citation_ids": ["S1", "S3"],
+      "action": "识别显式数学关系，但保留证据歧义和限定条件的独立评审。",
+      "human_approved": null,
+      "semantic_verdict": null
+    },
+    {
+      "case_id": "X02",
+      "unit_id": "C012",
+      "classification": "context_hint_needed",
+      "assessment": "仅分别描述的主语是当前检索证据，不是 BERT/LoRA 的全部论文内容。若丢失当前检索这个范围，可能把局部证据说明误读成整篇论文的排他结论。",
+      "proposed_subject_context": {
+        "text": "当前检索证据",
+        "start": 513,
+        "end": 519,
+        "from_unit_id": "C011"
+      },
+      "citation_ids": ["S4", "S7", "S2", "S3", "S8"],
+      "action": "只补范围名词，不传入 C011 关于 BERT 与 LoRA 结合使用的否定断言。当前仍不评判这条排他描述是否成立。",
+      "human_approved": null,
+      "semantic_verdict": null
+    }
+  ]
+}

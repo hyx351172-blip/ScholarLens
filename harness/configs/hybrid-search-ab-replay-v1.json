@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "hybrid-search-ab-replay-v1",
+  "description": "Zero-call replay of historical Dense Top-10 vs BM25/Dense RRF. PASS checks artifact execution/API-call count only, NOT Hybrid adoption or live quality.",
+  "stages": [
+    {
+      "id": "hybrid_search_dev_v1",
+      "label": "Previously used v1: cached Dense vs BM25/Dense RRF",
+      "source": {"kind": "artifact", "path": "docs/evaluation/hybrid-search-v1-20260928.results.json"},
+      "metrics": [
+        {"id": "dense_hit", "label": "Dense complete-evidence hit", "path": "summary.dense.strict_evidence_hit_rate", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_hit", "label": "Hybrid complete-evidence hit", "path": "summary.hybrid.strict_evidence_hit_rate", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_recall", "label": "Dense evidence-set recall", "path": "summary.dense.mean_best_evidence_set_recall", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_recall", "label": "Hybrid evidence-set recall", "path": "summary.hybrid.mean_best_evidence_set_recall", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_mrr", "label": "Dense evidence-set MRR", "path": "summary.dense.evidence_set_mrr", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_mrr", "label": "Hybrid evidence-set MRR", "path": "summary.hybrid.evidence_set_mrr", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_ndcg", "label": "Dense annotated NDCG", "path": "summary.dense.mean_ndcg", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_ndcg", "label": "Hybrid annotated NDCG", "path": "summary.hybrid.mean_ndcg", "unit": "ratio", "direction": "higher"},
+        {"id": "api_calls", "label": "External API calls", "path": "external_api_calls", "unit": "count", "direction": "lower"}
+      ],
+      "gates": [{"id": "zero_calls", "metric": "api_calls", "operator": "==", "value": 0}]
+    },
+    {
+      "id": "hybrid_search_used_v2",
+      "label": "Previously used v2: not a fresh held-out run",
+      "source": {"kind": "artifact", "path": "docs/evaluation/hybrid-search-v2-20260928.results.json"},
+      "metrics": [
+        {"id": "dense_hit", "label": "Dense complete-evidence hit", "path": "summary.dense.strict_evidence_hit_rate", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_hit", "label": "Hybrid complete-evidence hit", "path": "summary.hybrid.strict_evidence_hit_rate", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_recall", "label": "Dense evidence-set recall", "path": "summary.dense.mean_best_evidence_set_recall", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_recall", "label": "Hybrid evidence-set recall", "path": "summary.hybrid.mean_best_evidence_set_recall", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_mrr", "label": "Dense evidence-set MRR", "path": "summary.dense.evidence_set_mrr", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_mrr", "label": "Hybrid evidence-set MRR", "path": "summary.hybrid.evidence_set_mrr", "unit": "ratio", "direction": "higher"},
+        {"id": "dense_ndcg", "label": "Dense annotated NDCG", "path": "summary.dense.mean_ndcg", "unit": "ratio", "direction": "higher"},
+        {"id": "hybrid_ndcg", "label": "Hybrid annotated NDCG", "path": "summary.hybrid.mean_ndcg", "unit": "ratio", "direction": "higher"},
+        {"id": "api_calls", "label": "External API calls", "path": "external_api_calls", "unit": "count", "direction": "lower"}
+      ],
+      "gates": [{"id": "zero_calls", "metric": "api_calls", "operator": "==", "value": 0}]
+    }
+  ]
+}

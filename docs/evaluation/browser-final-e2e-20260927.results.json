@@ -1,0 +1,38 @@
+{
+  "run_id": "browser-final-20260927",
+  "application_commit": "005c440d1408c685b74b399e722b7456d167080c",
+  "overall_status": "partial_not_all_passed",
+  "review_method": "AI comparison of browser-visible output with local PDF/source excerpts; not independent human Gold or paid model judge",
+  "population": "8 existing development questions, 2 papers, one mixed history and one new empty conversation",
+  "uploaded_documents": 2,
+  "uploaded_pages": 31,
+  "indexed_chunks": 108,
+  "browser_chat_submissions": 8,
+  "manual_chat_retries": 0,
+  "external_judge_calls": 0,
+  "exact_billable_model_calls": null,
+  "core_question_checks": {"passed": 7, "failed": 1, "total": 8},
+  "core_question_checks_are_not_full_ui_acceptance": true,
+  "cases": [
+    {"id":"A01","core_check":"pass","cited_count":8,"uncited_count":2,"note":"Transformer core architecture; Attention source"},
+    {"id":"A02","core_check":"pass","cited_count":1,"uncited_count":9,"note":"Table 2: 28.4 / 41.8; Attention p8"},
+    {"id":"A03","core_check":"pass","cited_count":3,"uncited_count":7,"ui_check":"fail_math_rendering","note":"Core formula and scaling rationale verified, not every extra assertion"},
+    {"id":"B01","core_check":"pass","cited_count":3,"uncited_count":7,"note":"MLM/NSP; target switched to BERT"},
+    {"id":"B03","core_check":"pass","cited_count":3,"uncited_count":7,"note":"15% selection; conditional 80/10/10"},
+    {"id":"X01","core_check":"fail","cited_count":6,"uncited_count":4,"note":"All 10 sources Attention, BERT claims attributed to Attention S4/S7/S8; code root cause unconfirmed"},
+    {"id":"A04","core_check":"pass","cited_count":0,"uncited_count":10,"note":"No-answer refusal, no fabricated GPT-4 score"},
+    {"id":"E01","core_check":"pass","cited_count":0,"uncited_count":0,"note":"New empty-library conversation, no stale sources"}
+  ],
+  "other_checks": {
+    "ui_file_upload": "pass",
+    "ingestion_read_only_audit": "pass",
+    "document_visibility_after_refresh": "pass",
+    "narrow_viewport_kb_selection": "fail_missing_visible_control",
+    "pdf_link_file_and_page_fragment": "pass",
+    "pdf_browser_visual_rendering": "blocked_iab_viewer_failed_external_browser_unavailable"
+  },
+  "evidence_directory": "output/browser-e2e-final-20260927",
+  "test_definition": "tests/integration/browser_final_acceptance_v1.json",
+  "business_code_modified": false,
+  "release_gate_passed": false
+}

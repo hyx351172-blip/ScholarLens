@@ -1,0 +1,41 @@
+{
+  "experiment": "evidence-units-live-v1",
+  "reviewer_type": "assistant_offline_inspection",
+  "status": "AI_DRAFT_PENDING_HUMAN_REVIEW",
+  "basis": "Only each claim's explicitly selected source spans from output/evidence-units-live-v1/human-review.json; no paid judge, no replacement of original answers.",
+  "semantic_accuracy_available": false,
+  "human_verified": false,
+  "definitions": {
+    "appears_supported": "AI inspection found support for the stated content in selected spans; not a human verdict or exhaustive correctness guarantee.",
+    "support_gap": "A stated detail or condition is not adequately supported by this claim's own selected spans.",
+    "needs_human_review": "Interpretation or wording is ambiguous; do not automatically mark correct or incorrect."
+  },
+  "claims": [
+    {"case":"B01","claim_id":"C001","assessment":"appears_supported","note":"所选片段包含 Task #1: Masked LM 和 BERT 使用 MLM 预训练的描述。","human_verdict":null},
+    {"case":"B01","claim_id":"C002","assessment":"appears_supported","note":"所选片段包含 Task #2: Next Sentence Prediction 及第二个预训练目标；已不再附加 50% 的有歧义解释，但这未测试模型能否正确解释比例。","human_verdict":null},
+    {"case":"L01","claim_id":"C001","assessment":"appears_supported","note":"S2:U0006/S3:U0005 含低秩分解、A/B 维度和秩条件。","human_verdict":null},
+    {"case":"L01","claim_id":"C002","assessment":"appears_supported","note":"S2:U0007/S3:U0006 明确 W0 冻结、不接收梯度，A/B 可训练。","human_verdict":null},
+    {"case":"L01","claim_id":"C003","assessment":"appears_supported","note":"S2:U0001 含前向公式，S2:U0008/S3:U0007 含输出向量逐坐标相加。","human_verdict":null},
+    {"case":"L01","claim_id":"C004","assessment":"appears_supported","note":"S1:U0002/S2:U0011 明确 A 高斯、B 零初始化及初始 BA=0。","human_verdict":null},
+    {"case":"L01","claim_id":"C005","assessment":"support_gap","note":"S1:U0003/S2:U0012 的原文是压平的 α r，未明确除号；模型仍写 α/r。其他所选句支持首次 r 的设定，但不能补齐模糊分式。","human_verdict":null},
+    {"case":"L01","claim_id":"C006","assessment":"support_gap","note":"S5:U0004 支持本研究只适配注意力、冻结 MLP，但未列出回答中的 Wq/Wv 示例；不把相邻未选句算入本条证据。","human_verdict":null},
+    {"case":"L01","claim_id":"C007","assessment":"support_gap","note":"S1:U0010 已保留完整条件句，但回答省略了 applying LoRA to all weight matrices 条件，仅提及秩及所有偏置，仍有范围扩大。","human_verdict":null},
+    {"case":"L01","claim_id":"C008","assessment":"needs_human_review","note":"S1:U0013/U0016 支持合并权重及无额外推理延迟；性能一致表述过宽，不能解读为任务效果也一致，建议明确仅比较推理延迟。","human_verdict":null},
+    {"case":"L01","claim_id":"C009","assessment":"appears_supported","note":"S1:U0015 支持减去旧 BA、加新 B'A'，以及很小的内存开销。","human_verdict":null},
+    {"case":"L01","claim_id":"C010","assessment":"appears_supported","note":"S2:U0004/U0005 和 S3:U0003/U0004 联合支持低内在维度的启发与更新低内在秩假设。","human_verdict":null},
+    {"case":"L03","claim_id":"C001","assessment":"support_gap","note":"所选公式/维度/按坐标求和单元支持前向式和低秩分解，但没有 W0 冻结条件；冻结句 S1:U0007 未选。","human_verdict":null},
+    {"case":"L03","claim_id":"C002","assessment":"support_gap","note":"S1:U0011/S2:U0002 仅含初始化与 BA=0，不含本条 A/B 维度；维度在其他未被本条选择的单元。","human_verdict":null},
+    {"case":"L03","claim_id":"C003","assessment":"support_gap","note":"S1:U0012/S2:U0003 仍是 α r，不能直接支持明确的 α/r；不以模型记忆或论文常识替代所选片段。","human_verdict":null},
+    {"case":"L03","claim_id":"C004","assessment":"appears_supported","note":"S1:U0013/S2:U0004 明确保留 Adam、适当初始化缩放及 roughly same 三个条件。","human_verdict":null},
+    {"case":"L03","claim_id":"C005","assessment":"needs_human_review","note":"所选句明确首次 r 赋值且不调优；回答额外说明减少超参数调整的目的，需判断是否可合理推得，显式相关说明在未选后续句。","human_verdict":null},
+    {"case":"X02","claim_id":"C001","assessment":"appears_supported","note":"S4:U0004/S7:U0004 明确下游微调更新所有参数。","human_verdict":null},
+    {"case":"X02","claim_id":"C002","assessment":"appears_supported","note":"S2:U0005/S8:U0007 联合支持冻结预训练权重、训练低秩矩阵 A/B。","human_verdict":null},
+    {"case":"X02","claim_id":"C003","assessment":"support_gap","note":"S3:U0004 只说 We limit our study，不能直接支持 LoRA 默认仅适配；所选句也未列出 Wq/Wk/Wv/Wo。","human_verdict":null},
+    {"case":"X02","claim_id":"C004","assessment":"support_gap","note":"S8:U0006 含维度和秩条件，但仅可训练 A/B 的依据在未选的 S8:U0007；不能借用 C002 的引用。","human_verdict":null},
+    {"case":"X02","claim_id":"C005","assessment":"needs_human_review","note":"所选片段支持除了输出层架构相同、全部参数微调；仅添加任务特定头比原文更具体，保留人工措辞复核。","human_verdict":null}
+  ],
+  "negative_controls": [
+    {"case":"A04","observation":"模型返回 insufficient，未给出论文没有的 GPT-4 成绩。","human_verdict":null},
+    {"case":"E01","observation":"空证据本地拒答，零模型调用。","human_verdict":null}
+  ]
+}

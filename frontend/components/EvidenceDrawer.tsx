@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { buttonStyles } from './ui/button';
 
 import { config } from '../src/config';
+import { retrievalScoreLabel } from '../src/retrievalMode';
 import {
   formatEvidenceLocation,
   getSourceChunkId,
@@ -83,12 +84,18 @@ export function EvidenceDrawer({ sourceId, source, onClose }: EvidenceDrawerProp
               检索原文
             </h4>
             <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-              相似度 {source.score.toFixed(3)}
+              {retrievalScoreLabel(source)} {source.score.toFixed(3)}
             </span>
           </div>
           <div className="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-700">
             {source.chunk_text}
           </div>
+          {source.retrieval_mode === 'hybrid' && (
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Dense {source.dense_score?.toFixed(3) ?? '未进入候选'} · BM25 {source.bm25_score?.toFixed(3) ?? '无匹配'} · RRF {source.hybrid_rrf_score?.toFixed(4) ?? '—'}
+              <br />不同分数不直接比较，也不代表置信概率。
+            </p>
+          )}
         </section>
 
         {chunkId && (

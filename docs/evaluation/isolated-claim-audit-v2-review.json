@@ -1,0 +1,101 @@
+{
+  "status": "AI_REVIEW_DRAFT_NOT_HUMAN_GOLD",
+  "date": "2026-09-26",
+  "experiment": "multipaper-claim-audit-v2",
+  "scope": "Targeted diagnostic review, not exhaustive relabeling or corrected accuracy",
+  "raw_results_overwritten": false,
+  "human_review_status": "pending",
+  "items": [
+    {
+      "case_id": "A01",
+      "unit_id": "C003",
+      "raw_verdict": "uncertain",
+      "category": "citation_coverage_gap",
+      "assessment": "本句只引用 S2/S3，未包含明确说明没有 recurrence/convolution 的 S8。新版不再以没有提到某组件来证明该组件不存在；这不等于该事实本身错误。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-A01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "B01",
+      "unit_id": "C001",
+      "raw_verdict": "unsupported",
+      "category": "citation_scope_policy",
+      "assessment": "带事实数量的列表引导句没有自己的引用，按冻结规则本地判为不支持。后续列表的证据包含两个预训练任务；是否允许引导句共享列表引用需要明确产品政策，不能把此条称为事实幻觉。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-B01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C008",
+      "raw_verdict": "supported",
+      "category": "possible_qualifier_overgeneralization",
+      "assessment": "原文限定的是本研究 only adapting the attention weights，同时明确 in principle 可以适配任意权重子集；回答的通常仅应用于把本研究范围泛化为惯例。评审接受了这个转述，需人工复核限定词，不能直接算作已验证支持。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-L01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "L01",
+      "unit_id": "C011",
+      "raw_verdict": "uncertain",
+      "category": "judge_capability_vs_experiment_scope",
+      "assessment": "原文讨论 training all biases 的理论设置，回答只称部分设置可训练偏置；评审却要求是否实际实现或测试。可能是评审提高了证明要求，而不只是答案证据不足，需结合原句范围确认。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-L01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "L03",
+      "unit_id": "C004",
+      "raw_verdict": "unsupported",
+      "category": "subject_lost_by_segmentation",
+      "assessment": "分句仅为不参与梯度更新，原回答前一分句主语是 W0。评审理由承认缺少主语，却给 unsupported 而非提示词要求的 uncertain。属于分句上下文丢失及判定枚举使用不一致，不能据此认定原回答错误。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-L03.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "L03",
+      "unit_id": "C009",
+      "raw_verdict": "supported",
+      "category": "flattened_math_and_judge_overinterpretation",
+      "assessment": "当前引用只有 alpha 与 r 的并列文本；评审摘录逐字合法，但理由自行补上除号并称原文明示 alpha/r。前一轮 PDF 页面核验确认原答案的分式正确，但本轮没有修复文本证据，也不能把该支持判定当作解析修复成功。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-L03.md",
+      "prior_pdf_verification": "docs/evaluation/multipaper-claim-audit-v1.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "X01",
+      "unit_id": "C003",
+      "raw_verdict": "uncertain",
+      "category": "subject_lost_by_segmentation",
+      "assessment": "每层含两个子层单独发送后未保留编码器主语。评审还以该单元没有回答整个跨论文问题为理由，这不属于逐条结论蕴含判定的要求。需保留可追溯主语而不引入其他结论的证据，并区分单元支持与全题完整性。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-X01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "X01",
+      "unit_id": "C008",
+      "raw_verdict": "uncertain",
+      "category": "subject_lost_by_segmentation",
+      "assessment": "原回答的 BERT 主语在前一分句；单独的不包含解码器部分无法直接分辨是 BERT 还是原始 Transformer。该不确定性主要由抽取边界造成，需保留原文主语范围，不应据此称原回答选错模型。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-X01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "X01",
+      "unit_id": "C011",
+      "raw_verdict": "uncertain",
+      "category": "citation_coverage_gap",
+      "assessment": "本句谈原始 Transformer 解码器的单向注意力，但只引用描述 BERT 与 GPT 比较的 S10。原始 Transformer 的直接证据应单独绑定；不能把 GPT 的片段替代另一模型的来源。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-X01.md",
+      "human_verdict": null
+    },
+    {
+      "case_id": "X01",
+      "unit_id": "C013",
+      "raw_verdict": "uncertain",
+      "category": "citation_coverage_gap",
+      "assessment": "S10 说明架构变化很小，但不说明轻量级分类头、通常及仅这些具体限定。新版隔离评审不再让这一额外断言跟随段落主干被接受；应补直接证据或删减额外细节，不应宣称该知识本身已证伪。",
+      "evidence": "output/e2e-claim-audit-v2-final/evidence-X01.md",
+      "human_verdict": null
+    }
+  ]
+}
